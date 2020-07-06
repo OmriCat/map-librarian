@@ -1,4 +1,4 @@
-package com.omricat.gradle
+package com.omricat.maplibrarian.gradle
 
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
