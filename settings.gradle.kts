@@ -1,12 +1,12 @@
 pluginManagement {
     resolutionStrategy {
+        val pluginIdToCoordinates = mapOf(
+            "com.android.library" to "com.android.tools.build:gradle",
+            "com.android.application" to "com.android.tools.build:gradle",
+            "com.google.gms.google-services" to "com.google.gms:google-services:4.3.3"
+        )
         eachPlugin {
-            if (requested.id.id == "com.android.library") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
-            if (requested.id.id == "com.android.application") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
+            pluginIdToCoordinates[requested.id.id]?.also { useModule("$it${requested.version}") }
         }
     }
     repositories {
