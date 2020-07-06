@@ -6,7 +6,7 @@ pluginManagement {
             "com.google.gms.google-services" to "com.google.gms:google-services:4.3.3"
         )
         eachPlugin {
-            pluginIdToCoordinates[requested.id.id]?.also { useModule("$it${requested.version}") }
+            pluginIdToCoordinates[requested.id.id]?.also { useModule("$it:${requested.version}") }
         }
     }
     repositories {
