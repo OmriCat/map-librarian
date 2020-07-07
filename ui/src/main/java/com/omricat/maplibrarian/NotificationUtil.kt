@@ -1,4 +1,4 @@
-package com.ncorti.kotlin.template.library.android
+package com.omricat.maplibrarian
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.omricat.maplibrarian.ui.R
 
 private const val CHANNEL_ID = "default"
 private const val NOTIFICATION_ID = 42
@@ -28,7 +29,9 @@ class NotificationUtil(context: Context) {
     }
 
     fun showNotification(context: Context, title: String, message: String): Notification {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context,
+            CHANNEL_ID
+        )
             .setSmallIcon(R.drawable.library_notification_icon)
             .setContentTitle(title)
             .setContentText(message)
