@@ -1,4 +1,6 @@
 package com.omricat.maplibrarian
 
-class MapLibraryApp {
+import android.app.Application
+
+class MapLibraryApp: Application() {
 }
