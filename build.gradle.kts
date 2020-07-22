@@ -21,6 +21,7 @@ subprojects {
     apply {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jlleitschuh.gradle.ktlint")
+        plugin("map-librarian")
     }
 
     ktlint {
