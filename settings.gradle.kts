@@ -14,6 +14,7 @@ pluginManagement {
         google()
         mavenCentral()
         jcenter()
+        mavenLocal()
     }
 }
 
