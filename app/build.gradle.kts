@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Sdk.COMPILE_SDK_VERSION)
+    compileSdkVersion(29)
 
     defaultConfig {
-        minSdkVersion(Sdk.MIN_SDK_VERSION)
-        targetSdkVersion(Sdk.TARGET_SDK_VERSION)
+        minSdkVersion(21)
+        targetSdkVersion(29)
 
-        applicationId = AppCoordinates.APP_ID
-        versionCode = AppCoordinates.APP_VERSION_CODE
-        versionName = AppCoordinates.APP_VERSION_NAME
+        applicationId = "com.omricat.maplibrarian"
+        versionCode = 1
+        versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -29,6 +29,10 @@ android {
         }
     }
 
+    sourceSets.forEach { srcSet ->
+        srcSet.java.srcDir("src/${srcSet.name}/kotlin")
+    }
+
     lintOptions {
         isWarningsAsErrors = true
         isAbortOnError = true
@@ -36,23 +40,21 @@ android {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk7"))
+    implementation(kotlin("stdlib"))
 
-    implementation(project(":domain"))
-    implementation(project(":ui"))
-
-    implementation(SupportLibs.ANDROIDX_APPCOMPAT)
-    implementation(SupportLibs.ANDROIDX_CONSTRAINT_LAYOUT)
-    implementation(SupportLibs.ANDROIDX_CORE_KTX)
+    implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation("com.android.support.constraint:constraint-layout:1.1.3")
+    implementation("androidx.core:core-ktx:1.2.0")
 
     implementation("com.google.firebase:firebase-auth:19.3.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.1.0")
+
+
+    implementation("androidx.fragment:fragment-ktx:1.2.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0")
 
-    testImplementation(TestingLib.JUNIT)
+    testImplementation("junit:junit:4.13")
 
-    androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT)
-    androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_RULES)
-    androidTestImplementation(AndroidTestingLib.ESPRESSO_CORE)
+    androidTestImplementation("androidx.test.ext:junit:1.1.1")
+    androidTestImplementation("androidx.test:rules:1.2.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }

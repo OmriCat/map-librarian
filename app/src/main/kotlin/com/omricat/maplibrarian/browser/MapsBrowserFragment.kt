@@ -1,11 +1,8 @@
 package com.omricat.maplibrarian.browser
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import com.omricat.maplibrarian.R
 
 class MapsBrowserFragment : Fragment(R.layout.maps_browser_fragment) {
@@ -18,7 +15,7 @@ class MapsBrowserFragment : Fragment(R.layout.maps_browser_fragment) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MapsBrowserViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MapsBrowserViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

@@ -1,12 +1,12 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    id("com.android.application") apply false
-    kotlin("android") apply false
-    id("com.google.gms.google-services") apply false
-    id("io.gitlab.arturbosch.detekt") version BuildPluginsVersion.DETEKT
-    id("org.jlleitschuh.gradle.ktlint") version BuildPluginsVersion.KTLINT
-    id("com.github.ben-manes.versions") version BuildPluginsVersion.VERSIONS_PLUGIN
+    id("com.android.application") version "4.1.0"
+    kotlin("android") version "1.4.10"
+    id("com.google.gms.google-services") version "4.3.3" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.9.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("com.github.ben-manes.versions") version "0.28.0"
     idea
 }
 
@@ -22,12 +22,11 @@ subprojects {
     apply {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jlleitschuh.gradle.ktlint")
-        plugin("map-librarian")
     }
 
     ktlint {
         debug.set(false)
-        version.set(Versions.KTLINT)
+        version.set("0.37.2")
         verbose.set(true)
         android.set(false)
         outputToConsole.set(true)
