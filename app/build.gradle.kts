@@ -46,6 +46,9 @@ dependencies {
     implementation(SupportLibs.ANDROIDX_CORE_KTX)
 
     implementation("com.google.firebase:firebase-auth:19.3.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.1.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0")
 
     testImplementation(TestingLib.JUNIT)
 
