@@ -37,20 +37,39 @@ android {
         isWarningsAsErrors = true
         isAbortOnError = true
     }
+    
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
 
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("com.android.support.constraint:constraint-layout:1.1.3")
-    implementation("androidx.core:core-ktx:1.2.0")
+    val coroutinesVersion = "1.4.1"
+    fun coroutines(artifact: String) = "org.jetbrains.kotlinx:kotlinx-coroutines-$artifact:$coroutinesVersion"
 
-    implementation("com.google.firebase:firebase-auth:19.3.1")
+    implementation(KotlinX.coroutines.core)
+    implementation(KotlinX.coroutines.android)
+
+    implementation(AndroidX.appCompat)
+    implementation(AndroidX.core.ktx)
+
+    implementation(AndroidX.activityKtx)
+    implementation(AndroidX.fragmentKtx)
+    implementation(AndroidX.lifecycle.viewModelKtx)
+    implementation(AndroidX.lifecycle.runtimeKtx)
+
+    implementation(AndroidX.constraintLayout)
+    implementation(AndroidX.recyclerView)
+    implementation(Google.android.material)
+
+    implementation(platform(Firebase.bom))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
 
 
-    implementation("androidx.fragment:fragment-ktx:1.2.5")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0")
+    implementation("com.firebaseui:firebase-ui-firestore:_")
+    implementation("com.firebaseui:firebase-ui-auth:_")
 
     testImplementation("junit:junit:4.13")
 
