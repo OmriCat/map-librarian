@@ -37,7 +37,7 @@ android {
         isWarningsAsErrors = true
         isAbortOnError = true
     }
-    
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -67,11 +67,12 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
-
     implementation("com.firebaseui:firebase-ui-firestore:_")
     implementation("com.firebaseui:firebase-ui-auth:_")
 
-    testImplementation("junit:junit:4.13")
+    testImplementation(Testing.kotest.runner.junit5)
+    testImplementation(Testing.kotest.assertions.core)
+    testImplementation(Testing.kotest.core)
 
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test:rules:1.2.0")
