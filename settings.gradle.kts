@@ -1,9 +1,8 @@
 import de.fayard.refreshVersions.bootstrapRefreshVersions
+
 pluginManagement {
     resolutionStrategy {
         val pluginIdToCoordinates = mapOf(
-            "com.android.library" to "com.android.tools.build:gradle",
-            "com.android.application" to "com.android.tools.build:gradle",
             "com.google.gms.google-services" to "com.google.gms:google-services"
         )
         eachPlugin {
@@ -28,7 +27,6 @@ buildscript {
 }
 
 bootstrapRefreshVersions()
-
 
 rootProject.name = ("map-librarian")
 

@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application") version "4.1.0" apply false
-    kotlin("android") version "1.4.10" apply false
-    id("com.google.gms.google-services") version "4.3.3" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.9.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("com.android.application") apply false
+    kotlin("android") apply false
+    id("com.google.gms.google-services").apply(false).version("4.3.3")
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jlleitschuh.gradle.ktlint")
     idea
 }
 
@@ -12,6 +12,7 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
+        maven(url = "https://dl.bintray.com/arkivanov/maven")
     }
 }
 
