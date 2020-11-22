@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -36,6 +38,7 @@ android {
     lintOptions {
         isWarningsAsErrors = true
         isAbortOnError = true
+        disable("GradleDependency")
     }
 
     kotlinOptions {
