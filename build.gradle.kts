@@ -46,3 +46,8 @@ subprojects {
         }
     }
 }
+
+idea.module {
+    isDownloadJavadoc = true
+    isDownloadSources = true
+}
