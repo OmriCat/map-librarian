@@ -1,16 +1,19 @@
 @file:Suppress("SpellCheckingInspection")
 
+import com.omricat.gradle.AndroidBuildToolVersions
+
 plugins {
     id("com.android.application")
     kotlin("android")
 }
 
 android {
-    compileSdkVersion(29)
+    val androidBuildVersions: AndroidBuildToolVersions by rootProject.extra
+    compileSdkVersion(androidBuildVersions.compileSdk)
 
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(29)
+        minSdkVersion(androidBuildVersions.minSdk)
+        targetSdkVersion(androidBuildVersions.targetSdk)
 
         applicationId = "com.omricat.maplibrarian"
         versionCode = 1
@@ -49,7 +52,8 @@ android {
 dependencies {
 
     val coroutinesVersion = "1.4.1"
-    fun coroutines(artifact: String) = "org.jetbrains.kotlinx:kotlinx-coroutines-$artifact:$coroutinesVersion"
+    fun coroutines(artifact: String) =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-$artifact:$coroutinesVersion"
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)
