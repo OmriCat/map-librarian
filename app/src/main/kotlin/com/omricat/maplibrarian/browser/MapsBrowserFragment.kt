@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.omricat.maplibrarian.R
 
-class MapsBrowserFragment : Fragment(R.layout.maps_browser_fragment) {
+class MapsBrowserFragment : Fragment(R.layout.fragment_maps_browser) {
 
     companion object {
         fun newInstance() = MapsBrowserFragment()
@@ -18,5 +18,4 @@ class MapsBrowserFragment : Fragment(R.layout.maps_browser_fragment) {
         viewModel = ViewModelProvider(this).get(MapsBrowserViewModel::class.java)
         // TODO: Use the ViewModel
     }
-
 }
