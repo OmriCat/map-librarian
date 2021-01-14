@@ -1,9 +1,12 @@
+@file:Suppress("SpellCheckingInspection")
+
 plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
     id("com.google.gms.google-services").apply(false).version("4.3.3")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
+    id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false).version("1.1.0")
     idea
 }
 
@@ -20,6 +23,7 @@ subprojects {
     apply {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jlleitschuh.gradle.ktlint")
+        plugin("dev.ahmedmourad.nocopy.nocopy-gradle-plugin")
     }
 
     ktlint {
