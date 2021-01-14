@@ -1,6 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
 import com.omricat.gradle.AndroidBuildToolVersions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
@@ -19,6 +20,8 @@ android {
         versionCode = 1
         versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resConfigs("en") // Only keep languages supported so to trim down FirebaseUI
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,6 +34,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("debug") {
+            isMinifyEnabled = false
+            isDebuggable = true
         }
     }
 
@@ -46,6 +53,11 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xinline-classes")
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 }
 
