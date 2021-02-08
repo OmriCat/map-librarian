@@ -1,7 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
 import com.omricat.gradle.AndroidBuildToolVersions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
@@ -53,7 +52,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xinline-classes")
+        freeCompilerArgs = listOf("-Xinline-classes", "-Xopt-in=kotlin.RequiresOptIn")
     }
 
     buildFeatures {
@@ -77,17 +76,26 @@ dependencies {
     implementation(AndroidX.fragmentKtx)
     implementation(AndroidX.lifecycle.viewModelKtx)
     implementation(AndroidX.lifecycle.runtimeKtx)
+    implementation(AndroidX.lifecycle.commonJava8)
+    implementation(AndroidX.annotation)
 
     implementation(AndroidX.constraintLayout)
     implementation(AndroidX.recyclerView)
     implementation(Google.android.material)
 
     implementation(platform(Firebase.bom))
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation(Firebase.cloudFirestoreKtx)
     implementation("com.google.firebase:firebase-auth-ktx")
 
     implementation("com.firebaseui:firebase-ui-firestore:_")
     implementation("com.firebaseui:firebase-ui-auth:_")
+
+    fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
+    implementation(workflow("ui-core-android"))
+    implementation(workflow("ui-backstack-android"))
+
+    implementation("com.michael-bull.kotlin-result:kotlin-result:_")
+
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
