@@ -75,8 +75,10 @@ idea.module {
 }
 
 @Suppress("MagicNumber")
-val androidBuildVersions by extra(object : com.omricat.gradle.AndroidBuildToolVersions {
-    override val compileSdk: Int = 30
-    override val minSdk: Int = 21
-    override val targetSdk: Int = 29
-})
+val androidBuildVersions by extra(
+    object : com.omricat.gradle.AndroidBuildToolVersions {
+        override val compileSdk: Int = 30
+        override val minSdk: Int = 21
+        override val targetSdk: Int = 29
+    }
+)

@@ -11,6 +11,8 @@ interface AuthService {
 
 data class User(val emailAddress: String, val username: String)
 
+private const val HEX_RADIX = 16
+
 @ExperimentalUnsignedTypes
 class FakeAuthService : AuthService {
     override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
@@ -20,7 +22,7 @@ class FakeAuthService : AuthService {
                     Ok(
                         User(
                             credential.emailAddress,
-                            Random.Default.nextInt().toUInt().toString(16)
+                            Random.Default.nextInt().toUInt().toString(HEX_RADIX)
                         )
                     )
                 } else Err(AuthError("Unknown email address or password"))
