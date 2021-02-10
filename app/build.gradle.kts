@@ -50,11 +50,6 @@ android {
         disable("GradleDependency")
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xinline-classes", "-Xopt-in=kotlin.RequiresOptIn")
-    }
-
     buildFeatures {
         viewBinding = true
     }
