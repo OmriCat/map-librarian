@@ -2,9 +2,9 @@
 
 package com.omricat.maplibrarian.auth
 
-import com.firebase.ui.auth.data.model.User
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
@@ -12,8 +12,8 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
+import com.squareup.workflow1.ui.BackPressHandler
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
-import com.squareup.workflow1.ui.backstack.BackStackScreen
 
 sealed class AuthResult {
     object Unauthenticated : AuthResult()
@@ -21,8 +21,6 @@ sealed class AuthResult {
 }
 
 interface AuthWorkflow : Workflow<Unit, AuthResult, AuthScreen>
-
-interface Credential
 
 internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWorkflow,
     StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthScreen>() {
@@ -35,44 +33,49 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
 
     override fun render(props: Unit, state: State, context: RenderContext): AuthScreen =
         when (state) {
-            is LoginPrompt -> BackStackScreen(
-                AuthSubScreen.Login(
+            is LoginPrompt ->
+                AuthScreen.Login(
                     onLoginClicked = context.eventHandler { credential ->
                         this.state = State.AttemptingAuthorization(credential)
-                    },
-                    onCancel = context.eventHandler {
-                        setOutput(AuthResult.Unauthenticated)
                     }
                 )
-            )
+
             is State.AttemptingAuthorization -> {
-                context.runningWorker(Worker.from { authService.attemptAuthentication(state.credential) }) { result ->
-                    when (result) {
-                        is Ok<User> -> action { this.setOutput(AuthResult.Authenticated(result.value)) }
-                        is Err -> action {
-                            this.state = LoginPrompt(errorMessage = result.error.message)
-                        }
-                    }
-                }
-                BackStackScreen(
-                    AuthSubScreen.Login(onLoginClicked = { }, onCancel = { }),
-                    AuthSubScreen.AttemptingLogin("LoggingIn")
-                )
+                context.runningWorker(
+                    attemptAuthentication(authService, state.credential)
+                ) { handleAuthResult(it) }
+                AuthScreen.AttemptingLogin(
+                    "LoggingIn",
+                    backPressHandler = context.eventHandler { setOutput(AuthResult.Unauthenticated) })
             }
         }
 
     // Don't need to store state of in progress sign in
     override fun snapshotState(state: State): Snapshot? = null
+
+    private fun attemptAuthentication(
+        authService: AuthService,
+        credential: Credential
+    ): Worker<Result<User, AuthError>> =
+        Worker.from { authService.attemptAuthentication(credential) }
+
+    private fun handleAuthResult(result: Result<User, AuthError>) =
+        when (result) {
+            is Ok<User> -> action { setOutput(AuthResult.Authenticated(result.value)) }
+            is Err -> action {
+                state = LoginPrompt(errorMessage = result.error.message)
+            }
+        }
 }
 
-typealias AuthScreen = BackStackScreen<AuthSubScreen>
-
-sealed class AuthSubScreen {
+sealed class AuthScreen {
     data class Login(
         val errorMessage: String = "",
-        val onLoginClicked: (credential: Credential) -> Unit,
-        val onCancel: () -> Unit
-    ) : AuthSubScreen()
+        val onLoginClicked: (credential: Credential) -> Unit
+    ) : AuthScreen()
 
-    data class AttemptingLogin(val message: String) : AuthSubScreen()
+    data class AttemptingLogin(
+        val message: String,
+        val backPressHandler: BackPressHandler = {}
+    ) : AuthScreen()
 }

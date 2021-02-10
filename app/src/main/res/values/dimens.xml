@@ -3,4 +3,5 @@
     <dimen name="base_grid_size">8dp</dimen>
     <dimen name="double_grid_size">16dp</dimen>
     <dimen name="fab_margin">@dimen/double_grid_size</dimen>
+    <dimen name="login_margin">64dp</dimen>
 </resources>

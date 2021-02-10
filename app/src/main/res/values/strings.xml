@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Map Librarian</string>
     <string name="content_description_add">Add new</string>
+    <string name="login">Log In</string>
+    <string name="user_avatar_content_description">User avatar</string>
+    <string name="sign_out">Sign out</string>
 </resources>
