@@ -5,8 +5,7 @@ import de.fayard.refreshVersions.bootstrapRefreshVersions
 pluginManagement {
     resolutionStrategy {
         val pluginIdToCoordinates = mapOf(
-            "com.google.gms.google-services" to "com.google.gms:google-services",
-            "dev.ahmedmourad.nocopy.nocopy-gradle-plugin" to "dev.ahmedmourad.nocopy:nocopy-gradle-plugin"
+            "com.google.gms.google-services" to "com.google.gms:google-services"
         )
         eachPlugin {
             pluginIdToCoordinates[requested.id.id]?.also { useModule("$it:${requested.version}") }

@@ -1,12 +1,23 @@
 @file:Suppress("SpellCheckingInspection")
 
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.google.gms:google-services:_")
+    }
+}
+
 plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
-    id("com.google.gms.google-services").apply(false).version("4.3.3")
+//    id("com.google.gms.google-services").apply(false).version("4.3.3")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
-    id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false).version("1.1.0")
+    id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false)
     idea
 }
 
@@ -14,8 +25,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
-        maven(url = "https://dl.bintray.com/arkivanov/maven")
+        jcenter() // TODO: Remove jcenter repo before 1/5/2021
     }
 }
 
