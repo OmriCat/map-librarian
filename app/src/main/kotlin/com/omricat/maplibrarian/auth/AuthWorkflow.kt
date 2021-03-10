@@ -10,6 +10,7 @@ import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
+import com.squareup.workflow1.WorkflowAction
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 import com.squareup.workflow1.ui.BackPressHandler
@@ -37,7 +38,8 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
                 AuthScreen.Login(
                     onLoginClicked = context.eventHandler { credential ->
                         this.state = State.AttemptingAuthorization(credential)
-                    }
+                    },
+                    errorMessage = state.errorMessage
                 )
 
             is State.AttemptingAuthorization -> {
@@ -59,7 +61,7 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
     ): Worker<Result<User, AuthError>> =
         Worker.from { authService.attemptAuthentication(credential) }
 
-    private fun handleAuthResult(result: Result<User, AuthError>) =
+    private fun handleAuthResult(result: Result<User, AuthError>): WorkflowAction<Unit, State, AuthResult> =
         when (result) {
             is Ok<User> -> action { setOutput(AuthResult.Authenticated(result.value)) }
             is Err -> action {
@@ -70,7 +72,7 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
 
 sealed class AuthScreen {
     data class Login(
-        val errorMessage: String = "",
+        val errorMessage: String,
         val onLoginClicked: (credential: Credential) -> Unit
     ) : AuthScreen()
 
