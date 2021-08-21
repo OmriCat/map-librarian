@@ -1,7 +1,5 @@
 @file:Suppress("SpellCheckingInspection")
 
-import de.fayard.refreshVersions.bootstrapRefreshVersions
-
 pluginManagement {
     resolutionStrategy {
         val pluginIdToCoordinates = mapOf(
@@ -15,20 +13,13 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        jcenter()
         mavenLocal()
     }
 }
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("de.fayard.refreshVersions:refreshVersions:0.9.7")
-    }
-}
 
-bootstrapRefreshVersions()
+plugins {
+    id("de.fayard.refreshVersions") version "0.11.0"
+}
 
 rootProject.name = ("map-librarian")
 
