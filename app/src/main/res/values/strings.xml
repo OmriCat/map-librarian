@@ -4,4 +4,6 @@
     <string name="login">Log In</string>
     <string name="user_avatar_content_description">User avatar</string>
     <string name="sign_out">Sign out</string>
+    <string name="hint_email">Email address</string>
+    <string name="hint_password">Password</string>
 </resources>

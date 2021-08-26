@@ -1,39 +1,45 @@
 package com.omricat.maplibrarian.auth
 
 import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.delay
-import kotlin.random.Random
-import kotlin.time.ExperimentalTime
-import kotlin.time.seconds
+import com.github.michaelbull.result.map
+import com.github.michaelbull.result.toResultOr
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.FirebaseUser as GoogleFirebaseUser
 
 interface AuthService {
-    suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError>
+    fun attemptAuthentication(credential: Credential): Flow<Result<User, AuthError>>
+    suspend fun signOut()
 }
 
-data class User(val emailAddress: String, val username: String)
-
-private const val HEX_RADIX = 16
-
-@ExperimentalTime
-class FakeAuthService : AuthService {
-    override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> {
-        delay(1.seconds)
-        return when (credential) {
-            is EmailPasswordCredential ->
-                if (credential.emailAddress == "root@example" && credential.password.isNotBlank()) {
-                    Ok(
-                        User(
-                            emailAddress = credential.emailAddress,
-                            username = Random.Default.nextInt().toString(HEX_RADIX)
-                        )
-                    )
-                } else Err(AuthError("Unknown email address or password"))
-            else ->
-                Err(AuthError("Can only sign in with email address and password"))
+internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService {
+    override fun attemptAuthentication(credential: Credential): Flow<Result<User, AuthError>> =
+        when (credential) {
+            is EmailPasswordCredential -> flow {
+                emit(auth.signInWithEmailAndPassword(
+                    credential.emailAddress,
+                    credential.password
+                ).await()
+                    .user
+                    .toResultOr { AuthError("Unknown email or password") }
+                    .map { FirebaseUser(it) })
+            }.catch { e -> emit(Err(AuthError(e.message ?: "Unknown error"))) }
         }
-    }
+
+    override suspend fun signOut() = auth.signOut()
+}
+
+@JvmInline
+value class FirebaseUser(val user: GoogleFirebaseUser) : User {
+    override val displayName: String
+        get() = user.displayName ?: "(unknown name)"
+
+    override val id: String
+        get() = user.uid
 }
 
 data class AuthError(val message: String)

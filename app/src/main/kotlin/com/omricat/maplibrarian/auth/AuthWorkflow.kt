@@ -12,9 +12,11 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.WorkflowAction
 import com.squareup.workflow1.action
+import com.squareup.workflow1.asWorker
 import com.squareup.workflow1.runningWorker
 import com.squareup.workflow1.ui.BackPressHandler
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
+import kotlinx.coroutines.flow.catch
 
 sealed class AuthResult {
     object Unauthenticated : AuthResult()
@@ -59,7 +61,9 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
         authService: AuthService,
         credential: Credential
     ): Worker<Result<User, AuthError>> =
-        Worker.from { authService.attemptAuthentication(credential) }
+        authService.attemptAuthentication(credential)
+            .catch { e -> emit(Err(AuthError(e.message ?: "Unknown error"))) }
+            .asWorker()
 
     private fun handleAuthResult(result: Result<User, AuthError>): WorkflowAction<Unit, State, AuthResult> =
         when (result) {
