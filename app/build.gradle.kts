@@ -63,6 +63,7 @@ dependencies {
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)
+    implementation(KotlinX.coroutines.playServices)
 
     implementation(AndroidX.appCompat)
     implementation(AndroidX.core.ktx)
@@ -80,10 +81,12 @@ dependencies {
 
     implementation(platform(Firebase.bom))
     implementation(Firebase.cloudFirestoreKtx)
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(Firebase.authenticationKtx)
 
-    implementation("com.firebaseui:firebase-ui-firestore:_")
-    implementation("com.firebaseui:firebase-ui-auth:_")
+//    implementation("com.firebaseui:firebase-ui-firestore:_")
+//    implementation("com.firebaseui:firebase-ui-auth:_")
+
+//    implementation("dev.gitlive:firebase-auth:_")
 
     fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
     implementation(workflow("ui-core-android"))
