@@ -5,6 +5,7 @@ import com.omricat.gradle.AndroidBuildToolVersions
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -82,11 +83,6 @@ dependencies {
     implementation(platform(Firebase.bom))
     implementation(Firebase.cloudFirestoreKtx)
     implementation(Firebase.authenticationKtx)
-
-//    implementation("com.firebaseui:firebase-ui-firestore:_")
-//    implementation("com.firebaseui:firebase-ui-auth:_")
-
-//    implementation("dev.gitlive:firebase-auth:_")
 
     fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
     implementation(workflow("ui-core-android"))
