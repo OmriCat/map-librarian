@@ -33,6 +33,7 @@ subprojects {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jlleitschuh.gradle.ktlint")
         plugin("dev.ahmedmourad.nocopy.nocopy-gradle-plugin")
+        plugin("org.gradle.idea")
     }
 
     ktlint {
@@ -57,6 +58,11 @@ subprojects {
                 destination = file("build/reports/detekt.html")
             }
         }
+    }
+
+    idea.module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
