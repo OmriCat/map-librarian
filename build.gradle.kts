@@ -25,7 +25,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter() // TODO: Remove jcenter repo before 1/5/2021
     }
 }
 
