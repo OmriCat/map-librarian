@@ -46,7 +46,7 @@
                 android:id="@+id/edit_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/fui_email_hint"
+                android:hint="@string/hint_email"
                 android:inputType="textEmailAddress" />
 
 
@@ -67,7 +67,7 @@
                 android:id="@+id/edit_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/fui_password_hint"
+                android:hint="@string/hint_password"
                 android:inputType="textPassword"
 
                 />
