@@ -29,4 +29,13 @@ internal val AuthAttemptingAuthViewFactory: ViewFactory<AuthScreen.AttemptingLog
         root.backPressedHandler = screen.backPressHandler
     }
 
-internal val AuthViewRegistry = ViewRegistry(AuthLoginViewFactory, AuthAttemptingAuthViewFactory)
+internal val ResolvingLoggedInStatusViewFactory: ViewFactory<AuthScreen.ResolvingLoggedInStatus> =
+    LayoutRunner.bind(AttemptingAuthenticationLayoutBinding::inflate) { screen, _ ->
+        authenticatingMessageTextView.text = screen.message
+    }
+
+internal val AuthViewRegistry = ViewRegistry(
+    AuthLoginViewFactory,
+    AuthAttemptingAuthViewFactory,
+    ResolvingLoggedInStatusViewFactory
+)
