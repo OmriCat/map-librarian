@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser as GoogleFirebaseUser
 
 interface AuthService {
     fun attemptAuthentication(credential: Credential): Flow<Result<User, AuthError>>
-    suspend fun signOut()
+    fun signOut()
     fun getSignedInUserIfAny(): Flow<Result<User, AuthError>>
 }
 
@@ -40,7 +40,7 @@ internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService
             }.catchAndWrap()
         }
 
-    override suspend fun signOut() = auth.signOut()
+    override fun signOut() = auth.signOut()
 
     private fun <T> Flow<Result<T, AuthError>>.catchAndWrap() =
         catch { e -> emit(Err(AuthError(e.message ?: "Unknown error"))) }

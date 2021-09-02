@@ -45,7 +45,10 @@ object MainWorkflow : StatefulWorkflow<Unit, State, Nothing, MainScreen>() {
             }
             is State.UserDetails ->
                 context.renderChild(userDetailsWorkFlow, state.user) {
-                    action { this.state = State.Authorizing }
+                    authService.signOut()
+                    action {
+                        this.state = State.Authorizing
+                    }
                 }
         }
 
