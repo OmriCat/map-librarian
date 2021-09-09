@@ -9,6 +9,6 @@ import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 internal val UserDetailsViewFactory: ViewFactory<UserDetailsScreen> =
     LayoutRunner.bind(LayoutUserDetailsBinding::inflate) { userDetailsScreen, _ ->
-        userId.text = userDetailsScreen.user.id
+        userId.text = userDetailsScreen.user.id.id
         this.btnSignOut.setOnClickListener { userDetailsScreen.onLogOutClicked() }
     }

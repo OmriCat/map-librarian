@@ -7,9 +7,7 @@ import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.maplist.MapListService
 import com.omricat.maplibrarian.maplist.MapListWorkflow
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 @Suppress("unused")
 class MapLibraryApp : Application(), MapLibDiContainer {
 

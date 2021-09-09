@@ -16,6 +16,9 @@ value class User(private val user: FirebaseUser) {
     val displayName: String
         get() = user.displayName ?: "(unknown name)"
 
-    val id: String
-        get() = user.uid
+    val id: UserUid
+        get() = UserUid(user.uid)
 }
+
+@JvmInline
+value class UserUid(val id: String)
