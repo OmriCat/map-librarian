@@ -3,7 +3,8 @@ package com.omricat.maplibrarian.maplist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.auth.User
+import com.omricat.maplibrarian.Map
+import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.maplist.MapListScreen.Loading
 import com.omricat.maplibrarian.maplist.MapListScreen.MapList
 import com.omricat.maplibrarian.maplist.MapListScreen.ShowError
@@ -17,8 +18,6 @@ import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
-
-typealias MapListProps = User
 
 class MapListWorkflow(private val mapListService: MapListService) :
     StatefulWorkflow<Props, MapListState, Unit, MapListScreen>() {
@@ -46,7 +45,7 @@ class MapListWorkflow(private val mapListService: MapListService) :
     }
 
     private fun loadMapList(user: User): Worker<Result<List<Map>, MapListError>> =
-        mapListService::mapsListForUser.asResultWorker(errorWrapper = ::MapListError).invoke(user)
+        mapListService::mapsListForUser.asResultWorker(errorWrapper = MapListError::fromThrowable).invoke(user)
 
     override fun snapshotState(state: MapListState): Snapshot? = null // TODO: Implement snapshots
 }

@@ -1,15 +1,15 @@
 package com.omricat.maplibrarian.userdetails
 
-import com.omricat.maplibrarian.auth.User
+import com.omricat.maplibrarian.User
 import com.squareup.workflow1.StatelessWorkflow
 
 object UserDetailsWorkFlow :
     StatelessWorkflow<User, UserDetailsWorkFlow.LogOut, UserDetailsScreen>() {
     object LogOut
 
-    override fun render(props: User, context: RenderContext): UserDetailsScreen =
+    override fun render(renderProps: User, context: RenderContext): UserDetailsScreen =
         UserDetailsScreen(
-            user = props,
+            user = renderProps,
             onLogOutClicked = context.eventHandler { setOutput(LogOut) }
         )
 }

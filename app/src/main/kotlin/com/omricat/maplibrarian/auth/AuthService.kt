@@ -3,56 +3,45 @@ package com.omricat.maplibrarian.auth
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.map
-import com.github.michaelbull.result.toResultOr
+import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.mapError
+import com.github.michaelbull.result.runCatching
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import com.omricat.maplibrarian.User
 import kotlinx.coroutines.tasks.await
-import com.google.firebase.auth.FirebaseUser as GoogleFirebaseUser
 
 interface AuthService {
-    fun attemptAuthentication(credential: Credential): Flow<Result<User, AuthError>>
+    suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError>
     fun signOut()
-    fun getSignedInUserIfAny(): Flow<Result<User, AuthError>>
+    suspend fun getSignedInUserIfAny(): Result<User, AuthError>
 }
 
 internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService {
-    override fun getSignedInUserIfAny(): Flow<Result<User, AuthError>> =
-        flow {
-            emit(
-                auth.currentUser?.let { Ok(FirebaseUser(it)) }
+    override suspend fun getSignedInUserIfAny(): Result<User, AuthError> =
+        runCatching { auth.currentUser }
+            .mapError(::AuthError)
+            .andThen { user ->
+                user?.let { Ok(User(it)) }
                     ?: Err(AuthError("No currently signed in user"))
-            )
-        }.catchAndWrap()
+            }
 
-    override fun attemptAuthentication(credential: Credential): Flow<Result<User, AuthError>> =
+    override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
         when (credential) {
-            is EmailPasswordCredential -> flow {
-                emit(auth.signInWithEmailAndPassword(
-                    credential.emailAddress,
-                    credential.password
-                ).await()
+            is EmailPasswordCredential -> runCatching {
+                auth.signInWithEmailAndPassword(credential.emailAddress, credential.password)
+                    .await()
                     .user
-                    .toResultOr { AuthError("Unknown email or password") }
-                    .map { FirebaseUser(it) })
-            }.catchAndWrap()
+            }
+                .mapError(::AuthError)
+                .andThen { user ->
+                    user?.let { Ok(User(it)) }
+                        ?: Err(AuthError("No currently signed in user"))
+                }
         }
 
     override fun signOut() = auth.signOut()
-
-    private fun <T> Flow<Result<T, AuthError>>.catchAndWrap() =
-        catch { e -> emit(Err(AuthError(e.message ?: "Unknown error"))) }
 }
 
-@JvmInline
-value class FirebaseUser(val user: GoogleFirebaseUser) : User {
-    override val displayName: String
-        get() = user.displayName ?: "(unknown name)"
-
-    override val id: String
-        get() = user.uid
+data class AuthError(val message: String) {
+    constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")
 }
-
-data class AuthError(val message: String)

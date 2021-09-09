@@ -1,9 +1,9 @@
 package com.omricat.maplibrarian.root
 
+import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.auth.User
 import com.omricat.maplibrarian.maplist.MapListWorkflow
 import com.omricat.maplibrarian.root.MainWorkflow.State
 import com.squareup.workflow1.Snapshot
@@ -38,7 +38,10 @@ class MainWorkflow(
                 }
             }
             is State.MapList ->
-                context.renderChild(mapListWorkflow, MapListWorkflow.Props(renderState.user)) { output: Unit ->
+                context.renderChild(
+                    mapListWorkflow,
+                    MapListWorkflow.Props(renderState.user)
+                ) { output: Unit ->
                     authService.signOut()
                     action {
                         this.state = State.Authorizing
