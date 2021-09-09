@@ -5,8 +5,11 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.userdetails.UserDetailsWorkFlow
+import com.omricat.maplibrarian.maplist.MapListService
+import com.omricat.maplibrarian.maplist.MapListWorkflow
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 @Suppress("unused")
 class MapLibraryApp : Application(), MapLibDiContainer {
 
@@ -20,6 +23,8 @@ class MapLibraryApp : Application(), MapLibDiContainer {
 
     override val authService: AuthService
         get() = di.authService
+    override val mapListService: MapListService
+        get() = di.mapListService
 
     override val workflows: MapLibDiContainer.Workflows
         get() = di.workflows
@@ -27,11 +32,12 @@ class MapLibraryApp : Application(), MapLibDiContainer {
 
 interface MapLibDiContainer {
     val authService: AuthService
+    val mapListService: MapListService
     val workflows: Workflows
 
     interface Workflows {
         val auth: AuthWorkflow
-        val userDetails: UserDetailsWorkFlow
+        val mapList: MapListWorkflow
     }
 }
 

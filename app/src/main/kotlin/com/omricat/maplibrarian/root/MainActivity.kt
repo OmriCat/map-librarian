@@ -13,7 +13,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.mapLibDiContainer
-import com.omricat.maplibrarian.userdetails.UserDetailsViewFactory
+import com.omricat.maplibrarian.maplist.MapListViewRegistry
 import com.squareup.workflow1.SimpleLoggingWorkflowInterceptor
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowLayout
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
-        val viewRegistry: ViewRegistry = AuthViewRegistry + (ViewRegistry(UserDetailsViewFactory))
+        val viewRegistry: ViewRegistry = AuthViewRegistry + MapListViewRegistry
     }
 }
 
@@ -44,7 +44,7 @@ class MainViewModel(app: Application, private val savedState: SavedStateHandle) 
             workflow = MainWorkflow(
                 diContainer.authService,
                 diContainer.workflows.auth,
-                diContainer.workflows.userDetails
+                diContainer.workflows.mapList
             ),
             scope = viewModelScope,
             savedStateHandle = savedState,
