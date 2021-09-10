@@ -90,6 +90,8 @@ dependencies {
 
     implementation("com.michael-bull.kotlin-result:kotlin-result:_")
 
+    implementation(JakeWharton.timber)
+
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
     testImplementation(Testing.kotest.core)
