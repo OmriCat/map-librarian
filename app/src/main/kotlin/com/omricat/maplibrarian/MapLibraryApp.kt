@@ -17,6 +17,7 @@ class MapLibraryApp : Application(), MapLibDiContainer {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         di = initializeDI()
+        initializeMapLibApp() // Any initialization that varies for different build variants
     }
 
     override val authService: AuthService
