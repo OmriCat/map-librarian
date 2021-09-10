@@ -1,0 +1,204 @@
+Shetland - Yell, Unst & Fetlar
+Shetland - Sullom Voe & Whalsay
+Shetland - North Mainland
+Shetland - South Mainland
+Orkney - Northern Isles
+Orkney - Mainland
+Orkney - Southern Isles
+Stornoway & North Lewis
+Cape Wrath
+Strath Naver
+Thurso & Dunbeath
+Thurso & Wick
+West Lewis & North Harris
+Tarbert & Loch Seaforth
+Loch Assynt
+Lairg & Loch Shin
+Helmsdale & Strath of Kildonan
+Sound of Harris
+Gairloch & Ullapool
+Beinn Dearg & Loch Broom
+Dornoch & Alness
+Benbecula & South Uist
+North Skye
+Raasay & Applecross
+Glen Carron & Glen Affric
+Inverness & Loch Ness
+Nairn & Forres
+Elgin & Dufftown
+Banff & Huntley
+Fraserburgh
+Barra & South Uist
+South Skye & Cuillin Hills
+Loch Alsh, Glen Shiel & Loch Hourn
+Fort Augustus
+Kingussie & Monadhliath Mountains
+Grantown & Aviemore
+Strathdon & Alford
+Aberdeen
+Rum, Eigg, Muck & Canna
+Mallaig & Glenfinnan
+Ben Nevis
+Glen Garry & Loch Rannoch
+Braemar & Blair Atholl
+Ballater & Glen Clova
+Stonehaven & Banchory
+Coll & Tiree
+Tobermory & North Mull
+Iona & West Mull
+Oban & East Mull
+Glen Orchy & Loch Etive
+Loch Tay & Glen Dochart
+Pitlochry & Crieff
+Blairgowrie & Forest of Alyth
+Dundee & Montrose
+Lochgilphead & Loc Awe
+Loch Lomond & Inveraray
+Stirling & The Trossachs
+Perth & Alloa
+St Andrews
+Islay
+Jura & Colonsay
+North Kintyre & Tarbert
+Firth of Clyde
+Glasgow
+Falkirk & Linlithgow
+Edinburgh
+Duns, Dunbar & Eyemouth
+South Kintyre & Campbeltown
+Isle of Arran
+Ayr, Kilmarnock & Troon
+Lanark & Upper Nithsdale
+Upper Clyde Valley
+Peebles, Galashiels & Selkirk
+Kelso & Coldstream
+Berwick-upon-Tweed
+Girvan
+Dalmellington & New Galloway
+Nithsdale & Annandale
+Hawick & Eskdale
+Cheviot Hills & Kielder Water
+Alnwick & Morpeth
+Stranraer & Glenluce
+Newton Stewart & Kirkcudbright
+Dumfries & Castle Douglas
+Carlisle & Solway Firth
+Haltwhistle & Brampton
+Hexham & Haltwhistle
+Newcastle upon Tyne
+West Cumbria
+Penrith & Keswick
+Appleby-in-Westmorland
+Barnard Castle & Richmond
+Middlesbrough
+Whitby & Esk Dale
+Isle of Man
+Barrow-in-Furness & South Lakeland
+Kendal & Morecambe
+Wensleydale & Upper Wharfedale
+Northallerton & Ripon
+Malton & Pickering
+Scarborough
+Preston & Blackpool
+Blackburn & Burnley
+Leeds & Bradford
+York & Selby
+Market Weighton
+Kingston Upon Hull
+Liverpool
+Manchester
+Sheffield & Huddersfield
+Sheffield & Doncaster
+Scunthorpe & Gainsborough
+Grimsby
+Anglesey
+Snowdon
+Denbigh & Colwyn Bay
+Chester & Wrexham
+Stoke-on-Trent & Macclesfield
+Buxton & Matlock
+Mansfield & Worksop
+Lincoln & Newark-on-Trent
+Skegness & Horncastle
+Lleyn Peninsula
+Porthmadog & Dolgellau
+Bala & Lake Vyrnwy
+Shrewsbury & Oswestry
+Stafford & Telford
+Derby & Burton upon Trent
+Nottingham & Loughborough
+Grantham
+Boston & Spalding
+North West Norfolk
+North East Norfolk
+Norwich & The Broads
+Aberystwyth & Machynlleth
+Newton & Llanidloes
+Church Stretton & Ludlow
+Kidderminster & Wyre Forest
+Birmingham & Wolverhampton
+Leiscester, Coventry & Rugby
+Kettering & Corby
+Peterborough
+Ely & Wisbech
+Thetford & Diss
+Cardigan & Mynydd Preseli
+Lampeter & Llandovery
+Elan Valley & Builth Wells
+Presteigne & Hay-on-Wye
+Hereford & Leominster
+Worcester & The Malverns
+Stratford-upon-Avon
+Northampton & Milton Keynes
+Bedford & Huntingdon
+Cambridge & Newmarket
+Bury St Edmunds
+Saxmundham, Aldeburgh & Southwold
+St Davids & Haverfordwest
+Tenby & Pembroke
+Swansea & Gower
+Breacon Beacons
+The Black Mountains
+Gloucester & Forest of Dean
+Cheltenham & Cirencester
+Oxford
+Aylesbury & Leighton Buzzard
+Luton & Hertford
+Chelmsford
+Colchester
+Ipswich & The Naze
+Vale of Glamorgan West
+Cardiff & Newport
+Bristol & Bath
+Swindon & Devizes
+Newbury & Wantage
+Reading & Windsor
+West London
+East London
+Thames Estuary
+Canterbury & East Kent
+Barnstaple & Ilfracombe
+Minehead & Brendon Hills
+Weston-super-Mare
+Yeovil & Frome
+Salisbury & The Plain
+Winchester & Basingstoke
+Aldershot & Guildford
+Dorking & Reigate
+Maidstone & Royal Tunbridge Wells
+Ashford & Romney Marsh
+Bude & Clovelly
+Okehampton & North Dartmoor
+Exeter & Sidmouth
+Taunton & Lyme Regis
+Dorchester & Weymouth
+Bournemouth & Purbeck
+The Solent & Isle of Wight
+Chichester & the South Downs
+Brighton & Lewes
+Eastbourne & Hastings
+Newquay & Bodmin
+Plymouth & Launceston
+Torbay & South Dartmoor
+Land's End & Isles of Scilly
+Truro & Falmouth
