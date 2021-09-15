@@ -2,13 +2,20 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
+    android:layout_height="56dp"
     tools:showIn="@layout/layout_maplist">
 
     <TextView
         android:id="@+id/map_item_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:text="@tools:sample/cities"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="@tools:sample/cities" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
