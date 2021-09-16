@@ -2,13 +2,19 @@ package com.omricat.maplibrarian.root
 
 import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.auth.AuthResult
+import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.maplist.MapListWorkflow
+import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
+import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
 import com.omricat.maplibrarian.root.MainWorkflow.State
+import com.omricat.maplibrarian.root.MainWorkflow.State.MapList
+import com.omricat.maplibrarian.root.MainWorkflow.State.Unauthorized
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.action
+import com.squareup.workflow1.renderChild
 
 class MainWorkflow(
     private val authService: AuthService,
@@ -17,36 +23,28 @@ class MainWorkflow(
 ) : StatefulWorkflow<Unit, State, Nothing, MainScreen>() {
 
     sealed class State {
-        object Authorizing : State()
+        object Unauthorized : State()
         data class MapList(val user: User) : State()
     }
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = State.Authorizing
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized
 
     override fun render(renderProps: Unit, renderState: State, context: RenderContext): MainScreen =
         when (renderState) {
-            is State.Authorizing -> context.renderChild(
-                authWorkflow,
-                Unit
-            ) { authResult: AuthResult ->
+            is Unauthorized -> context.renderChild(authWorkflow) { authResult: AuthResult ->
                 action {
-                    if (authResult is AuthResult.Authenticated) {
-                        this.state = State.MapList(authResult.user)
-                    } else {
-                        this.state = State.Authorizing
+                    state =
+                        if (authResult is Authenticated) MapList(authResult.user) else Unauthorized
+                }
+            }
+            is MapList -> context.renderChild(mapListWorkflow, Props(renderState.user)) { output ->
+                when (output) {
+                    is LogOut -> {
+                        authService.signOut()
+                        action { state = Unauthorized }
                     }
                 }
             }
-            is State.MapList ->
-                context.renderChild(
-                    mapListWorkflow,
-                    MapListWorkflow.Props(renderState.user)
-                ) { output: Unit ->
-                    authService.signOut()
-                    action {
-                        this.state = State.Authorizing
-                    }
-                }
         }
 
     override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots

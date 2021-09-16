@@ -4,6 +4,7 @@ package com.omricat.maplibrarian.maplist
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,10 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
     LayoutRunner<MapList> {
     private val adapter: MapListAdapter = MapListAdapter()
 
+    private val logOutMenuItem = binding.toolbar.menu.add("Log out").apply {
+        setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+    }
+
     init {
         with(binding) {
             mapList.adapter = adapter
@@ -37,6 +42,7 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showRendering(rendering: MapList, viewEnvironment: ViewEnvironment) {
+        logOutMenuItem.setOnMenuItemClickListener { rendering.logOutCmd(); true }
         adapter.list = rendering.list
         adapter.notifyDataSetChanged()
     }
@@ -47,7 +53,7 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
 }
 
 internal val MapListErrorViewFactory: ViewFactory<MapListScreen.ShowError> =
-    LayoutRunner.bind(LayoutMaplistErrorBinding::inflate) { error, _ ->
+    bind(LayoutMaplistErrorBinding::inflate) { error, _ ->
         maplistErrorMessage.text = error.message
     }
 

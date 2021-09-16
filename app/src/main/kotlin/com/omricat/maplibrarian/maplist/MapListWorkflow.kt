@@ -11,6 +11,8 @@ import com.omricat.maplibrarian.maplist.MapListScreen.ShowError
 import com.omricat.maplibrarian.maplist.MapListState.ErrorLoadingMaps
 import com.omricat.maplibrarian.maplist.MapListState.MapListLoaded
 import com.omricat.maplibrarian.maplist.MapListState.RequestData
+import com.omricat.maplibrarian.maplist.MapListWorkflow.Output
+import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
 import com.omricat.workflow.asResultWorker
 import com.squareup.workflow1.Snapshot
@@ -20,7 +22,11 @@ import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
 class MapListWorkflow(private val mapListService: MapListService) :
-    StatefulWorkflow<Props, MapListState, Unit, MapListScreen>() {
+    StatefulWorkflow<Props, MapListState, Output, MapListScreen>() {
+
+    sealed interface Output {
+        object LogOut : Output
+    }
 
     data class Props(val user: User)
 
@@ -40,12 +46,16 @@ class MapListWorkflow(private val mapListService: MapListService) :
             }
             Loading
         }
-        is MapListLoaded -> MapList(renderState.list)
+        is MapListLoaded -> MapList(
+            list = renderState.list,
+            logOutCmd = { context.actionSink.send(action { setOutput(LogOut) }) }
+        )
         is ErrorLoadingMaps -> ShowError(renderState.message)
     }
 
     private fun loadMapList(user: User): Worker<Result<List<Map>, MapListError>> =
-        mapListService::mapsListForUser.asResultWorker(errorWrapper = MapListError::fromThrowable).invoke(user)
+        mapListService::mapsListForUser.asResultWorker(errorWrapper = MapListError::fromThrowable)
+            .invoke(user)
 
     override fun snapshotState(state: MapListState): Snapshot? = null // TODO: Implement snapshots
 }
@@ -58,6 +68,6 @@ sealed class MapListState {
 
 sealed class MapListScreen {
     object Loading : MapListScreen()
-    data class MapList(val list: List<Map>) : MapListScreen()
+    data class MapList(val list: List<Map>, val logOutCmd: () -> Unit) : MapListScreen()
     data class ShowError(val message: String) : MapListScreen()
 }
