@@ -14,7 +14,7 @@ import com.omricat.maplibrarian.maplist.MapListState.RequestData
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
-import com.omricat.workflow.asResultWorker
+import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
@@ -39,7 +39,7 @@ class MapListWorkflow(private val mapListService: MapListService) :
         context: RenderContext
     ): MapListScreen = when (renderState) {
         is RequestData -> {
-            context.runningWorker(loadMapList(renderProps.user)) { result ->
+            context.runningWorker(loadMapList(mapListService, renderProps.user)) { result ->
                 action {
                     this.state = result.map { MapListLoaded(it) }.getOrElse { ErrorLoadingMaps("") }
                 }
@@ -53,11 +53,15 @@ class MapListWorkflow(private val mapListService: MapListService) :
         is ErrorLoadingMaps -> ShowError(renderState.message)
     }
 
-    private fun loadMapList(user: User): Worker<Result<List<Map>, MapListError>> =
-        mapListService::mapsListForUser.asResultWorker(errorWrapper = MapListError::fromThrowable)
-            .invoke(user)
-
     override fun snapshotState(state: MapListState): Snapshot? = null // TODO: Implement snapshots
+
+    companion object {
+        private fun loadMapList(
+            mapListService: MapListService,
+            user: User
+        ): Worker<Result<List<Map>, MapListError>> =
+            resultWorker(MapListError::fromThrowable) { mapListService.mapsListForUser(user) }
+    }
 }
 
 sealed class MapListState {
