@@ -9,7 +9,8 @@ import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.AttemptingAuthorization
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.PossibleLoggedInUser
-import com.omricat.workflow.asResultWorker
+import com.omricat.maplibrarian.auth.AuthResult.Authenticated
+import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
@@ -40,13 +41,8 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
     override fun render(renderProps: Unit, renderState: State, context: RenderContext): AuthScreen =
         when (renderState) {
             is PossibleLoggedInUser -> {
-                context.runningWorker(resolveLoggedInStatus(authService)) {
-                    when (it) {
-                        is Ok<User> -> action { setOutput(AuthResult.Authenticated(it.value)) }
-                        is Err<AuthError> -> action { this.state = LoginPrompt() }
-                    }
-                }
-                AuthScreen.ResolvingLoggedInStatus("")
+                context.runningWorker(resolveLoggedInStatus(authService)) { handleAuthResult(it) }
+                AuthScreen.AttemptingLogin("")
             }
 
             is LoginPrompt ->
@@ -67,9 +63,6 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
             }
         }
 
-    private fun resolveLoggedInStatus(authService: AuthService): Worker<Result<User, AuthError>> =
-        authService::getSignedInUserIfAny.asResultWorker(::AuthError)
-
     // Don't need to store state of in progress sign in
 
     override fun snapshotState(state: State): Snapshot? = null
@@ -78,15 +71,23 @@ internal class ActualAuthWorkflow(private val authService: AuthService) : AuthWo
         authService: AuthService,
         credential: Credential
     ): Worker<Result<User, AuthError>> =
-        authService::attemptAuthentication.asResultWorker(::AuthError).invoke(credential)
+        resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
 
-    private fun handleAuthResult(result: Result<User, AuthError>): WorkflowAction<Unit, State, AuthResult> =
+    private fun resolveLoggedInStatus(authService: AuthService): Worker<Result<User, AuthError>> =
+        resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+
+    internal fun handleAuthResult(result: Result<User, AuthError>): WorkflowAction<Unit, State, AuthResult> =
         when (result) {
-            is Ok<User> -> action { setOutput(AuthResult.Authenticated(result.value)) }
-            is Err -> action {
-                state = LoginPrompt(errorMessage = result.error.message)
-            }
+            is Ok<User> -> onAuthenticated(result.value)
+            is Err -> onAuthError(result.error)
         }
+
+    internal fun onAuthError(result: AuthError) =
+        action {
+            state = LoginPrompt(errorMessage = result.message)
+        }
+
+    internal fun onAuthenticated(user: User) = action { setOutput(Authenticated(user)) }
 }
 
 sealed class AuthScreen {
@@ -97,8 +98,6 @@ sealed class AuthScreen {
 
     data class AttemptingLogin(
         val message: String,
-        val backPressHandler: BackPressHandler = {}
+        val backPressHandler: BackPressHandler? = null
     ) : AuthScreen()
-
-    data class ResolvingLoggedInStatus(val message: String) : AuthScreen()
 }
