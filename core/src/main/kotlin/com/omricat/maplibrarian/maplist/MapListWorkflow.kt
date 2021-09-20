@@ -3,7 +3,6 @@ package com.omricat.maplibrarian.maplist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.Map
 import com.omricat.maplibrarian.maplist.MapListScreen.Loading
 import com.omricat.maplibrarian.maplist.MapListScreen.MapList
 import com.omricat.maplibrarian.maplist.MapListScreen.ShowError
@@ -13,6 +12,7 @@ import com.omricat.maplibrarian.maplist.MapListState.RequestData
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
+import com.omricat.maplibrarian.model.Map
 import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
@@ -21,14 +21,14 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
-class MapListWorkflow(private val mapListService: MapListService) :
+public class MapListWorkflow(private val mapListService: MapListService) :
     StatefulWorkflow<Props, MapListState, Output, MapListScreen>() {
 
-    sealed interface Output {
-        object LogOut : Output
+    public sealed interface Output {
+        public object LogOut : Output
     }
 
-    data class Props(val user: User)
+    public data class Props(val user: User)
 
     override fun initialState(props: Props, snapshot: Snapshot?): MapListState =
         RequestData
@@ -55,7 +55,7 @@ class MapListWorkflow(private val mapListService: MapListService) :
 
     override fun snapshotState(state: MapListState): Snapshot? = null // TODO: Implement snapshots
 
-    companion object {
+    private companion object {
         private fun loadMapList(
             mapListService: MapListService,
             user: User
@@ -64,14 +64,14 @@ class MapListWorkflow(private val mapListService: MapListService) :
     }
 }
 
-sealed class MapListState {
-    object RequestData : MapListState()
-    data class MapListLoaded(val list: List<Map>) : MapListState()
-    data class ErrorLoadingMaps(val message: String) : MapListState()
+public sealed class MapListState {
+    public object RequestData : MapListState()
+    public data class MapListLoaded(val list: List<Map>) : MapListState()
+    public data class ErrorLoadingMaps(val message: String) : MapListState()
 }
 
-sealed class MapListScreen {
-    object Loading : MapListScreen()
-    data class MapList(val list: List<Map>, val logOutCmd: () -> Unit) : MapListScreen()
-    data class ShowError(val message: String) : MapListScreen()
+public sealed class MapListScreen {
+    public object Loading : MapListScreen()
+    public data class MapList(val list: List<Map>, val logOutCmd: () -> Unit) : MapListScreen()
+    public data class ShowError(val message: String) : MapListScreen()
 }
