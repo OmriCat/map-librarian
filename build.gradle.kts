@@ -14,10 +14,11 @@ buildscript {
 plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
-//    id("com.google.gms.google-services").apply(false).version("4.3.3")
+//    id("com.google.gms.google-services").apply(false)
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
     id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false)
+    id("com.dorongold.task-tree")
     idea
 }
 
@@ -68,9 +69,11 @@ subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xinline-classes", "-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs = listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xexplicit-api=warning"
+            )
             languageVersion = "1.5"
-            useIR = true
         }
     }
 }
