@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.omricat.maplibrarian.Map
+import com.omricat.maplibrarian.model.Map
 import com.omricat.maplibrarian.databinding.LayoutMaplistBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistErrorBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistLoadingBinding
