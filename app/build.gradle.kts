@@ -54,13 +54,17 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
 
-    val coroutinesVersion = "1.4.1"
-    fun coroutines(artifact: String) =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-$artifact:$coroutinesVersion"
+    implementation(project(":core"))
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)
