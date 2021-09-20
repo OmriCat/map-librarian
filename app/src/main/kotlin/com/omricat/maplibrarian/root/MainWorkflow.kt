@@ -1,6 +1,5 @@
 package com.omricat.maplibrarian.root
 
-import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.auth.AuthService
@@ -8,6 +7,7 @@ import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.maplist.MapListWorkflow
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
+import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.root.MainWorkflow.State
 import com.omricat.maplibrarian.root.MainWorkflow.State.MapList
 import com.omricat.maplibrarian.root.MainWorkflow.State.Unauthorized

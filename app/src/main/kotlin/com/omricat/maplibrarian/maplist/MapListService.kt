@@ -8,7 +8,7 @@ import com.github.michaelbull.result.runCatching
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.Map
 import com.omricat.maplibrarian.MapId
-import com.omricat.maplibrarian.User
+import com.omricat.maplibrarian.model.User
 import kotlinx.coroutines.tasks.await
 
 interface MapListService {
