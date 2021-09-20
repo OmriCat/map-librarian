@@ -17,7 +17,6 @@ dependencies {
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
-    testImplementation(Testing.kotest.core)
 
     testImplementation(KotlinX.coroutines.test)
 
