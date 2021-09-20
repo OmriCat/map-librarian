@@ -16,15 +16,15 @@ import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.renderChild
 
-class MainWorkflow(
+public class MainWorkflow(
     private val authService: AuthService,
     private val authWorkflow: AuthWorkflow,
     private val mapListWorkflow: MapListWorkflow
 ) : StatefulWorkflow<Unit, State, Nothing, MainScreen>() {
 
-    sealed class State {
-        object Unauthorized : State()
-        data class MapList(val user: User) : State()
+    public sealed class State {
+        public object Unauthorized : State()
+        public data class MapList(val user: User) : State()
     }
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized
@@ -50,4 +50,4 @@ class MainWorkflow(
     override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots
 }
 
-typealias MainScreen = Any
+public typealias MainScreen = Any
