@@ -4,7 +4,6 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.Map
-import com.omricat.maplibrarian.User
 import com.omricat.maplibrarian.maplist.MapListScreen.Loading
 import com.omricat.maplibrarian.maplist.MapListScreen.MapList
 import com.omricat.maplibrarian.maplist.MapListScreen.ShowError
@@ -14,6 +13,7 @@ import com.omricat.maplibrarian.maplist.MapListState.RequestData
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
 import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
+import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow

@@ -1,6 +1,6 @@
 package com.omricat.maplibrarian.userdetails
 
-import com.omricat.maplibrarian.User
+import com.omricat.maplibrarian.model.User
 import com.squareup.workflow1.StatelessWorkflow
 
 object UserDetailsWorkFlow :

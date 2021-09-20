@@ -7,22 +7,16 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.runCatching
 import com.google.firebase.auth.FirebaseAuth
-import com.omricat.maplibrarian.User
+import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.model.UserUid
 import kotlinx.coroutines.tasks.await
 
-interface AuthService {
-    suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError>
-    fun signOut()
-    suspend fun getSignedInUserIfAny(): Result<User, AuthError>
-}
-
 internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService {
-    override suspend fun getSignedInUserIfAny(): Result<User, AuthError> =
+    override suspend fun getSignedInUserIfAny(): Result<User?, AuthError> =
         runCatching { auth.currentUser }
             .mapError(::AuthError)
             .andThen { user ->
-                user?.let { Ok(User(it)) }
-                    ?: Err(AuthError("No currently signed in user"))
+                user?.let { Ok(FirebaseUser(it)) } ?: Ok(null)
             }
 
     override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
@@ -34,7 +28,7 @@ internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService
             }
                 .mapError(::AuthError)
                 .andThen { user ->
-                    user?.let { Ok(User(it)) }
+                    user?.let { Ok(FirebaseUser(it)) }
                         ?: Err(AuthError("No currently signed in user"))
                 }
         }
@@ -42,6 +36,11 @@ internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService
     override fun signOut() = auth.signOut()
 }
 
-data class AuthError(val message: String) {
-    constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")
+@JvmInline
+internal value class FirebaseUser(private val user: com.google.firebase.auth.FirebaseUser) : User {
+    override val displayName: String
+        get() = user.displayName ?: "(unknown name)"
+
+    override val id: UserUid
+        get() = UserUid(user.uid)
 }
