@@ -26,5 +26,6 @@ plugins {
 rootProject.name = ("map-librarian")
 
 include(
-    "app"
+    ":app",
+    ":core",
 )
