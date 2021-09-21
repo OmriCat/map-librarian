@@ -1,18 +1,18 @@
 package com.omricat.maplibrarian.auth
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.getOrElse
+import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.AttemptingAuthorization
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.PossibleLoggedInUser
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
-import com.squareup.workflow1.WorkflowAction
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
@@ -39,11 +39,10 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
         when (renderState) {
             is PossibleLoggedInUser -> {
                 context.runningWorker(resolveLoggedInStatus(authService)) { result ->
-                    when (result) {
-                        is Err -> onAuthError(result.error)
-                        is Ok -> result.value?.let { onAuthenticated(it) }
+                    result.map { maybeUser ->
+                        maybeUser?.let { user -> onAuthenticated(user) }
                             ?: onNoAuthenticatedUser()
-                    }
+                    }.getOrElse { error -> onAuthError(error) }
                 }
                 AuthScreen.AttemptingLogin("")
             }
@@ -59,44 +58,38 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
             is AttemptingAuthorization -> {
                 context.runningWorker(
                     attemptAuthentication(authService, renderState.credential)
-                ) { handleAuthResult(it) }
+                ) { result ->
+                    result.map { user -> onAuthenticated(user) }
+                        .getOrElse { error -> onAuthError(error) }
+                }
                 AuthScreen.AttemptingLogin(
                     "LoggingIn",
-                    backPressHandler = context.eventHandler { setOutput(AuthResult.Unauthenticated) })
+                    backPressHandler = context.eventHandler { setOutput(AuthResult.Unauthenticated) }
+                )
             }
         }
 
     // Don't need to store state of in progress sign in
-
     override fun snapshotState(state: State): Snapshot? = null
 
-    private fun attemptAuthentication(
-        authService: AuthService,
-        credential: Credential
-    ): Worker<Result<User, AuthError>> =
-        com.omricat.workflow.resultWorker(::AuthError) {
-            authService.attemptAuthentication(
-                credential
-            )
-        }
-
-    private fun resolveLoggedInStatus(authService: AuthService): Worker<Result<User?, AuthError>> =
-        com.omricat.workflow.resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
-
-    internal fun handleAuthResult(result: Result<User, AuthError>): WorkflowAction<Unit, State, AuthResult> =
-        when (result) {
-            is Ok<User> -> onAuthenticated(result.value)
-            is Err -> onAuthError(result.error)
-        }
-
-    internal fun onAuthError(result: AuthError) =
-        action {
-            state = LoginPrompt(errorMessage = result.message)
-        }
+    internal fun onAuthError(error: AuthError) = action {
+        state = LoginPrompt(errorMessage = error.message)
+    }
 
     internal fun onAuthenticated(user: User) = action { setOutput(Authenticated(user)) }
 
     internal fun onNoAuthenticatedUser() = action { this.state = LoginPrompt() }
+
+    internal companion object {
+        internal fun resolveLoggedInStatus(authService: AuthService): Worker<Result<User?, AuthError>> =
+            resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+
+        internal fun attemptAuthentication(
+            authService: AuthService,
+            credential: Credential
+        ): Worker<Result<User, AuthError>> =
+            resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
+    }
 }
 
 public sealed class AuthScreen {
