@@ -4,4 +4,5 @@
     <dimen name="double_grid_size">16dp</dimen>
     <dimen name="fab_margin">@dimen/double_grid_size</dimen>
     <dimen name="login_margin">64dp</dimen>
+    <dimen name="circular_progress_size">48dp</dimen>
 </resources>
