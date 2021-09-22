@@ -4,7 +4,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
-import com.omricat.maplibrarian.auth.AuthScreen.AttemptingLogin
+import com.omricat.maplibrarian.auth.AuthorizingScreen.AttemptingLogin
 import com.omricat.maplibrarian.model.User
 import com.squareup.workflow1.testing.testRender
 import io.kotest.core.spec.style.StringSpec

@@ -3,32 +3,30 @@ package com.omricat.maplibrarian.maplist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
+import com.omricat.maplibrarian.maplist.ActualMapsWorkflow.Props
 import com.omricat.maplibrarian.maplist.MapsListWorkflow.Event
 import com.omricat.maplibrarian.maplist.MapsScreen.Loading
 import com.omricat.maplibrarian.maplist.MapsScreen.ShowError
 import com.omricat.maplibrarian.maplist.MapsState.ErrorLoadingMaps
 import com.omricat.maplibrarian.maplist.MapsState.MapListLoaded
 import com.omricat.maplibrarian.maplist.MapsState.RequestData
-import com.omricat.maplibrarian.maplist.MapsWorkflow.Output
-import com.omricat.maplibrarian.maplist.MapsWorkflow.Props
 import com.omricat.maplibrarian.model.Map
 import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.root.AuthorizedProps
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
-import com.squareup.workflow1.WorkflowAction
+import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
-public class MapsWorkflow(private val mapListService: MapListService) :
-    StatefulWorkflow<Props, MapsState, Output, MapsScreen>() {
+public interface MapsWorkflow : Workflow<Props, Nothing, MapsScreen>
 
-    public sealed interface Output {
-        public object LogOut : Output
-    }
+public class ActualMapsWorkflow(private val mapListService: MapListService) :
+    StatefulWorkflow<Props, MapsState, Nothing, MapsScreen>(), MapsWorkflow {
 
-    public data class Props(val user: User)
+    public data class Props(override val user: User) : AuthorizedProps
 
     override fun initialState(props: Props, snapshot: Snapshot?): MapsState =
         RequestData
@@ -55,7 +53,7 @@ public class MapsWorkflow(private val mapListService: MapListService) :
         is ErrorLoadingMaps -> ShowError(renderState.error.message)
     }
 
-    private fun onSelectItem(itemIndex: Int): WorkflowAction<Props, MapsState, Output> = action {}
+    private fun onSelectItem(itemIndex: Int) = action {}
 
     override fun snapshotState(state: MapsState): Snapshot? = null // TODO: Implement snapshots
 

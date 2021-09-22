@@ -23,10 +23,10 @@ public sealed class AuthResult {
     public data class Authenticated(val user: User) : AuthResult()
 }
 
-public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthScreen>
+public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScreen>
 
 public class ActualAuthWorkflow(private val authService: AuthService) : AuthWorkflow,
-    StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthScreen>() {
+    StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
     public sealed class State {
         public object PossibleLoggedInUser : State()
         public data class LoginPrompt(val errorMessage: String = "") : State()
@@ -35,7 +35,7 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = PossibleLoggedInUser
 
-    override fun render(renderProps: Unit, renderState: State, context: RenderContext): AuthScreen =
+    override fun render(renderProps: Unit, renderState: State, context: RenderContext): AuthorizingScreen =
         when (renderState) {
             is PossibleLoggedInUser -> {
                 context.runningWorker(resolveLoggedInStatus(authService)) { result ->
@@ -44,11 +44,11 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
                             ?: onNoAuthenticatedUser()
                     }.getOrElse { error -> onAuthError(error) }
                 }
-                AuthScreen.AttemptingLogin("")
+                AuthorizingScreen.AttemptingLogin("")
             }
 
             is LoginPrompt ->
-                AuthScreen.Login(
+                AuthorizingScreen.Login(
                     onLoginClicked = context.eventHandler { credential ->
                         this.state = AttemptingAuthorization(credential)
                     },
@@ -62,7 +62,7 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
                     result.map { user -> onAuthenticated(user) }
                         .getOrElse { error -> onAuthError(error) }
                 }
-                AuthScreen.AttemptingLogin(
+                AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
                     backPressHandler = context.eventHandler { setOutput(AuthResult.Unauthenticated) }
                 )
@@ -92,14 +92,14 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
     }
 }
 
-public sealed class AuthScreen {
+public sealed class AuthorizingScreen {
     public data class Login(
         val errorMessage: String,
         val onLoginClicked: (credential: Credential) -> Unit
-    ) : AuthScreen()
+    ) : AuthorizingScreen()
 
     public data class AttemptingLogin(
         val message: String,
         val backPressHandler: BackPressHandler? = null
-    ) : AuthScreen()
+    ) : AuthorizingScreen()
 }

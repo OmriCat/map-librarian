@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.omricat.maplibrarian.databinding.LayoutMaplistBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistErrorBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistLoadingBinding
+import com.omricat.maplibrarian.databinding.MaplistBinding
 import com.omricat.maplibrarian.databinding.MaplistItemBinding
 import com.omricat.maplibrarian.maplist.MapListAdapter.MapViewHolder
 import com.omricat.maplibrarian.model.Map
@@ -26,7 +26,7 @@ import timber.log.Timber
 internal val MapListLoadingViewFactory: ViewFactory<MapsScreen.Loading> =
     bind(LayoutMaplistLoadingBinding::inflate) { _, _ -> }
 
-internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
+internal class MapListLayoutRunner(private val binding: MaplistBinding) :
     LayoutRunner<MapListScreen> {
     private val adapter: MapListAdapter = MapListAdapter()
 
@@ -45,7 +45,7 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
     }
 
     companion object : ViewFactory<MapListScreen> by bind(
-        LayoutMaplistBinding::inflate, ::MapListLayoutRunner
+        MaplistBinding::inflate, ::MapListLayoutRunner
     )
 }
 

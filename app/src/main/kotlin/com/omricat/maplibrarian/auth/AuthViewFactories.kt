@@ -10,7 +10,7 @@ import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.backPressedHandler
 
-internal val AuthLoginViewFactory: ViewFactory<AuthScreen.Login> =
+internal val AuthLoginViewFactory: ViewFactory<AuthorizingScreen.Login> =
     LayoutRunner.bind(LoginLayoutBinding::inflate) { authScreen, _ ->
         btnLogin.setOnClickListener {
             authScreen.onLoginClicked(
@@ -23,7 +23,7 @@ internal val AuthLoginViewFactory: ViewFactory<AuthScreen.Login> =
         errorMessage.text = authScreen.errorMessage
     }
 
-internal val AuthAttemptingAuthViewFactory: ViewFactory<AuthScreen.AttemptingLogin> =
+internal val AuthAttemptingAuthViewFactory: ViewFactory<AuthorizingScreen.AttemptingLogin> =
     LayoutRunner.bind(AttemptingAuthenticationLayoutBinding::inflate) { screen, _ ->
         authenticatingMessageTextView.text = screen.message
         root.backPressedHandler = screen.backPressHandler
