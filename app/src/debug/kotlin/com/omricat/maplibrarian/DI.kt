@@ -11,7 +11,7 @@ import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.FirebaseAuthService
 import com.omricat.maplibrarian.maplist.FirebaseMapListService
 import com.omricat.maplibrarian.maplist.MapListService
-import com.omricat.maplibrarian.maplist.MapListWorkflow
+import com.omricat.maplibrarian.maplist.MapsWorkflow
 
 private const val FIREBASE_EMULATOR_HOST = "192.168.1.17"
 
@@ -35,6 +35,6 @@ internal fun MapLibraryApp.initializeDI(): MapLibDiContainer = object : MapLibDi
     override val workflows: MapLibDiContainer.Workflows = object : MapLibDiContainer.Workflows {
         override val auth: AuthWorkflow by lazy { ActualAuthWorkflow(authService) }
 
-        override val mapList: MapListWorkflow = MapListWorkflow(mapListService)
+        override val maps: MapsWorkflow = MapsWorkflow(mapListService)
     }
 }

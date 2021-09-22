@@ -4,9 +4,9 @@ import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.maplist.MapListWorkflow
-import com.omricat.maplibrarian.maplist.MapListWorkflow.Output.LogOut
-import com.omricat.maplibrarian.maplist.MapListWorkflow.Props
+import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.omricat.maplibrarian.maplist.MapsWorkflow.Output.LogOut
+import com.omricat.maplibrarian.maplist.MapsWorkflow.Props
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.root.MainWorkflow.State
 import com.omricat.maplibrarian.root.MainWorkflow.State.MapList
@@ -19,7 +19,7 @@ import com.squareup.workflow1.renderChild
 public class MainWorkflow(
     private val authService: AuthService,
     private val authWorkflow: AuthWorkflow,
-    private val mapListWorkflow: MapListWorkflow
+    private val mapsWorkflow: MapsWorkflow
 ) : StatefulWorkflow<Unit, State, Nothing, MainScreen>() {
 
     public sealed class State {
@@ -37,7 +37,7 @@ public class MainWorkflow(
                         if (authResult is Authenticated) MapList(authResult.user) else Unauthorized
                 }
             }
-            is MapList -> context.renderChild(mapListWorkflow, Props(renderState.user)) { output ->
+            is MapList -> context.renderChild(mapsWorkflow, Props(renderState.user)) { output ->
                 when (output) {
                     is LogOut -> {
                         authService.signOut()

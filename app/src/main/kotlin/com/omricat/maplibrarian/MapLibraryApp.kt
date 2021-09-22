@@ -6,7 +6,7 @@ import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.maplist.MapListService
-import com.omricat.maplibrarian.maplist.MapListWorkflow
+import com.omricat.maplibrarian.maplist.MapsWorkflow
 
 @Suppress("unused")
 class MapLibraryApp : Application(), MapLibDiContainer {
@@ -36,7 +36,7 @@ interface MapLibDiContainer {
 
     interface Workflows {
         val auth: AuthWorkflow
-        val mapList: MapListWorkflow
+        val maps: MapsWorkflow
     }
 }
 

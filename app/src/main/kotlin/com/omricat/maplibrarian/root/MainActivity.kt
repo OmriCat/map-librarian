@@ -44,7 +44,7 @@ class MainViewModel(app: Application, private val savedState: SavedStateHandle) 
             workflow = MainWorkflow(
                 diContainer.authService,
                 diContainer.workflows.auth,
-                diContainer.workflows.mapList
+                diContainer.workflows.maps
             ),
             scope = viewModelScope,
             savedStateHandle = savedState,

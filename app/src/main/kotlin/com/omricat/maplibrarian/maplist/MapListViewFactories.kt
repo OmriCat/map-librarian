@@ -4,17 +4,15 @@ package com.omricat.maplibrarian.maplist
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.omricat.maplibrarian.model.Map
 import com.omricat.maplibrarian.databinding.LayoutMaplistBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistErrorBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistLoadingBinding
 import com.omricat.maplibrarian.databinding.MaplistItemBinding
 import com.omricat.maplibrarian.maplist.MapListAdapter.MapViewHolder
-import com.omricat.maplibrarian.maplist.MapListScreen.MapList
+import com.omricat.maplibrarian.model.Map
 import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
 import com.squareup.workflow1.ui.ViewEnvironment
@@ -22,16 +20,12 @@ import com.squareup.workflow1.ui.ViewFactory
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
-internal val MapListLoadingViewFactory: ViewFactory<MapListScreen.Loading> =
+internal val MapListLoadingViewFactory: ViewFactory<MapsScreen.Loading> =
     bind(LayoutMaplistLoadingBinding::inflate) { _, _ -> }
 
 internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
-    LayoutRunner<MapList> {
+    LayoutRunner<MapListScreen> {
     private val adapter: MapListAdapter = MapListAdapter()
-
-    private val logOutMenuItem = binding.toolbar.menu.add("Log out").apply {
-        setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-    }
 
     init {
         with(binding) {
@@ -41,26 +35,31 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun showRendering(rendering: MapList, viewEnvironment: ViewEnvironment) {
-        logOutMenuItem.setOnMenuItemClickListener { rendering.logOutCmd(); true }
+    override fun showRendering(rendering: MapListScreen, viewEnvironment: ViewEnvironment) {
         adapter.list = rendering.list
+        adapter.onClick = rendering.onItemSelect
         adapter.notifyDataSetChanged()
     }
 
-    companion object : ViewFactory<MapList> by bind(
+    companion object : ViewFactory<MapListScreen> by bind(
         LayoutMaplistBinding::inflate, ::MapListLayoutRunner
     )
 }
 
-internal val MapListErrorViewFactory: ViewFactory<MapListScreen.ShowError> =
+internal val MapsErrorViewFactory: ViewFactory<MapsScreen.ShowError> =
     bind(LayoutMaplistErrorBinding::inflate) { error, _ ->
         maplistErrorMessage.text = error.message
     }
 
 internal class MapListAdapter : RecyclerView.Adapter<MapViewHolder>() {
+
+    internal var onClick: (Int) -> Unit = {}
     internal var list: List<Map> = emptyList()
 
-    class MapViewHolder(internal val binding: MaplistItemBinding) :
+    class MapViewHolder(
+        internal val binding: MaplistItemBinding,
+        internal val onClick: (Int) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapViewHolder =
@@ -69,12 +68,14 @@ internal class MapListAdapter : RecyclerView.Adapter<MapViewHolder>() {
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onClick
         )
 
     override fun onBindViewHolder(holder: MapViewHolder, position: Int) {
         with(holder.binding) {
             mapItemTitle.text = list[position].title
+            root.setOnClickListener { holder.onClick(position) }
         }
     }
 
@@ -83,6 +84,6 @@ internal class MapListAdapter : RecyclerView.Adapter<MapViewHolder>() {
 
 internal val MapListViewRegistry = ViewRegistry(
     MapListLoadingViewFactory,
-    MapListErrorViewFactory,
+    MapsErrorViewFactory,
     MapListLayoutRunner
 )
