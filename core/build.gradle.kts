@@ -1,3 +1,5 @@
+@file:Suppress("SuspiciousCollectionReassignment")
+
 plugins {
     `java-library`
     kotlin("jvm")
@@ -5,6 +7,12 @@ plugins {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xexplicit-api=warning"
+    }
 }
 
 dependencies {

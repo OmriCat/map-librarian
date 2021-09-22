@@ -71,7 +71,6 @@ subprojects {
             jvmTarget = "1.8"
             freeCompilerArgs = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexplicit-api=warning"
             )
             languageVersion = "1.5"
         }
