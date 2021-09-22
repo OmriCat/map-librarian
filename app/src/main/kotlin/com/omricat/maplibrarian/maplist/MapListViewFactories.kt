@@ -5,7 +5,9 @@ package com.omricat.maplibrarian.maplist
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.omricat.maplibrarian.databinding.LayoutMaplistBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistErrorBinding
@@ -19,6 +21,7 @@ import com.squareup.workflow1.ui.ViewEnvironment
 import com.squareup.workflow1.ui.ViewFactory
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
+import timber.log.Timber
 
 internal val MapListLoadingViewFactory: ViewFactory<MapsScreen.Loading> =
     bind(LayoutMaplistLoadingBinding::inflate) { _, _ -> }
@@ -36,7 +39,7 @@ internal class MapListLayoutRunner(private val binding: LayoutMaplistBinding) :
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showRendering(rendering: MapListScreen, viewEnvironment: ViewEnvironment) {
-        adapter.list = rendering.list
+        adapter.submitList(rendering.list)
         adapter.onClick = rendering.onItemSelect
         adapter.notifyDataSetChanged()
     }
@@ -51,16 +54,20 @@ internal val MapsErrorViewFactory: ViewFactory<MapsScreen.ShowError> =
         maplistErrorMessage.text = error.message
     }
 
-internal class MapListAdapter : RecyclerView.Adapter<MapViewHolder>() {
+internal class MapListAdapter : ListAdapter<Map, MapViewHolder>(MapDiffCallback) {
+    object MapDiffCallback : DiffUtil.ItemCallback<Map>() {
+        override fun areItemsTheSame(oldItem: Map, newItem: Map): Boolean =
+            oldItem.mapId == newItem.mapId
+
+        override fun areContentsTheSame(oldItem: Map, newItem: Map): Boolean = oldItem == newItem
+    }
 
     internal var onClick: (Int) -> Unit = {}
-    internal var list: List<Map> = emptyList()
 
     class MapViewHolder(
         internal val binding: MaplistItemBinding,
         internal val onClick: (Int) -> Unit
-    ) :
-        RecyclerView.ViewHolder(binding.root)
+    ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapViewHolder =
         MapViewHolder(
@@ -74,12 +81,13 @@ internal class MapListAdapter : RecyclerView.Adapter<MapViewHolder>() {
 
     override fun onBindViewHolder(holder: MapViewHolder, position: Int) {
         with(holder.binding) {
-            mapItemTitle.text = list[position].title
-            root.setOnClickListener { holder.onClick(position) }
+            mapItemTitle.text = getItem(position).title
+            root.setOnClickListener {
+                holder.onClick(position)
+                Timber.d("Item clicked at position %d", position)
+            }
         }
     }
-
-    override fun getItemCount(): Int = list.size
 }
 
 internal val MapListViewRegistry = ViewRegistry(
