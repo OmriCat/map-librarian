@@ -1,3 +1,5 @@
+@file:OptIn(WorkflowUiExperimentalApi::class)
+
 package com.omricat.maplibrarian
 
 import android.app.Application
@@ -7,32 +9,27 @@ import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.maplist.MapListService
 import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.squareup.workflow1.ui.ViewRegistry
+import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 @Suppress("unused")
-class MapLibraryApp : Application(), MapLibDiContainer {
+class MapLibraryApp : Application() {
 
-    private lateinit var di: MapLibDiContainer
+    lateinit var diContainer: MapLibDiContainer
 
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        di = initializeDI()
+        diContainer = initializeDI()
         initializeMapLibApp() // Any initialization that varies for different build variants
     }
-
-    override val authService: AuthService
-        get() = di.authService
-    override val mapListService: MapListService
-        get() = di.mapListService
-
-    override val workflows: MapLibDiContainer.Workflows
-        get() = di.workflows
 }
 
 interface MapLibDiContainer {
     val authService: AuthService
     val mapListService: MapListService
     val workflows: Workflows
+    val viewRegistry: ViewRegistry
 
     interface Workflows {
         val auth: AuthWorkflow
@@ -40,4 +37,4 @@ interface MapLibDiContainer {
     }
 }
 
-val Context.mapLibDiContainer: MapLibDiContainer get() = (this.applicationContext as MapLibDiContainer)
+val Context.mapLibDiContainer: MapLibDiContainer get() = (this.applicationContext as MapLibraryApp).diContainer

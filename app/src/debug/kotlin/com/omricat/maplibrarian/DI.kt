@@ -5,13 +5,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow
 import com.omricat.maplibrarian.auth.AuthService
-import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.FirebaseAuthService
 import com.omricat.maplibrarian.maplist.FirebaseMapListService
 import com.omricat.maplibrarian.maplist.MapListService
-import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 private const val FIREBASE_EMULATOR_HOST = "192.168.1.17"
 
@@ -19,7 +17,8 @@ private const val FIREBASE_EMULATOR_AUTH_PORT = 9099
 
 private const val FIREBASE_EMULATOR_FIRESTORE_PORT = 8080
 
-internal fun MapLibraryApp.initializeDI(): MapLibDiContainer = object : MapLibDiContainer {
+@WorkflowUiExperimentalApi
+internal fun MapLibraryApp.initializeDI(): MapLibDiContainer = object : DefaultDiContainer() {
     override val authService: AuthService by lazy {
         FirebaseAuth.getInstance().useEmulator(FIREBASE_EMULATOR_HOST, FIREBASE_EMULATOR_AUTH_PORT)
         FirebaseAuthService(Firebase.auth)
@@ -30,11 +29,5 @@ internal fun MapLibraryApp.initializeDI(): MapLibDiContainer = object : MapLibDi
             FIREBASE_EMULATOR_FIRESTORE_PORT
         )
         FirebaseMapListService(Firebase.firestore)
-    }
-
-    override val workflows: MapLibDiContainer.Workflows = object : MapLibDiContainer.Workflows {
-        override val auth: AuthWorkflow by lazy { ActualAuthWorkflow(authService) }
-
-        override val maps: MapsWorkflow = MapsWorkflow(mapListService)
     }
 }
