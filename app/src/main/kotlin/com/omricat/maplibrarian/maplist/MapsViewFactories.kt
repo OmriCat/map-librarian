@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.omricat.maplibrarian.databinding.LayoutMaplistErrorBinding
+import com.omricat.maplibrarian.databinding.ErrorBinding
 import com.omricat.maplibrarian.databinding.LayoutMaplistLoadingBinding
 import com.omricat.maplibrarian.databinding.MaplistBinding
 import com.omricat.maplibrarian.databinding.MaplistItemBinding
@@ -50,8 +50,8 @@ internal class MapListLayoutRunner(private val binding: MaplistBinding) :
 }
 
 internal val MapsErrorViewFactory: ViewFactory<MapsScreen.ShowError> =
-    bind(LayoutMaplistErrorBinding::inflate) { error, _ ->
-        maplistErrorMessage.text = error.message
+    bind(ErrorBinding::inflate) { error, _ ->
+        errorMessage.text = error.message
     }
 
 internal class MapListAdapter : ListAdapter<Map, MapViewHolder>(MapDiffCallback) {
