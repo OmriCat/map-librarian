@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.omricat.maplibrarian.databinding.ErrorBinding
-import com.omricat.maplibrarian.databinding.LayoutMaplistLoadingBinding
 import com.omricat.maplibrarian.databinding.MaplistBinding
 import com.omricat.maplibrarian.databinding.MaplistItemBinding
+import com.omricat.maplibrarian.databinding.MaplistLoadingBinding
 import com.omricat.maplibrarian.maplist.MapListAdapter.MapViewHolder
 import com.omricat.maplibrarian.model.Map
 import com.squareup.workflow1.ui.LayoutRunner
@@ -24,7 +24,7 @@ import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import timber.log.Timber
 
 internal val MapListLoadingViewFactory: ViewFactory<MapsScreen.Loading> =
-    bind(LayoutMaplistLoadingBinding::inflate) { _, _ -> }
+    bind(MaplistLoadingBinding::inflate) { _, _ -> }
 
 internal class MapListLayoutRunner(private val binding: MaplistBinding) :
     LayoutRunner<MapListScreen> {
