@@ -22,4 +22,5 @@ internal val MapListViewRegistry = ViewRegistry(
     MapListLoadingViewFactory,
     MapsErrorViewFactory,
     MapListLayoutRunner,
+    AddingItemScreenViewFactory,
 )

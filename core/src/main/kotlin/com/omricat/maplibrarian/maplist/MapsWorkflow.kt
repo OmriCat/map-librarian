@@ -7,12 +7,13 @@ import com.omricat.maplibrarian.maplist.ActualMapsWorkflow.Props
 import com.omricat.maplibrarian.maplist.MapsListWorkflow.Event.SelectItem
 import com.omricat.maplibrarian.maplist.MapsScreen.Loading
 import com.omricat.maplibrarian.maplist.MapsScreen.ShowError
-import com.omricat.maplibrarian.maplist.MapsServiceError
+import com.omricat.maplibrarian.maplist.MapsState.AddingItem
 import com.omricat.maplibrarian.maplist.MapsState.ErrorLoadingMaps
 import com.omricat.maplibrarian.maplist.MapsState.MapListLoaded
 import com.omricat.maplibrarian.maplist.MapsState.RequestData
 import com.omricat.maplibrarian.model.DbMapModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
@@ -23,8 +24,10 @@ import com.squareup.workflow1.runningWorker
 
 public interface MapsWorkflow : Workflow<Props, Nothing, MapsScreen>
 
-public class ActualMapsWorkflow(private val mapsService: MapsService) :
-    StatefulWorkflow<Props, MapsState, Nothing, MapsScreen>(), MapsWorkflow {
+public class ActualMapsWorkflow(
+    private val mapsService: MapsService,
+    private val mapAddItemWorkflow: MapAddItemWorkflow
+) : StatefulWorkflow<Props, MapsState, Nothing, MapsScreen>(), MapsWorkflow {
 
     public data class Props(val user: User)
 
@@ -44,23 +47,39 @@ public class ActualMapsWorkflow(private val mapsService: MapsService) :
         }
 
         is MapListLoaded -> {
-            context.renderChild(MapsListWorkflow, props = renderState.list) { event ->
+            val mapListScreen = context.renderChild(
+                MapsListWorkflow,
+                props = renderState.list
+            ) { event ->
                 when (event) {
                     is SelectItem -> onSelectItem(event.itemIndex)
                 }
             }
+            AddItemDecoratorScreen(
+                childScreen = mapListScreen,
+                onAddItemClicked = context.eventHandler(::onAddItemClicked)
+            )
         }
+        is AddingItem ->
+            context.renderChild(mapAddItemWorkflow, props = renderProps.user) { onItemAdded() }
+
         is ErrorLoadingMaps -> ShowError(renderState.error.message)
     }
 
-    override fun snapshotState(state: MapsState): Snapshot? = null // TODO: Implement snapshots
+    internal fun onItemAdded() = action { state = RequestData }
 
-    internal fun onMapListLoaded(list: List<DbMapModel>) = action { state = MapListLoaded(list) }
+    override fun snapshotState(state: MapsState): Snapshot? = null // TODO: Implement snapshots
 
     internal fun onSelectItem(itemIndex: Int) = action {}
 
+    internal fun onMapListLoaded(list: List<DbMapModel>) =
+        action { state = MapListLoaded(list) }
+
     internal fun onLoadingError(error: MapsServiceError) =
         action { state = ErrorLoadingMaps(error) }
+
+    internal fun onAddItemClicked() =
+        action { state = AddingItem }
 
     internal companion object {
 
@@ -72,10 +91,11 @@ public class ActualMapsWorkflow(private val mapsService: MapsService) :
     }
 }
 
-public sealed class MapsState {
-    public object RequestData : MapsState()
-    public data class MapListLoaded(val list: List<DbMapModel>) : MapsState()
-    public data class ErrorLoadingMaps(val error: MapsServiceError) : MapsState()
+public sealed interface MapsState {
+    public object RequestData : MapsState
+    public data class MapListLoaded(val list: List<DbMapModel>) : MapsState
+    public object AddingItem : MapsState
+    public data class ErrorLoadingMaps(val error: MapsServiceError) : MapsState
 }
 
 public sealed interface MapsScreen {
@@ -83,8 +103,7 @@ public sealed interface MapsScreen {
     public data class ShowError(val message: String) : MapsScreen
 }
 
-public data class AddItemWrapperScreen<ChildScreenT : MapsScreen>(
+public data class AddItemDecoratorScreen<ChildScreenT : MapsScreen>(
     val childScreen: ChildScreenT,
     val onAddItemClicked: () -> Unit
 ) : MapsScreen
-
