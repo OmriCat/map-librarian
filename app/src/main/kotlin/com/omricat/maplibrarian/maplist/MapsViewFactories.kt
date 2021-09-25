@@ -14,7 +14,7 @@ import com.omricat.maplibrarian.databinding.MaplistBinding
 import com.omricat.maplibrarian.databinding.MaplistItemBinding
 import com.omricat.maplibrarian.databinding.MaplistLoadingBinding
 import com.omricat.maplibrarian.maplist.MapListAdapter.MapViewHolder
-import com.omricat.maplibrarian.model.Map
+import com.omricat.maplibrarian.model.DbMapModel
 import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
 import com.squareup.workflow1.ui.ViewEnvironment
@@ -54,12 +54,12 @@ internal val MapsErrorViewFactory: ViewFactory<MapsScreen.ShowError> =
         errorMessage.text = error.message
     }
 
-internal class MapListAdapter : ListAdapter<Map, MapViewHolder>(MapDiffCallback) {
-    object MapDiffCallback : DiffUtil.ItemCallback<Map>() {
-        override fun areItemsTheSame(oldItem: Map, newItem: Map): Boolean =
+internal class MapListAdapter : ListAdapter<DbMapModel, MapViewHolder>(MapDiffCallback) {
+    object MapDiffCallback : DiffUtil.ItemCallback<DbMapModel>() {
+        override fun areItemsTheSame(oldItem: DbMapModel, newItem: DbMapModel): Boolean =
             oldItem.mapId == newItem.mapId
 
-        override fun areContentsTheSame(oldItem: Map, newItem: Map): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: DbMapModel, newItem: DbMapModel): Boolean = oldItem == newItem
     }
 
     internal var onClick: (Int) -> Unit = {}

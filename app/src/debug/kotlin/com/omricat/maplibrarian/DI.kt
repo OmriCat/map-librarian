@@ -7,8 +7,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.FirebaseAuthService
-import com.omricat.maplibrarian.maplist.FirebaseMapListService
-import com.omricat.maplibrarian.maplist.MapListService
+import com.omricat.maplibrarian.maplist.FirebaseMapsService
+import com.omricat.maplibrarian.maplist.MapsService
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 private const val FIREBASE_EMULATOR_HOST = "192.168.1.17"
@@ -23,11 +23,11 @@ internal fun MapLibraryApp.initializeDI(): MapLibDiContainer = object : DefaultD
         FirebaseAuth.getInstance().useEmulator(FIREBASE_EMULATOR_HOST, FIREBASE_EMULATOR_AUTH_PORT)
         FirebaseAuthService(Firebase.auth)
     }
-    override val mapListService: MapListService by lazy {
+    override val mapsService: MapsService by lazy {
         FirebaseFirestore.getInstance().useEmulator(
             FIREBASE_EMULATOR_HOST,
             FIREBASE_EMULATOR_FIRESTORE_PORT
         )
-        FirebaseMapListService(Firebase.firestore)
+        FirebaseMapsService(Firebase.firestore)
     }
 }

@@ -17,7 +17,7 @@ abstract class DefaultDiContainer : MapLibDiContainer {
     override val workflows: MapLibDiContainer.Workflows = object : MapLibDiContainer.Workflows {
         override val auth: AuthWorkflow by lazy { ActualAuthWorkflow(authService) }
 
-        override val maps: MapsWorkflow by lazy { ActualMapsWorkflow(mapListService) }
+        override val maps: MapsWorkflow by lazy { ActualMapsWorkflow(mapsService) }
     }
     override val viewRegistry: ViewRegistry =
         ViewRegistry(AuthorizedScreenLayoutRunner) +

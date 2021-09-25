@@ -7,7 +7,7 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.maplist.MapListService
+import com.omricat.maplibrarian.maplist.MapsService
 import com.omricat.maplibrarian.maplist.MapsWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
@@ -27,7 +27,7 @@ class MapLibraryApp : Application() {
 
 interface MapLibDiContainer {
     val authService: AuthService
-    val mapListService: MapListService
+    val mapsService: MapsService
     val workflows: Workflows
     val viewRegistry: ViewRegistry
 
