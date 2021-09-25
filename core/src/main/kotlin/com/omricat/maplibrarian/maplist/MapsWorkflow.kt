@@ -4,7 +4,7 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.maplist.ActualMapsWorkflow.Props
-import com.omricat.maplibrarian.maplist.MapsListWorkflow.Event
+import com.omricat.maplibrarian.maplist.MapsListWorkflow.Event.SelectItem
 import com.omricat.maplibrarian.maplist.MapsScreen.Loading
 import com.omricat.maplibrarian.maplist.MapsScreen.ShowError
 import com.omricat.maplibrarian.maplist.MapsServiceError
@@ -42,22 +42,22 @@ public class ActualMapsWorkflow(private val mapsService: MapsService) :
             }
             Loading
         }
-        is MapListLoaded -> context.renderChild(
-            MapsListWorkflow,
-            props = renderState.list
-        ) { event ->
-            when (event) {
-                is Event.SelectItem -> onSelectItem(event.itemIndex)
+
+        is MapListLoaded -> {
+            context.renderChild(MapsListWorkflow, props = renderState.list) { event ->
+                when (event) {
+                    is SelectItem -> onSelectItem(event.itemIndex)
+                }
             }
         }
         is ErrorLoadingMaps -> ShowError(renderState.error.message)
     }
 
-    private fun onSelectItem(itemIndex: Int) = action {}
-
     override fun snapshotState(state: MapsState): Snapshot? = null // TODO: Implement snapshots
 
     internal fun onMapListLoaded(list: List<DbMapModel>) = action { state = MapListLoaded(list) }
+
+    internal fun onSelectItem(itemIndex: Int) = action {}
 
     internal fun onLoadingError(error: MapsServiceError) =
         action { state = ErrorLoadingMaps(error) }
@@ -82,3 +82,9 @@ public sealed interface MapsScreen {
     public object Loading : MapsScreen
     public data class ShowError(val message: String) : MapsScreen
 }
+
+public data class AddItemWrapperScreen<ChildScreenT : MapsScreen>(
+    val childScreen: ChildScreenT,
+    val onAddItemClicked: () -> Unit
+) : MapsScreen
+

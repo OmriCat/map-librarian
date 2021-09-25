@@ -17,8 +17,9 @@ internal val MapsErrorViewFactory: ViewFactory<MapsScreen.ShowError> =
         errorMessage.text = error.message
     }
 
+@WorkflowUiExperimentalApi
 internal val MapListViewRegistry = ViewRegistry(
     MapListLoadingViewFactory,
     MapsErrorViewFactory,
-    MapListLayoutRunner
+    MapListLayoutRunner,
 )
