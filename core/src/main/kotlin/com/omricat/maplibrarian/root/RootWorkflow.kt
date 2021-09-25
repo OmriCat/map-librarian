@@ -2,8 +2,10 @@ package com.omricat.maplibrarian.root
 
 import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
+import com.omricat.maplibrarian.auth.AuthResult.NotAuthenticated
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
+import com.omricat.maplibrarian.auth.AuthorizedScreen
 import com.omricat.maplibrarian.maplist.ActualMapsWorkflow.Props
 import com.omricat.maplibrarian.maplist.MapsWorkflow
 import com.omricat.maplibrarian.model.User
@@ -30,20 +32,30 @@ public class RootWorkflow(
 
     override fun render(renderProps: Unit, renderState: State, context: RenderContext): Screen =
         when (renderState) {
-            is Unauthorized -> context.renderChild(authWorkflow) { authResult: AuthResult ->
-                action {
-                    state =
-                        if (authResult is Authenticated) MapList(authResult.user) else Unauthorized
+            is Unauthorized -> {
+                context.renderChild(authWorkflow) { authResult: AuthResult ->
+                    when (authResult) {
+                        is Authenticated -> onAuthenticated(authResult)
+                        is NotAuthenticated -> unauthorized()
+                    }
                 }
             }
             is MapList -> {
-                val authorizedWorkflow = AuthorizedWorkflow(mapsWorkflow)
-                context.renderChild(authorizedWorkflow, Props(renderState.user)) {
-                    authService.signOut()
-                    action { state = Unauthorized }
-                }
+                val mapsScreen = context.renderChild(mapsWorkflow, Props(renderState.user))
+                AuthorizedScreen(
+                    mapsScreen,
+                    onLogoutClicked = context.eventHandler {
+                        authService.signOut()
+                        unauthorized()
+                    }
+                )
             }
         }
+
+    private fun onAuthenticated(authResult: Authenticated) =
+        action { state = MapList(authResult.user) }
+
+    private fun unauthorized() = action { state = Unauthorized }
 
     override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots
 }

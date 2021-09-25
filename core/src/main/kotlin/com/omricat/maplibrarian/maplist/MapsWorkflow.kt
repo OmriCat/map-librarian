@@ -13,7 +13,6 @@ import com.omricat.maplibrarian.maplist.MapsState.MapListLoaded
 import com.omricat.maplibrarian.maplist.MapsState.RequestData
 import com.omricat.maplibrarian.model.DbMapModel
 import com.omricat.maplibrarian.model.User
-import com.omricat.maplibrarian.root.AuthorizedProps
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
@@ -27,7 +26,7 @@ public interface MapsWorkflow : Workflow<Props, Nothing, MapsScreen>
 public class ActualMapsWorkflow(private val mapsService: MapsService) :
     StatefulWorkflow<Props, MapsState, Nothing, MapsScreen>(), MapsWorkflow {
 
-    public data class Props(override val user: User) : AuthorizedProps
+    public data class Props(val user: User)
 
     override fun initialState(props: Props, snapshot: Snapshot?): MapsState =
         RequestData

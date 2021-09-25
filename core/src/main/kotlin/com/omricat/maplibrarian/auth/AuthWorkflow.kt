@@ -19,7 +19,7 @@ import com.squareup.workflow1.runningWorker
 public typealias BackPressHandler = () -> Unit
 
 public sealed class AuthResult {
-    public object Unauthenticated : AuthResult()
+    public object NotAuthenticated : AuthResult()
     public data class Authenticated(val user: User) : AuthResult()
 }
 
@@ -38,7 +38,7 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
     override fun render(renderProps: Unit, renderState: State, context: RenderContext): AuthorizingScreen =
         when (renderState) {
             is PossibleLoggedInUser -> {
-                context.runningWorker(resolveLoggedInStatus(authService)) { result ->
+                context.runningWorker(resolveLoggedInStatus()) { result ->
                     result.map { maybeUser ->
                         maybeUser?.let { user -> onAuthenticated(user) }
                             ?: onNoAuthenticatedUser()
@@ -57,14 +57,14 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
 
             is AttemptingAuthorization -> {
                 context.runningWorker(
-                    attemptAuthentication(authService, renderState.credential)
+                    attemptAuthentication(renderState.credential)
                 ) { result ->
                     result.map { user -> onAuthenticated(user) }
                         .getOrElse { error -> onAuthError(error) }
                 }
                 AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
-                    backPressHandler = context.eventHandler { setOutput(AuthResult.Unauthenticated) }
+                    backPressHandler = context.eventHandler { setOutput(AuthResult.NotAuthenticated) }
                 )
             }
         }
@@ -80,16 +80,13 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
 
     internal fun onNoAuthenticatedUser() = action { this.state = LoginPrompt() }
 
-    internal companion object {
-        internal fun resolveLoggedInStatus(authService: AuthService): Worker<Result<User?, AuthError>> =
-            resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+    internal fun resolveLoggedInStatus(): Worker<Result<User?, AuthError>> =
+        resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
 
-        internal fun attemptAuthentication(
-            authService: AuthService,
-            credential: Credential
-        ): Worker<Result<User, AuthError>> =
-            resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
-    }
+    internal fun attemptAuthentication(
+        credential: Credential
+    ): Worker<Result<User, AuthError>> =
+        resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
 }
 
 public sealed class AuthorizingScreen {

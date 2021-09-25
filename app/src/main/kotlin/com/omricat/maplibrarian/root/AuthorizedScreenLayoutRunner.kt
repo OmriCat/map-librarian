@@ -1,6 +1,7 @@
 package com.omricat.maplibrarian.root
 
 import android.view.MenuItem
+import com.omricat.maplibrarian.auth.AuthorizedScreen
 import com.omricat.maplibrarian.databinding.AuthorizedScreenBinding
 import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
