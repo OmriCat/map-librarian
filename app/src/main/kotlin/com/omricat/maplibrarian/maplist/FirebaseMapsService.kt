@@ -10,6 +10,7 @@ import com.omricat.maplibrarian.model.DbMapModel
 import com.omricat.maplibrarian.model.MapId
 import com.omricat.maplibrarian.model.MapModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.model.UserUid
 import kotlinx.coroutines.tasks.await
 
 class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
@@ -37,7 +38,11 @@ class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
 }
 
 internal fun DocumentSnapshot.toMapModel(): DbMapModel =
-    DbMapModel(mapId = MapId(id), title = get("title") as? CharSequence ?: "Error getting title")
+    DbMapModel(
+        mapId = MapId(id),
+        title = get("title") as? CharSequence ?: "Error getting title",
+        userId = (get("userId") as? String)?.let { UserUid(it) } ?: throw IllegalStateException()
+    )
 
 internal fun MapModel.toStringMap(): Map<String, Any> =
-    mapOf("title" to title)
+    mapOf("title" to title, "userId" to userId)
