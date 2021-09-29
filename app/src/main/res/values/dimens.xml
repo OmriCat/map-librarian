@@ -5,4 +5,5 @@
     <dimen name="fab_margin">@dimen/double_grid_size</dimen>
     <dimen name="login_margin">64dp</dimen>
     <dimen name="circular_progress_size">48dp</dimen>
+    <dimen name="margin_horizontal_default">32dp</dimen>
 </resources>
