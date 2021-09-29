@@ -13,6 +13,7 @@ import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.State.Saving
 import com.omricat.maplibrarian.model.DbMapModel
 import com.omricat.maplibrarian.model.MapModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.model.UserUid
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
@@ -24,7 +25,9 @@ import com.squareup.workflow1.runningWorker
 public class MapAddItemWorkflow(private val mapsService: MapsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public data class EditingMapModel(override val title: CharSequence) : MapModel
+    public data class EditingMapModel(override val title: CharSequence,
+                                      override val userId: UserUid
+    ) : MapModel
 
     public sealed interface State {
         public data class Editing(val map: EditingMapModel, val errorMessage: String = "") : State
@@ -38,7 +41,7 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
     }
 
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        Editing(EditingMapModel(""))
+        Editing(EditingMapModel("", props.id))
 
     override fun render(
         renderProps: User,
@@ -103,4 +106,4 @@ public data class SavingItemScreen(override val map: MapModel) : AddingItemScree
 
 private fun EditingMapModel.withTitle(newTitle: CharSequence) = copy(title = newTitle)
 
-private fun editingMap(map: MapModel) = EditingMapModel(title = map.title)
+private fun editingMap(map: MapModel) = EditingMapModel(title = map.title, userId = map.userId)
