@@ -5,7 +5,6 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
-import com.github.michaelbull.result.runCatching
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.model.DbMapModel
@@ -15,12 +14,13 @@ import com.omricat.maplibrarian.model.MapModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.serialized
 import com.omricat.maplibrarian.utils.logErrorAndMap
+import com.omricat.maplibrarian.utils.runSuspendCatching
 import kotlinx.coroutines.tasks.await
 
 class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
 
     override suspend fun mapsListForUser(user: User): Result<List<DbMapModel>, MapsServiceError> =
-        runCatching {
+        runSuspendCatching {
             db.mapsCollection()
                 .whereEqualTo("userId", user.id.id)
                 .get()
@@ -40,7 +40,7 @@ class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
             "UserId of newMap (was ${newMap.userId}) must be " +
                     "same as userId of user (was ${user.id})"
         }
-        return runCatching {
+        return runSuspendCatching {
             db.mapsCollection()
                 .add(newMap.serialized())
                 .await()
