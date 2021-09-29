@@ -1,0 +1,6 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+projectroot="$(git rev-parse --show-toplevel)"
+fuego="$projectroot/tools/fuego"
+FIRESTORE_EMULATOR_HOST=localhost:8080 "$fuego" -projectid map-librarian "$@"
