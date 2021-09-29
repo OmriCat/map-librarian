@@ -13,20 +13,26 @@ import com.omricat.maplibrarian.model.MapId
 import com.omricat.maplibrarian.model.MapModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.serialized
+import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logErrorAndMap
 import com.omricat.maplibrarian.utils.runSuspendCatching
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
+class FirebaseMapsService(
+    private val db: FirebaseFirestore,
+    private val dispatchers: DispatcherProvider = DispatcherProvider.Default
+) : MapsService {
 
     override suspend fun mapsListForUser(user: User): Result<List<DbMapModel>, MapsServiceError> =
-        runSuspendCatching {
-            db.mapsCollection()
-                .whereEqualTo("userId", user.id.id)
-                .get()
-                .await()
-        }
-            .mapError(MapsServiceError::fromThrowable)
+        withContext(dispatchers.io) {
+            runSuspendCatching {
+                db.mapsCollection()
+                    .whereEqualTo("userId", user.id.id)
+                    .get()
+                    .await()
+            }
+        }.mapError(MapsServiceError::fromThrowable)
             .andThen { snapshot ->
                 snapshot.map { m: DocumentSnapshot -> m.parseMapModel() }.combine()
                     .mapError { MapsServiceError(it.message) }
@@ -40,10 +46,12 @@ class FirebaseMapsService(private val db: FirebaseFirestore) : MapsService {
             "UserId of newMap (was ${newMap.userId}) must be " +
                     "same as userId of user (was ${user.id})"
         }
-        return runSuspendCatching {
-            db.mapsCollection()
-                .add(newMap.serialized())
-                .await()
+        return withContext(dispatchers.io) {
+            runSuspendCatching {
+                db.mapsCollection()
+                    .add(newMap.serialized())
+                    .await()
+            }
         }.logErrorAndMap(MapsServiceError::fromThrowable)
             .map { ref -> DbMapModel(MapId(ref.id), newMap) }
     }

@@ -8,18 +8,25 @@ import com.github.michaelbull.result.toResultOr
 import com.google.firebase.auth.FirebaseAuth
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
+import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.runSuspendCatching
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService {
+internal class FirebaseAuthService(
+    private val auth: FirebaseAuth,
+    private val dispatchers: DispatcherProvider = DispatcherProvider.Default
+) : AuthService {
     override suspend fun getSignedInUserIfAny(): Result<User?, AuthError> =
-        runSuspendCatching { auth.currentUser }
-            .mapError(::AuthError)
-            .map { user -> user?.let { FirebaseUser(it) } }
+        withContext(dispatchers.io) {
+            runSuspendCatching { auth.currentUser }
+                .mapError(::AuthError)
+                .map { user -> user?.let { FirebaseUser(it) } }
+        }
 
     override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
         when (credential) {
-            is EmailPasswordCredential ->
+            is EmailPasswordCredential -> withContext(dispatchers.io) {
                 runSuspendCatching {
                     auth.signInWithEmailAndPassword(credential.emailAddress, credential.password)
                         .await()
@@ -29,6 +36,7 @@ internal class FirebaseAuthService(private val auth: FirebaseAuth) : AuthService
                         user.toResultOr { AuthError("No currently signed in user") }
                             .map { FirebaseUser(it) }
                     }
+            }
         }
 
     override fun signOut() = auth.signOut()
