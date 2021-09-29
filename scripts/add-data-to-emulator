@@ -1,0 +1,10 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+projectroot="$(git rev-parse --show-toplevel)"
+datafile="$projectroot/resources/sample-titles.txt"
+defaultuserId="XbmeeiiyihVjM5aBtVT0frNiGall"
+fuego="$projectroot/scripts/fuego-emulator-wrapper"
+head -n 10 "$datafile" | while IFS='' read -r LINE || [ -n "${LINE}" ]; do
+    "$fuego" add "maps" "{ \"userId\" : \"${defaultuserId}\", \"title\" : \"${LINE}\" }"
+done
