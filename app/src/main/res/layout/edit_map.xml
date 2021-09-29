@@ -29,6 +29,17 @@
             tools:text="@tools:sample/cities" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/saving_error"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginBottom="64dp"
+        android:layout_marginHorizontal="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Error message" />
+
     <Button
         android:id="@+id/btn_save"
         android:layout_width="wrap_content"

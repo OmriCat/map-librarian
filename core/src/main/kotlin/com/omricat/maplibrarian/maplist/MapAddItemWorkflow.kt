@@ -51,6 +51,7 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
         is Editing -> {
             AddItemScreen(
                 map = renderState.map,
+                errorMessage = renderState.errorMessage,
                 onTitleChanged = context.eventHandler(onTitleChanged(renderState)),
                 discardChanges = context.eventHandler(::onDiscard),
                 saveChanges = context.eventHandler(onSave(renderState.map))
@@ -97,6 +98,7 @@ public sealed interface AddingItemScreen : MapsScreen {
 
 public data class AddItemScreen(
     override val map: MapModel,
+    val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
     val saveChanges: () -> Unit

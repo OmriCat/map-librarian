@@ -13,6 +13,7 @@ internal object AddItemScreenViewFactory : ViewFactory<AddItemScreen> by bind(
     bindingInflater = EditMapBinding::inflate,
     showRendering = { screen, _ ->
         editTitle.updateText(screen.map.title)
+        savingError.text = screen.errorMessage
         enableSaveAndDiscard(screen)
     }
 )
