@@ -25,8 +25,9 @@ import com.squareup.workflow1.runningWorker
 public class MapAddItemWorkflow(private val mapsService: MapsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public data class EditingMapModel(override val title: CharSequence,
-                                      override val userId: UserUid
+    public data class EditingMapModel(
+        override val title: String,
+        override val userId: UserUid
     ) : MapModel
 
     public sealed interface State {
@@ -88,7 +89,7 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
     private fun onDiscard() = action { setOutput(Discard) }
 
     private fun onTitleChanged(editingState: Editing) = { newTitle: CharSequence ->
-        action { state = Editing(map = editingState.map.withTitle(newTitle)) }
+        action { state = Editing(map = editingState.map.withTitle(newTitle.toString())) }
     }
 }
 
@@ -106,6 +107,7 @@ public data class AddItemScreen(
 
 public data class SavingItemScreen(override val map: MapModel) : AddingItemScreen
 
-private fun EditingMapModel.withTitle(newTitle: CharSequence) = copy(title = newTitle)
+private fun EditingMapModel.withTitle(newTitle: String) = copy(title = newTitle)
 
-private fun editingMap(map: MapModel) = EditingMapModel(title = map.title, userId = map.userId)
+private fun editingMap(map: MapModel) =
+    EditingMapModel(title = map.title.toString(), userId = map.userId)

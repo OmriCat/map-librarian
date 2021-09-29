@@ -17,10 +17,10 @@ private object MapModelProperties {
 }
 
 public object MapModelSerializer : Serializer<MapModel> {
-    override operator fun invoke(mapModel: MapModel): Map<String, Any?> =
+    override operator fun invoke(mapModel: MapModel): Map<String, String> =
         hashMapOf(
-            TITLE to mapModel.title,
-            USER_ID to mapModel.userId
+            TITLE to mapModel.title.toString(),
+            USER_ID to mapModel.userId.id
         )
 }
 

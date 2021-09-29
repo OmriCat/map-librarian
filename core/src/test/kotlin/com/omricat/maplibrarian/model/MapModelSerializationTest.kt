@@ -21,6 +21,18 @@ internal class MapModelSerializationTest : StringSpec({
 
         serialized.keys shouldContainExactly setOf("title", "userId")
     }
+    "serializing map model gives a map with all string values" {
+        val testMap =
+            DbMapModel(
+                mapId = MapId("map1"),
+                userId = UserUid("user1"),
+                title = "A nice map"
+            )
+
+        val serialized: Map<String, Any?> = testMap.serialized()
+
+        serialized.values.forEach { it.shouldBeTypeOf<String>() }
+    }
 
     "deserializing from Map<String, Any> works correctly if all properties found" {
         val serialized = mapOf("title" to "A nice map", "userId" to "user1")
