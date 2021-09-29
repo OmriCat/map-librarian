@@ -1,8 +1,12 @@
 package com.omricat.maplibrarian.root
 
 import android.view.MenuItem
+import android.view.View
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.omricat.maplibrarian.R
 import com.omricat.maplibrarian.auth.AuthorizedScreen
 import com.omricat.maplibrarian.databinding.AuthorizedScreenBinding
+import com.omricat.maplibrarian.maplist.AddItemDecoratorScreen
 import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
 import com.squareup.workflow1.ui.ViewEnvironment
@@ -15,6 +19,7 @@ internal class AuthorizedScreenLayoutRunner(binding: AuthorizedScreenBinding) :
 
     private val toolbar = binding.toolbar
     private val contentStub = binding.authorizedContentStub
+    private val fab = binding.fabPrimaryAction
 
     private val logoutMenu = toolbar.menu.add("Log out").apply {
         setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
@@ -22,7 +27,34 @@ internal class AuthorizedScreenLayoutRunner(binding: AuthorizedScreenBinding) :
 
     override fun showRendering(rendering: AuthorizedScreen<*>, viewEnvironment: ViewEnvironment) {
         logoutMenu.setOnMenuItemClickListener { rendering.onLogoutClicked(); true }
-        contentStub.update(rendering.subScreen, viewEnvironment)
+
+        val childRendering: Screen = rendering.childRendering.let { child ->
+            when (child) {
+                is AddItemDecoratorScreen<*> -> {
+                    fab.setAsAdd(child.onAddItemClicked)
+                    child.childScreen
+                }
+                else -> {
+                    fab.reset()
+                    child
+                }
+            }
+        }
+        contentStub.update(childRendering, viewEnvironment)
+    }
+
+    private fun FloatingActionButton.reset() {
+        setImageDrawable(null)
+        setOnClickListener(null)
+        visibility = View.INVISIBLE
+    }
+
+    private fun FloatingActionButton.setAsAdd(
+        onAddItemClicked: () -> Unit
+    ) {
+        setImageResource(R.drawable.ic_add)
+        show()
+        setOnClickListener { onAddItemClicked() }
     }
 
     companion object : ViewFactory<AuthorizedScreen<*>> by bind(
