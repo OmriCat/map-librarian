@@ -1,12 +1,10 @@
 package com.omricat.maplibrarian.auth
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
+import com.squareup.workflow1.StatelessWorkflow
 import com.squareup.workflow1.applyTo
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.StringSpec
@@ -17,7 +15,7 @@ import io.kotest.matchers.types.shouldBeTypeOf
 
 public class ActualAuthWorkflowTest : StringSpec({
     "onAuthError action returns to login prompt" {
-        val workflow = ActualAuthWorkflow(TestAuthService())
+        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
         val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
         val (newState, maybeOutput) = workflow.onAuthError(AuthError("Authentication failure"))
             .applyTo(
@@ -34,8 +32,8 @@ public class ActualAuthWorkflowTest : StringSpec({
     }
 
     "onNoAuthenticatedUser action transitions to LoginPrompt" {
-        val workflow = ActualAuthWorkflow(TestAuthService())
-        val (newState, maybeOutput) = workflow.onNoAuthenticatedUser()
+        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+        val (newState, maybeOutput) = workflow.onNoAuthenticatedUser
             .applyTo(
                 props = Unit,
                 state = State.PossibleLoggedInUser
@@ -48,7 +46,7 @@ public class ActualAuthWorkflowTest : StringSpec({
     }
 
     "onAuthenticated action outputs Authenticated(user) from workflow" {
-        val workflow = ActualAuthWorkflow(TestAuthService())
+        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
         val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
         val fakeUser = TestUser("user1", UserUid("1"))
         val (_, maybeOutput) = workflow.onAuthenticated(fakeUser)
@@ -67,22 +65,8 @@ public class ActualAuthWorkflowTest : StringSpec({
     }
 })
 
-internal data class TestUser(override val displayName: String, override val id: UserUid) : User
-
-internal class TestAuthService(
-    private val onAttemptAuthentication: (suspend (Credential) -> Result<User, AuthError>)? = null,
-    private val onSignOut: (() -> Unit)? = null,
-    private val onGetSignedInUserIfAny: (suspend () -> Result<User?, AuthError>)? = null
-) : AuthService {
-    override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
-        onAttemptAuthentication?.invoke(credential)
-            ?: Err(AuthError("Can't sign in with $credential"))
-
-    override fun signOut() {
-        onSignOut?.invoke()
-    }
-
-    override suspend fun getSignedInUserIfAny(): Result<User?, AuthError> {
-        return onGetSignedInUserIfAny?.invoke() ?: Ok(null)
-    }
+private object NullSignupWorkflow : SignUpWorkflow,
+    StatelessWorkflow<Unit, User?, SignUpScreen>() {
+    override fun render(renderProps: Unit, context: RenderContext): SignUpScreen =
+        object : SignUpScreen {}
 }
