@@ -31,9 +31,29 @@ internal class FirebaseAuthService(
                     auth.signInWithEmailAndPassword(credential.emailAddress, credential.password)
                         .await()
                         .user
-                }.mapError(::AuthError)
+                }
+                    .mapError(::AuthError)
                     .andThen { user -> // If user is null, no user is signed in
                         user.toResultOr { AuthError("No currently signed in user") }
+                            .map { FirebaseUser(it) }
+                    }
+            }
+        }
+
+    override suspend fun createUser(credential: Credential): Result<User, AuthError> =
+        when (credential) {
+            is EmailPasswordCredential -> withContext(dispatchers.io) {
+                runSuspendCatching {
+                    auth.createUserWithEmailAndPassword(
+                        credential.emailAddress,
+                        credential.password
+                    )
+                        .await()
+                        .user
+                }
+                    .mapError(::AuthError)
+                    .andThen { maybeUser ->
+                        maybeUser.toResultOr { AuthError("User was created but not signed in") }
                             .map { FirebaseUser(it) }
                     }
             }

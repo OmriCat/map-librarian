@@ -3,6 +3,7 @@ package com.omricat.maplibrarian
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow
 import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
+import com.omricat.maplibrarian.auth.SignUpWorkflow
 import com.omricat.maplibrarian.maplist.ActualMapsWorkflow
 import com.omricat.maplibrarian.maplist.MapAddItemWorkflow
 import com.omricat.maplibrarian.maplist.MapListViewRegistry
@@ -16,7 +17,12 @@ import com.squareup.workflow1.ui.plus
 abstract class DefaultDiContainer : MapLibDiContainer {
 
     override val workflows: MapLibDiContainer.Workflows = object : MapLibDiContainer.Workflows {
-        override val auth: AuthWorkflow by lazy { ActualAuthWorkflow(authService) }
+        override val auth: AuthWorkflow by lazy {
+            ActualAuthWorkflow(
+                authService,
+                SignUpWorkflow.instance(authService)
+            )
+        }
 
         override val maps: MapsWorkflow by lazy {
             ActualMapsWorkflow(

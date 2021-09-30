@@ -11,4 +11,5 @@ public interface AuthService {
     public suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError>
     public fun signOut()
     public suspend fun getSignedInUserIfAny(): Result<User?, AuthError>
+    public suspend fun createUser(credential: Credential): Result<User, AuthError>
 }
