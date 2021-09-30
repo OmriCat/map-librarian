@@ -27,8 +27,7 @@ class FirebaseMapsService(
     override suspend fun mapsListForUser(user: User): Result<List<DbMapModel>, MapsServiceError> =
         withContext(dispatchers.io) {
             runSuspendCatching {
-                db.mapsCollection()
-                    .whereEqualTo("userId", user.id.id)
+                db.mapsCollection(user)
                     .get()
                     .await()
             }
@@ -48,7 +47,7 @@ class FirebaseMapsService(
         }
         return withContext(dispatchers.io) {
             runSuspendCatching {
-                db.mapsCollection()
+                db.mapsCollection(user)
                     .add(newMap.serialized())
                     .await()
             }
@@ -56,7 +55,10 @@ class FirebaseMapsService(
             .map { ref -> DbMapModel(MapId(ref.id), newMap) }
     }
 
-    private fun FirebaseFirestore.mapsCollection() = collection("maps")
+    private fun FirebaseFirestore.mapsCollection(user: User) =
+        collection("users")
+            .document(user.id.toString())
+            .collection("maps")
 }
 
 internal fun DocumentSnapshot.parseMapModel() =

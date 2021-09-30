@@ -5,6 +5,7 @@ projectroot="$(git rev-parse --show-toplevel)"
 datafile="$projectroot/resources/sample-titles.txt"
 defaultuserId="XbmeeiiyihVjM5aBtVT0frNiGall"
 fuego="$projectroot/scripts/fuego-emulator-wrapper"
+"$fuego" set "users/$defaultuserId" "{\"exists\": true }"
 head -n 10 "$datafile" | while IFS='' read -r LINE || [ -n "${LINE}" ]; do
-    "$fuego" add "maps" "{ \"userId\" : \"${defaultuserId}\", \"title\" : \"${LINE}\" }"
+    "$fuego" add "users/$defaultuserId/maps" "{ \"title\" : \"${LINE}\" }"
 done
