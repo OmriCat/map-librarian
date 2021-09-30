@@ -8,6 +8,7 @@ import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.PossibleLoggedInUser
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
@@ -27,41 +28,39 @@ public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScr
 
 public class ActualAuthWorkflow(private val authService: AuthService) : AuthWorkflow,
     StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
-    public sealed class State {
-        public object PossibleLoggedInUser : State()
-        public data class LoginPrompt(val errorMessage: String = "") : State()
-        public data class AttemptingAuthorization(val credential: Credential) : State()
+    public sealed interface State {
+        public object PossibleLoggedInUser : State
+        public data class LoginPrompt(val errorMessage: String = "") : State
+        public data class AttemptingAuthorization(val credential: Credential) : State
     }
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = PossibleLoggedInUser
 
-    override fun render(renderProps: Unit, renderState: State, context: RenderContext): AuthorizingScreen =
+    override fun render(
+        renderProps: Unit,
+        renderState: State,
+        context: RenderContext
+    ): AuthorizingScreen =
         when (renderState) {
             is PossibleLoggedInUser -> {
-                context.runningWorker(resolveLoggedInStatus()) { result ->
-                    result.map { maybeUser ->
-                        maybeUser?.let { user -> onAuthenticated(user) }
-                            ?: onNoAuthenticatedUser()
-                    }.getOrElse { error -> onAuthError(error) }
-                }
+                context.runningWorker(
+                    resolveLoggedInStatusWorker,
+                    handler = ::handlePossibleUserResult
+                )
                 AuthorizingScreen.AttemptingLogin("")
             }
 
             is LoginPrompt ->
                 AuthorizingScreen.Login(
-                    onLoginClicked = context.eventHandler { credential ->
-                        this.state = AttemptingAuthorization(credential)
-                    },
-                    errorMessage = renderState.errorMessage
+                    errorMessage = renderState.errorMessage,
+                    onLoginClicked = context.eventHandler(::onLoginClicked),
                 )
 
             is AttemptingAuthorization -> {
                 context.runningWorker(
-                    attemptAuthentication(renderState.credential)
-                ) { result ->
-                    result.map { user -> onAuthenticated(user) }
-                        .getOrElse { error -> onAuthError(error) }
-                }
+                    attemptAuthenticationWorker(renderState.credential),
+                    handler = ::handleAuthenticationResult
+                )
                 AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
                     backPressHandler = context.eventHandler { setOutput(AuthResult.NotAuthenticated) }
@@ -78,25 +77,40 @@ public class ActualAuthWorkflow(private val authService: AuthService) : AuthWork
 
     internal fun onAuthenticated(user: User) = action { setOutput(Authenticated(user)) }
 
-    internal fun onNoAuthenticatedUser() = action { this.state = LoginPrompt() }
+    internal fun onNoAuthenticatedUser() = action { state = LoginPrompt() }
 
-    internal fun resolveLoggedInStatus(): Worker<Result<User?, AuthError>> =
-        resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+    internal fun onLoginClicked(credential: Credential) = action {
+        state = AttemptingAuthorization(credential)
+    }
 
-    internal fun attemptAuthentication(
+    internal val resolveLoggedInStatusWorker: Worker<Result<User?, AuthError>>
+        get() = resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+
+    internal fun handlePossibleUserResult(result: Result<User?, AuthError>) =
+        result.map { maybeUser ->
+            maybeUser
+                ?.let { user -> onAuthenticated(user) }
+                ?: onNoAuthenticatedUser()
+        }.getOrElse { error -> onAuthError(error) }
+
+    internal fun attemptAuthenticationWorker(
         credential: Credential
     ): Worker<Result<User, AuthError>> =
         resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
+
+    internal fun handleAuthenticationResult(result: Result<User, AuthError>) =
+        result.map { user -> onAuthenticated(user) }
+            .getOrElse { error -> onAuthError(error) }
 }
 
-public sealed class AuthorizingScreen {
+public sealed interface AuthorizingScreen {
     public data class Login(
         val errorMessage: String,
-        val onLoginClicked: (credential: Credential) -> Unit
-    ) : AuthorizingScreen()
+        val onLoginClicked: (credential: Credential) -> Unit,
+    ) : AuthorizingScreen
 
     public data class AttemptingLogin(
         val message: String,
         val backPressHandler: BackPressHandler? = null
-    ) : AuthorizingScreen()
+    ) : AuthorizingScreen
 }
