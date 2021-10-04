@@ -73,8 +73,11 @@ public class ActualAuthWorkflow(
                 )
             }
 
-            is SigningUp -> context.renderChild(signUpWorkflow, Unit) {user: User? ->
-                user?.let { onAuthenticated(it) } ?: onNoAuthenticatedUser
+            is SigningUp -> context.renderChild(signUpWorkflow, Unit) {output: SignUpOutput ->
+                when(output) {
+                    is SignUpOutput.SignUpCancelled -> onNoAuthenticatedUser
+                    is SignUpOutput.UserCreated -> onAuthenticated(output.user)
+                }
             }
         }
 

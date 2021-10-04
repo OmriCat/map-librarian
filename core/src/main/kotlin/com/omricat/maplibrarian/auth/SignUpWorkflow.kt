@@ -3,9 +3,13 @@ package com.omricat.maplibrarian.auth
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
+import com.omricat.maplibrarian.auth.SignUpOutput.SignUpCancelled
+import com.omricat.maplibrarian.auth.SignUpOutput.UserCreated
 import com.omricat.maplibrarian.auth.SignUpScreen.EmailAndPasswordSignUpScreen
 import com.omricat.maplibrarian.auth.SignUpScreen.Step
 import com.omricat.maplibrarian.auth.SignUpScreen.Step.EnteringEmailAndPassword
+import com.omricat.maplibrarian.auth.State.AttemptingUserCreation
+import com.omricat.maplibrarian.auth.State.SignUpPrompt
 import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
@@ -16,7 +20,7 @@ import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
-public interface SignUpWorkflow : Workflow<Unit, User?, SignUpScreen> {
+public interface SignUpWorkflow : Workflow<Unit, SignUpOutput, SignUpScreen> {
     public companion object {
         public fun instance(authService: AuthService): SignUpWorkflow =
             ActualSignUpWorkflow(authService)
@@ -24,7 +28,7 @@ public interface SignUpWorkflow : Workflow<Unit, User?, SignUpScreen> {
 }
 
 internal class ActualSignUpWorkflow(private val authService: AuthService) :
-    StatefulWorkflow<Unit, State, User?, SignUpScreen>(),
+    StatefulWorkflow<Unit, State, SignUpOutput, SignUpScreen>(),
     SignUpWorkflow {
     override fun initialState(props: Unit, snapshot: Snapshot?): State = SignUpPrompt()
 
@@ -37,8 +41,9 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
             credential = renderState.credential,
             step = EnteringEmailAndPassword(
                 errorMessage = renderState.errorMessage,
-                onSignUpClicked = context.eventHandler(::onSignUpClicked)
-            )
+                onSignUpClicked = context.eventHandler(::onSignUpClicked),
+            ),
+            backPressHandler = context.eventHandler(::onSignUpCancelled)
         )
 
         is AttemptingUserCreation -> {
@@ -47,10 +52,13 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
             }
             EmailAndPasswordSignUpScreen(
                 credential = renderState.credential,
-                step = Step.AttemptingUserCreation
+                backPressHandler = context.eventHandler(::onSignUpCancelled),
+                step = Step.CreatingUser
             )
         }
     }
+
+    override fun snapshotState(state: State): Snapshot? = null
 
     private fun handleUserCreationResult(
         result: Result<User, AuthError>,
@@ -59,38 +67,34 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
         .map { onUserCreated(it) }
         .getOrElse { e -> onErrorCreatingUser(credential, e) }
 
-    private fun onErrorCreatingUser(
+    internal fun onErrorCreatingUser(
         credential: EmailPasswordCredential,
         e: AuthError
     ) = action {
-        state = SignUpPrompt(credential = credential, errorMessage = e.message)
+        this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
     }
 
-    internal fun onUserCreated(user: User) = action { setOutput(user) }
+    internal fun onUserCreated(user: User) = action { setOutput(UserCreated(user)) }
 
     internal fun onSignUpClicked(credential: EmailPasswordCredential) = action {
         state = AttemptingUserCreation(credential)
     }
 
-    internal fun attemptUserCreation(credential: EmailPasswordCredential): Worker<Result<User, AuthError>> =
-        resultWorker(::AuthError) { TODO() }
+    internal fun onSignUpCancelled() = action { setOutput(SignUpCancelled) }
 
-    override fun snapshotState(state: State): Snapshot? = null
+    internal fun attemptUserCreation(credential: EmailPasswordCredential): Worker<Result<User, AuthError>> =
+        resultWorker(::AuthError) { authService.createUser(credential) }
 }
 
-internal data class SignUpPrompt(
-    val credential: EmailPasswordCredential =
-        EmailPasswordCredential("", ""),
-    val errorMessage: String = "",
-) : State
-
-internal data class AttemptingUserCreation(
-    val credential: EmailPasswordCredential
-) : State
+public sealed interface SignUpOutput {
+    public data class UserCreated(val user: User) : SignUpOutput
+    public object SignUpCancelled : SignUpOutput
+}
 
 public interface SignUpScreen : AuthorizingScreen {
     public data class EmailAndPasswordSignUpScreen(
         val credential: EmailPasswordCredential,
+        val backPressHandler: BackPressHandler,
         val step: Step
     ) : SignUpScreen
 
@@ -100,8 +104,18 @@ public interface SignUpScreen : AuthorizingScreen {
             val errorMessage: String = ""
         ) : Step
 
-        public object AttemptingUserCreation : Step
+        public object CreatingUser : Step
     }
 }
 
-internal sealed interface State
+internal sealed interface State {
+    data class SignUpPrompt(
+        val credential: EmailPasswordCredential =
+            EmailPasswordCredential("", ""),
+        val errorMessage: String = "",
+    ) : State
+
+    data class AttemptingUserCreation(
+        val credential: EmailPasswordCredential
+    ) : State
+}

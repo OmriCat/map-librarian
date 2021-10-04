@@ -2,7 +2,6 @@ package com.omricat.maplibrarian.auth
 
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
-import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
 import com.squareup.workflow1.StatelessWorkflow
 import com.squareup.workflow1.applyTo
@@ -66,7 +65,7 @@ public class ActualAuthWorkflowTest : StringSpec({
 })
 
 private object NullSignupWorkflow : SignUpWorkflow,
-    StatelessWorkflow<Unit, User?, SignUpScreen>() {
+    StatelessWorkflow<Unit, SignUpOutput, SignUpScreen>() {
     override fun render(renderProps: Unit, context: RenderContext): SignUpScreen =
         object : SignUpScreen {}
 }
