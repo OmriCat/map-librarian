@@ -20,6 +20,7 @@ internal val AuthLoginViewFactory: ViewFactory<AuthorizingScreen.Login> =
                 )
             )
         }
+        btnSignUp.setOnClickListener { authScreen.onSignUpClicked() }
         errorMessage.text = authScreen.errorMessage
     }
 
@@ -32,4 +33,5 @@ internal val AuthAttemptingAuthViewFactory: ViewFactory<AuthorizingScreen.Attemp
 internal val AuthViewRegistry = ViewRegistry(
     AuthLoginViewFactory,
     AuthAttemptingAuthViewFactory,
+    SignUpScreenLayoutRunner
 )
