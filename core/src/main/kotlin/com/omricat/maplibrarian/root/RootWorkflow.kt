@@ -12,6 +12,7 @@ import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.root.RootWorkflow.State
 import com.omricat.maplibrarian.root.RootWorkflow.State.MapList
 import com.omricat.maplibrarian.root.RootWorkflow.State.Unauthorized
+import com.omricat.workflow.eventHandler
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.action
@@ -44,10 +45,7 @@ public class RootWorkflow(
                 val mapsScreen = context.renderChild(mapsWorkflow, Props(renderState.user))
                 AuthorizedScreen(
                     mapsScreen,
-                    onLogoutClicked = context.eventHandler {
-                        authService.signOut()
-                        unauthorized()
-                    }
+                    onLogoutClicked = context.eventHandler(::unauthorized)
                 )
             }
         }
@@ -55,7 +53,10 @@ public class RootWorkflow(
     private fun onAuthenticated(authResult: Authenticated) =
         action { state = MapList(authResult.user) }
 
-    private fun unauthorized() = action { state = Unauthorized }
+    private fun unauthorized() = action {
+        authService.signOut()
+        state = Unauthorized
+    }
 
     override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots
 }
