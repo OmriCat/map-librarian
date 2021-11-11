@@ -21,6 +21,11 @@ plugins {
     id("de.fayard.refreshVersions") version "0.23.0"
 }
 
+refreshVersions {
+    rejectVersionIf {
+        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel)
+    }
+}
 rootProject.name = ("map-librarian")
 
 include(
