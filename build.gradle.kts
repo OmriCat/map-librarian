@@ -7,14 +7,13 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.google.gms:google-services:_")
+        classpath(Google.playServicesGradlePlugin)
     }
 }
 
 plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
-//    id("com.google.gms.google-services").apply(false)
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
     id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false)
