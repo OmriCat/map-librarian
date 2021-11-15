@@ -72,9 +72,7 @@ dependencies {
     implementation(AndroidX.core.ktx)
 
     implementation(AndroidX.activityKtx)
-    implementation(AndroidX.fragmentKtx)
     implementation(AndroidX.lifecycle.viewModelKtx)
-    implementation(AndroidX.lifecycle.runtimeKtx)
     implementation(AndroidX.lifecycle.commonJava8)
     implementation(AndroidX.annotation)
 
