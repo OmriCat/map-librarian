@@ -99,7 +99,7 @@ dependencies {
 
     testImplementation(workflow("testing-jvm"))
 
-    androidTestImplementation("androidx.test.ext:junit:_")
-    androidTestImplementation("androidx.test:rules:_")
-    androidTestImplementation("androidx.test.espresso:espresso-core:_")
+    androidTestImplementation(AndroidX.test.ext.junit)
+    androidTestImplementation(AndroidX.test.rules)
+    androidTestImplementation(AndroidX.test.espresso.core)
 }
