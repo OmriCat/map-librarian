@@ -68,11 +68,16 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
             freeCompilerArgs = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
             )
             languageVersion = "1.5"
+        }
+    }
+
+    extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension>()?.apply {
+        jvmToolchain {
+            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(15))
         }
     }
 }
