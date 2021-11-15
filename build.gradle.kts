@@ -18,6 +18,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
     id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false)
     id("com.dorongold.task-tree")
+    id("com.autonomousapps.dependency-analysis")
     idea
 }
 
