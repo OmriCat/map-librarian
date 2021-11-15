@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69911493920:android:54d3ae764a93af42db2b45",
+        "android_client_info": {
+          "package_name": "com.omricat.maplibrarian.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69911493920-urfhk53fcn459n4ie93kjjelsl13sb7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8mH5ZG2TfDC1Qfes8zkhXVXd6aESUx7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69911493920-urfhk53fcn459n4ie93kjjelsl13sb7a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

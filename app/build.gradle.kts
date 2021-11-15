@@ -38,6 +38,7 @@ android {
         getByName("debug") {
             isMinifyEnabled = false
             isDebuggable = true
+            applicationIdSuffix = ".debug"
         }
     }
 
