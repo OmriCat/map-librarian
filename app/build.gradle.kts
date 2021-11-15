@@ -74,7 +74,8 @@ dependencies {
     implementation(AndroidX.activityKtx)
     implementation(AndroidX.lifecycle.viewModelKtx)
     implementation(AndroidX.lifecycle.commonJava8)
-    implementation(AndroidX.annotation)
+
+    compileOnly(AndroidX.annotation)
 
     implementation(AndroidX.constraintLayout)
     implementation(AndroidX.recyclerView)
@@ -91,6 +92,8 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:_")
 
     implementation(JakeWharton.timber)
+
+    compileOnly("dev.ahmedmourad.nocopy:nocopy-annotations:_")
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
