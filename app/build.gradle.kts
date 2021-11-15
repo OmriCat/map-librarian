@@ -23,10 +23,6 @@ android {
 
         resConfigs("en") // Only keep languages supported so to trim down FirebaseUI
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
