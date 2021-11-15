@@ -10,19 +10,20 @@ plugins {
 
 android {
     val androidBuildVersions: AndroidBuildToolVersions by rootProject.extra
-    compileSdkVersion(androidBuildVersions.compileSdk)
+    compileSdk = androidBuildVersions.compileSdk
 
     defaultConfig {
-        minSdkVersion(androidBuildVersions.minSdk)
-        targetSdkVersion(androidBuildVersions.targetSdk)
+        minSdk = androidBuildVersions.minSdk
+        targetSdk = androidBuildVersions.targetSdk
 
         applicationId = "com.omricat.maplibrarian"
         versionCode = 1
         versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        resConfigs("en") // Only keep languages supported so to trim down FirebaseUI
+        resourceConfigurations += "en" // Only keep languages supported so to trim down FirebaseUI
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -42,7 +43,7 @@ android {
         srcSet.java.srcDir("src/${srcSet.name}/kotlin")
     }
 
-    lintOptions {
+    lint {
         isWarningsAsErrors = true
         isAbortOnError = true
         disable("GradleDependency")
