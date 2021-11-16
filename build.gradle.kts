@@ -47,6 +47,7 @@ subprojects {
         outputToConsole.set(true)
         ignoreFailures.set(false)
         enableExperimentalRules.set(true)
+        disabledRules.addAll("experimental:argument-list-wrapping")
         filter {
             exclude("**/generated/**")
             include("**/kotlin/**")
