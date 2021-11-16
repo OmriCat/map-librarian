@@ -58,7 +58,7 @@ public class RootWorkflow(
         state = Unauthorized
     }
 
-    override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots
+    override fun snapshotState(state: State): Snapshot? = null // TODO(#18) Implement snapshots
 }
 
 public typealias Screen = Any
