@@ -77,10 +77,30 @@ subprojects {
             languageVersion = "1.5"
         }
     }
+    afterEvaluate {
+        val hasKotlin = plugins.any {
+            it is org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+        }
+        if (hasKotlin) {
+            extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension>().apply {
+                jvmToolchain {
+                    (this as JavaToolchainSpec).languageVersion.set(
+                        JavaLanguageVersion.of(buildVersions.javaLanguageVersion)
+                    )
+                }
+            }
+        }
 
-    extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension>()?.apply {
-        jvmToolchain {
-            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(15))
+        val hasAndroidPlugin = plugins.any {
+            it is com.android.build.gradle.api.AndroidBasePlugin
+        }
+        if (hasAndroidPlugin) {
+            extensions.getByType<com.android.build.gradle.BaseExtension>().apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.toVersion(buildVersions.javaLanguageVersion)
+                    targetCompatibility = JavaVersion.toVersion(buildVersions.javaLanguageVersion)
+                }
+            }
         }
     }
 }
