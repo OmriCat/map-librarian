@@ -489,8 +489,8 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    values: ['TODO:', 'FIXME:', 'STOPSHIP:']
-    allowedPatterns: ''
+    values: ['TODO(:|\s)', 'FIXME:', 'STOPSHIP:']
+    allowedPatterns: 'TODO\(#\d+\)'
   ForbiddenImport:
     active: false
     imports: []

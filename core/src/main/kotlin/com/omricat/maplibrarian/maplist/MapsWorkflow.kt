@@ -68,7 +68,7 @@ public class ActualMapsWorkflow(
 
     internal fun onItemAdded() = action { state = RequestData }
 
-    override fun snapshotState(state: MapsState): Snapshot? = null // TODO: Implement snapshots
+    override fun snapshotState(state: MapsState): Snapshot? = null // TODO(#18) Implement snapshots
 
     internal fun onSelectItem(itemIndex: Int) = action {}
 
