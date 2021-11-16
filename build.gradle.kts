@@ -45,7 +45,7 @@ subprojects {
         verbose.set(true)
         android.set(false)
         outputToConsole.set(true)
-        ignoreFailures.set(false)
+        ignoreFailures.set(true)
         enableExperimentalRules.set(true)
         disabledRules.addAll("experimental:argument-list-wrapping")
         filter {
