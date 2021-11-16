@@ -76,7 +76,7 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
 
     internal fun onNewItemSaved() = action { setOutput(Saved) }
 
-    public override fun snapshotState(state: State): Snapshot? = null // TODO: Implement snapshots
+    public override fun snapshotState(state: State): Snapshot? = null // TODO(#18) Implement snapshots
 
     private fun saveNewItem(
         user: User,
