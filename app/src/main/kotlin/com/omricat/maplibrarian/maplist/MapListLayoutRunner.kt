@@ -36,7 +36,8 @@ internal class MapListLayoutRunner(private val binding: MaplistBinding) :
     }
 
     companion object : ViewFactory<MapListScreen> by LayoutRunner.bind(
-        MaplistBinding::inflate, ::MapListLayoutRunner
+        MaplistBinding::inflate,
+        ::MapListLayoutRunner
     )
 }
 
@@ -72,6 +73,7 @@ internal class MapListAdapter : ListAdapter<DbMapModel, MapViewHolder>(MapDiffCa
         override fun areItemsTheSame(oldItem: DbMapModel, newItem: DbMapModel): Boolean =
             oldItem.mapId == newItem.mapId
 
-        override fun areContentsTheSame(oldItem: DbMapModel, newItem: DbMapModel): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: DbMapModel, newItem: DbMapModel): Boolean =
+            oldItem == newItem
     }
 }
