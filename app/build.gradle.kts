@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-import com.omricat.gradle.AndroidBuildToolVersions
+import com.omricat.gradle.BuildVersions
 
 plugins {
     id("com.android.application")
@@ -9,12 +9,12 @@ plugins {
 }
 
 android {
-    val androidBuildVersions: AndroidBuildToolVersions by rootProject.extra
-    compileSdk = androidBuildVersions.compileSdk
+    val buildVersions: BuildVersions by rootProject.extra
+    compileSdk = buildVersions.compileSdk
 
     defaultConfig {
-        minSdk = androidBuildVersions.minSdk
-        targetSdk = androidBuildVersions.targetSdk
+        minSdk = buildVersions.minSdk
+        targetSdk = buildVersions.targetSdk
 
         applicationId = "com.omricat.maplibrarian"
         versionCode = 1
