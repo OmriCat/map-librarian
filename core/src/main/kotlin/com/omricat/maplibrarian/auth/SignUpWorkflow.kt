@@ -82,7 +82,8 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
 
     internal fun onSignUpCancelled() = action { setOutput(SignUpCancelled) }
 
-    internal fun attemptUserCreation(credential: EmailPasswordCredential): Worker<Result<User, AuthError>> =
+    internal fun attemptUserCreation(credential: EmailPasswordCredential):
+        Worker<Result<User, AuthError>> =
         resultWorker(::AuthError) { authService.createUser(credential) }
 }
 
