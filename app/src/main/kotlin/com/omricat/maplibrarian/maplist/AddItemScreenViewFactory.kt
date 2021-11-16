@@ -17,6 +17,7 @@ internal object AddItemScreenViewFactory : ViewFactory<AddItemScreen> by bind(
         enableSaveAndDiscard(screen)
     }
 )
+
 @OptIn(WorkflowUiExperimentalApi::class)
 internal object SavingItemScreenViewFactory : ViewFactory<SavingItemScreen> by bind(
     bindingInflater = EditMapBinding::inflate,

@@ -19,59 +19,60 @@ import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
-internal class RunSuspendCatchingTest : StringSpec({
+internal class RunSuspendCatchingTest : StringSpec(
+    {
 
-    "runSuspendCatching is cancellable" {
-        val testDispatcher = TestCoroutineDispatcher()
-        val testScope = TestCoroutineScope(testDispatcher)
+        "runSuspendCatching is cancellable" {
+            val testDispatcher = TestCoroutineDispatcher()
+            val testScope = TestCoroutineScope(testDispatcher)
 
-        testScope.runBlockingTest {
+            testScope.runBlockingTest {
 
-            var value: String? = null
+                var value: String? = null
 
-            launch {
                 launch {
-                    val result = runSuspendCatching {
-                        delay(Duration.seconds(4))
-                        "value"
+                    launch {
+                        val result = runSuspendCatching {
+                            delay(Duration.seconds(4))
+                            "value"
+                        }
+
+                        result.onSuccess { value = it }
                     }
 
-                    result.onSuccess { value = it }
+                    testDispatcher.advanceTimeBy(2000)
+
+                    cancel()
                 }
 
-                testDispatcher.advanceTimeBy(2000)
-
-                cancel()
+                value.shouldBeNull()
             }
-
-            value.shouldBeNull()
         }
-    }
 
-    "suspend functions run in runBlocking can't be cancelled" {
-        val testDispatcher = TestCoroutineDispatcher()
-        val testScope = TestCoroutineScope(testDispatcher)
+        "suspend functions run in runBlocking can't be cancelled" {
+            val testDispatcher = TestCoroutineDispatcher()
+            val testScope = TestCoroutineScope(testDispatcher)
 
-        testScope.runBlockingTest {
+            testScope.runBlockingTest {
 
-            var value: String? = null
+                var value: String? = null
 
-            launch {
                 launch {
-                    val result: Result<String, Throwable> = runCatching {
-                        delay(Duration.seconds(4))
-                        "value"
+                    launch {
+                        val result: Result<String, Throwable> = runCatching {
+                            delay(Duration.seconds(4))
+                            "value"
+                        }
+                        result.onFailure { value = "Failure" }
                     }
-                    result.onFailure { value = "Failure" }
+
+                    testDispatcher.advanceTimeBy(2000)
+
+                    cancel()
                 }
 
-                testDispatcher.advanceTimeBy(2000)
-
-                cancel()
+                value.shouldNotBeNull()
             }
-
-            value.shouldNotBeNull()
         }
     }
-}
 )
