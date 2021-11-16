@@ -69,7 +69,9 @@ public class ActualAuthWorkflow(
                 )
                 AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
-                    backPressHandler = context.eventHandler { setOutput(AuthResult.NotAuthenticated) }
+                    backPressHandler = context.eventHandler {
+                        setOutput(AuthResult.NotAuthenticated)
+                    }
                 )
             }
 
