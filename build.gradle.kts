@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+import de.fayard.refreshVersions.core.versionFor
+
 buildscript {
     repositories {
         google()
@@ -39,7 +41,7 @@ subprojects {
 
     ktlint {
         debug.set(false)
-        version.set("0.37.2")
+        version.set(versionFor("com.pinterest:ktlint:_"))
         verbose.set(true)
         android.set(false)
         outputToConsole.set(true)
