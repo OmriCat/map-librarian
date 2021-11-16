@@ -37,4 +37,5 @@ interface MapLibDiContainer {
     }
 }
 
-val Context.mapLibDiContainer: MapLibDiContainer get() = (this.applicationContext as MapLibraryApp).diContainer
+val Context.mapLibDiContainer: MapLibDiContainer
+    get() = (this.applicationContext as MapLibraryApp).diContainer

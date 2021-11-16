@@ -33,5 +33,5 @@ abstract class DefaultDiContainer : MapLibDiContainer {
     }
     override val viewRegistry: ViewRegistry =
         ViewRegistry(AuthorizedScreenLayoutRunner) +
-                AuthViewRegistry + MapListViewRegistry
+            AuthViewRegistry + MapListViewRegistry
 }

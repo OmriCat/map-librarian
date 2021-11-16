@@ -12,57 +12,59 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 
-public class ActualAuthWorkflowTest : StringSpec({
-    "onAuthError action returns to login prompt" {
-        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
-        val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
-        val (newState, maybeOutput) = workflow.onAuthError(AuthError("Authentication failure"))
-            .applyTo(
-                props = Unit,
-                state = State.AttemptingAuthorization(fakeCredential)
-            )
+public class ActualAuthWorkflowTest : StringSpec(
+    {
+        "onAuthError action returns to login prompt" {
+            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
+            val (newState, maybeOutput) = workflow.onAuthError(AuthError("Authentication failure"))
+                .applyTo(
+                    props = Unit,
+                    state = State.AttemptingAuthorization(fakeCredential)
+                )
 
-        assertSoftly {
-            maybeOutput.shouldBeNull()
+            assertSoftly {
+                maybeOutput.shouldBeNull()
 
-            newState.shouldBeTypeOf<State.LoginPrompt>()
-            newState.errorMessage.shouldBe("Authentication failure")
+                newState.shouldBeTypeOf<State.LoginPrompt>()
+                newState.errorMessage.shouldBe("Authentication failure")
+            }
         }
-    }
 
-    "onNoAuthenticatedUser action transitions to LoginPrompt" {
-        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
-        val (newState, maybeOutput) = workflow.onNoAuthenticatedUser
-            .applyTo(
-                props = Unit,
-                state = State.PossibleLoggedInUser
-            )
+        "onNoAuthenticatedUser action transitions to LoginPrompt" {
+            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val (newState, maybeOutput) = workflow.onNoAuthenticatedUser
+                .applyTo(
+                    props = Unit,
+                    state = State.PossibleLoggedInUser
+                )
 
-        assertSoftly {
-            maybeOutput.shouldBeNull()
-            newState.shouldBeTypeOf<State.LoginPrompt>()
+            assertSoftly {
+                maybeOutput.shouldBeNull()
+                newState.shouldBeTypeOf<State.LoginPrompt>()
+            }
         }
-    }
 
-    "onAuthenticated action outputs Authenticated(user) from workflow" {
-        val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
-        val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
-        val fakeUser = TestUser("user1", UserUid("1"))
-        val (_, maybeOutput) = workflow.onAuthenticated(fakeUser)
-            .applyTo(
-                props = Unit,
-                state = State.AttemptingAuthorization(fakeCredential)
-            )
+        "onAuthenticated action outputs Authenticated(user) from workflow" {
+            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
+            val fakeUser = TestUser("user1", UserUid("1"))
+            val (_, maybeOutput) = workflow.onAuthenticated(fakeUser)
+                .applyTo(
+                    props = Unit,
+                    state = State.AttemptingAuthorization(fakeCredential)
+                )
 
-        assertSoftly {
-            maybeOutput.shouldNotBeNull()
-            maybeOutput.value.let { result ->
-                result.shouldBeTypeOf<Authenticated>()
-                result.user.shouldBe(fakeUser)
+            assertSoftly {
+                maybeOutput.shouldNotBeNull()
+                maybeOutput.value.let { result ->
+                    result.shouldBeTypeOf<Authenticated>()
+                    result.user.shouldBe(fakeUser)
+                }
             }
         }
     }
-})
+)
 
 private object NullSignupWorkflow : SignUpWorkflow,
     StatelessWorkflow<Unit, SignUpOutput, SignUpScreen>() {

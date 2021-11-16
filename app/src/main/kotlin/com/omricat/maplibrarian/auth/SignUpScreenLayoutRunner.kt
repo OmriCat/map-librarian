@@ -21,12 +21,14 @@ class SignUpScreenLayoutRunner(private val binding: SignUpScreenBinding) :
             root.backPressedHandler = rendering.backPressHandler
             when (val step = rendering.step) {
                 is SignUpScreen.Step.EnteringEmailAndPassword -> {
-                    btnSignUp.setOnClickListener { step.onSignUpClicked(
-                        EmailPasswordCredential(
-                        signUpEmail.text?.toString().orEmpty(),
-                            signUpPassword.text?.toString().orEmpty()
-                    )
-                    ) }
+                    btnSignUp.setOnClickListener {
+                        step.onSignUpClicked(
+                            EmailPasswordCredential(
+                                signUpEmail.text?.toString().orEmpty(),
+                                signUpPassword.text?.toString().orEmpty()
+                            )
+                        )
+                    }
                     btnSignUp.isEnabled = true
                     errorMessage.text = step.errorMessage
                 }

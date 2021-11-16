@@ -43,7 +43,7 @@ class FirebaseMapsService(
     ): Result<DbMapModel, MapsServiceError> {
         require(user.id == newMap.userId) {
             "UserId of newMap (was ${newMap.userId}) must be " +
-                    "same as userId of user (was ${user.id})"
+                "same as userId of user (was ${user.id})"
         }
         return withContext(dispatchers.io) {
             runSuspendCatching {

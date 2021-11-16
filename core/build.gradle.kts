@@ -1,5 +1,3 @@
-@file:Suppress("SuspiciousCollectionReassignment")
-
 plugins {
     `java-library`
     kotlin("jvm")

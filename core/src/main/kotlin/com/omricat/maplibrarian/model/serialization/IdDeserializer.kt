@@ -12,9 +12,14 @@ public interface IdDeserializer<ValueT, ErrorT> {
     ): Result<ValueT, ErrorT>
 }
 
-public inline fun <reified T> Map<String, Any?>.getProperty(propertyName: String): Result<T, Error> =
+public inline fun <reified T> Map<String, Any?>.getProperty(propertyName: String):
+    Result<T, Error> =
     get(propertyName).toResultOr { Error("Property $propertyName not found in $this") }
         .flatMap {
-            (it as? T).toResultOr { Error("Can't cast property $propertyName ($it : ${it::class}) " +
-                    "to type ${T::class.simpleName}") }
+            (it as? T).toResultOr {
+                Error(
+                    "Can't cast property $propertyName ($it : ${it::class}) " +
+                        "to type ${T::class.simpleName}"
+                )
+            }
         }
