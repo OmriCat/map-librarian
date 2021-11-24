@@ -58,7 +58,10 @@ public class RootWorkflow(
         state = Unauthorized
     }
 
-    override fun snapshotState(state: State): Snapshot? = null // TODO(#18) Implement snapshots
+    // No need to return anything here. If the user is logged in, then running the auth workflow
+    // will retrieve the logged in User and then return them to the MapList, which should restore
+    // it's own state.
+    override fun snapshotState(state: State): Snapshot? = null
 }
 
 public typealias Screen = Any
