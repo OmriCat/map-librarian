@@ -1,17 +1,17 @@
-package com.omricat.maplibrarian.maplist
+package com.omricat.maplibrarian.chartlist
 
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.EditingMapModel
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.Event
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.Event.Discard
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.Event.Saved
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.State
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.State.Editing
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow.State.Saving
-import com.omricat.maplibrarian.model.DbMapModel
-import com.omricat.maplibrarian.model.MapModel
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.EditingChartModel
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Discard
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Saved
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Editing
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Saving
+import com.omricat.maplibrarian.model.ChartModel
+import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.workflow.eventHandler
@@ -22,18 +22,19 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
-public class MapAddItemWorkflow(private val mapsService: MapsService) :
+public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public data class EditingMapModel(
+    public data class EditingChartModel(
         override val title: String,
         override val userId: UserUid
-    ) : MapModel
+    ) : ChartModel
 
     public sealed interface State {
-        public data class Editing(val map: EditingMapModel, val errorMessage: String = "") : State
+        public data class Editing(val chart: EditingChartModel, val errorMessage: String = "") :
+            State
 
-        public data class Saving(val map: MapModel) : State
+        public data class Saving(val chart: ChartModel) : State
     }
 
     public sealed interface Event {
@@ -42,7 +43,7 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
     }
 
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        Editing(EditingMapModel("", props.id))
+        Editing(EditingChartModel("", props.id))
 
     override fun render(
         renderProps: User,
@@ -51,26 +52,26 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
     ): AddingItemScreen = when (renderState) {
         is Editing -> {
             AddItemScreen(
-                map = renderState.map,
+                chart = renderState.chart,
                 errorMessage = renderState.errorMessage,
                 onTitleChanged = context.eventHandler(onTitleChanged(renderState)),
                 discardChanges = context.eventHandler(::onDiscard),
-                saveChanges = context.eventHandler(onSave(renderState.map))
+                saveChanges = context.eventHandler(onSave(renderState.chart))
             )
         }
         is Saving -> {
-            context.runningWorker(saveNewItem(renderProps, renderState.map)) { result ->
-                result.map { savedMap -> onNewItemSaved() }
+            context.runningWorker(saveNewItem(renderProps, renderState.chart)) { result ->
+                result.map { savedChart -> onNewItemSaved() }
                     .getOrElse { e ->
                         action {
                             state = Editing(
-                                map = editingMap(renderState.map),
+                                chart = editingChart(renderState.chart),
                                 errorMessage = e.message
                             )
                         }
                     }
             }
-            SavingItemScreen(renderState.map)
+            SavingItemScreen(renderState.chart)
         }
     }
 
@@ -80,34 +81,34 @@ public class MapAddItemWorkflow(private val mapsService: MapsService) :
 
     private fun saveNewItem(
         user: User,
-        map: MapModel
-    ): Worker<Result<DbMapModel, MapsServiceError>> =
-        resultWorker(MapsServiceError::fromThrowable) { mapsService.addNewMap(user, map) }
+        chart: ChartModel
+    ): Worker<Result<DbChartModel, ChartsServiceError>> =
+        resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
 
-    private fun onSave(map: MapModel) = action { state = Saving(map) }
+    private fun onSave(chart: ChartModel) = action { state = Saving(chart) }
 
     private fun onDiscard() = action { setOutput(Discard) }
 
     private fun onTitleChanged(editingState: Editing) = { newTitle: CharSequence ->
-        action { state = Editing(map = editingState.map.withTitle(newTitle.toString())) }
+        action { state = Editing(chart = editingState.chart.withTitle(newTitle.toString())) }
     }
 }
 
-public sealed interface AddingItemScreen : MapsScreen {
-    public val map: MapModel
+public sealed interface AddingItemScreen : ChartsScreen {
+    public val chart: ChartModel
 }
 
 public data class AddItemScreen(
-    override val map: MapModel,
+    override val chart: ChartModel,
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
     val saveChanges: () -> Unit
 ) : AddingItemScreen
 
-public data class SavingItemScreen(override val map: MapModel) : AddingItemScreen
+public data class SavingItemScreen(override val chart: ChartModel) : AddingItemScreen
 
-private fun EditingMapModel.withTitle(newTitle: String) = copy(title = newTitle)
+private fun EditingChartModel.withTitle(newTitle: String) = copy(title = newTitle)
 
-private fun editingMap(map: MapModel) =
-    EditingMapModel(title = map.title.toString(), userId = map.userId)
+private fun editingChart(chart: ChartModel) =
+    EditingChartModel(title = chart.title.toString(), userId = chart.userId)

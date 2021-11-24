@@ -6,11 +6,11 @@ import com.omricat.maplibrarian.auth.AuthResult.NotAuthenticated
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.AuthorizedScreen
-import com.omricat.maplibrarian.maplist.ActualMapsWorkflow.Props
-import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow.Props
+import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.root.RootWorkflow.State
-import com.omricat.maplibrarian.root.RootWorkflow.State.MapList
+import com.omricat.maplibrarian.root.RootWorkflow.State.ChartList
 import com.omricat.maplibrarian.root.RootWorkflow.State.Unauthorized
 import com.omricat.workflow.eventHandler
 import com.squareup.workflow1.Snapshot
@@ -21,12 +21,12 @@ import com.squareup.workflow1.renderChild
 public class RootWorkflow(
     private val authService: AuthService,
     private val authWorkflow: AuthWorkflow,
-    private val mapsWorkflow: MapsWorkflow
+    private val chartsWorkflow: ChartsWorkflow
 ) : StatefulWorkflow<Unit, State, Nothing, Screen>() {
 
     public sealed class State {
         public object Unauthorized : State()
-        public data class MapList(val user: User) : State()
+        public data class ChartList(val user: User) : State()
     }
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized
@@ -41,8 +41,8 @@ public class RootWorkflow(
                     }
                 }
             }
-            is MapList -> {
-                val mapsScreen = context.renderChild(mapsWorkflow, Props(renderState.user))
+            is ChartList -> {
+                val mapsScreen = context.renderChild(chartsWorkflow, Props(renderState.user))
                 AuthorizedScreen(
                     mapsScreen,
                     onLogoutClicked = context.eventHandler(::unauthorized)
@@ -51,7 +51,7 @@ public class RootWorkflow(
         }
 
     private fun onAuthenticated(authResult: Authenticated) =
-        action { state = MapList(authResult.user) }
+        action { state = ChartList(authResult.user) }
 
     private fun unauthorized() = action {
         authService.signOut()
