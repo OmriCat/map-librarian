@@ -1,7 +1,7 @@
-package com.omricat.maplibrarian.maplist
+package com.omricat.maplibrarian.chartlist
 
 import android.view.View
-import com.omricat.maplibrarian.databinding.EditMapBinding
+import com.omricat.maplibrarian.databinding.EditChartBinding
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
 import com.squareup.workflow1.ui.ViewFactory
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
@@ -10,9 +10,9 @@ import com.squareup.workflow1.ui.updateText
 
 @OptIn(WorkflowUiExperimentalApi::class)
 internal object AddItemScreenViewFactory : ViewFactory<AddItemScreen> by bind(
-    bindingInflater = EditMapBinding::inflate,
+    bindingInflater = EditChartBinding::inflate,
     showRendering = { screen, _ ->
-        editTitle.updateText(screen.map.title)
+        editTitle.updateText(screen.chart.title)
         savingError.text = screen.errorMessage
         enableSaveAndDiscard(screen)
     }
@@ -20,15 +20,15 @@ internal object AddItemScreenViewFactory : ViewFactory<AddItemScreen> by bind(
 
 @OptIn(WorkflowUiExperimentalApi::class)
 internal object SavingItemScreenViewFactory : ViewFactory<SavingItemScreen> by bind(
-    bindingInflater = EditMapBinding::inflate,
+    bindingInflater = EditChartBinding::inflate,
     showRendering = { screen, _ ->
-        editTitle.updateText(screen.map.title)
+        editTitle.updateText(screen.chart.title)
         enableSaveAndDiscard(null)
     }
 )
 
 @WorkflowUiExperimentalApi
-private fun EditMapBinding.enableSaveAndDiscard(
+private fun EditChartBinding.enableSaveAndDiscard(
     screen: AddItemScreen?
 ) {
     fun (() -> Unit).asClickListener(): (View) -> Unit = { _ ->

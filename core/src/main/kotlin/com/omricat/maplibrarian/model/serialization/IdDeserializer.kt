@@ -3,7 +3,7 @@ package com.omricat.maplibrarian.model.serialization
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.flatMap
 import com.github.michaelbull.result.toResultOr
-import com.omricat.maplibrarian.model.DbMapModelDeserializer.Error
+import com.omricat.maplibrarian.model.DbChartModelDeserializer.Error
 
 public interface IdDeserializer<ValueT, ErrorT> {
     public operator fun invoke(

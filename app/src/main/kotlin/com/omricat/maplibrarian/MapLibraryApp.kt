@@ -7,15 +7,15 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.maplist.MapsService
-import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.omricat.maplibrarian.chartlist.ChartsService
+import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 @Suppress("unused")
 class MapLibraryApp : Application() {
 
-    lateinit var diContainer: MapLibDiContainer
+    lateinit var diContainer: DiContainer
 
     override fun onCreate() {
         super.onCreate()
@@ -25,17 +25,17 @@ class MapLibraryApp : Application() {
     }
 }
 
-interface MapLibDiContainer {
+interface DiContainer {
     val authService: AuthService
-    val mapsService: MapsService
+    val chartsService: ChartsService
     val workflows: Workflows
     val viewRegistry: ViewRegistry
 
     interface Workflows {
         val auth: AuthWorkflow
-        val maps: MapsWorkflow
+        val charts: ChartsWorkflow
     }
 }
 
-val Context.mapLibDiContainer: MapLibDiContainer
+val Context.diContainer: DiContainer
     get() = (this.applicationContext as MapLibraryApp).diContainer

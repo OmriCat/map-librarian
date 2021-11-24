@@ -4,19 +4,19 @@ import com.omricat.maplibrarian.auth.ActualAuthWorkflow
 import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.SignUpWorkflow
-import com.omricat.maplibrarian.maplist.ActualMapsWorkflow
-import com.omricat.maplibrarian.maplist.MapAddItemWorkflow
-import com.omricat.maplibrarian.maplist.MapListViewRegistry
-import com.omricat.maplibrarian.maplist.MapsWorkflow
+import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow
+import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow
+import com.omricat.maplibrarian.chartlist.ChartsWorkflow
+import com.omricat.maplibrarian.chartlist.MapListViewRegistry
 import com.omricat.maplibrarian.root.AuthorizedScreenLayoutRunner
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.plus
 
 @WorkflowUiExperimentalApi
-abstract class DefaultDiContainer : MapLibDiContainer {
+abstract class DefaultDiContainer : DiContainer {
 
-    override val workflows: MapLibDiContainer.Workflows = object : MapLibDiContainer.Workflows {
+    override val workflows: DiContainer.Workflows = object : DiContainer.Workflows {
         override val auth: AuthWorkflow by lazy {
             ActualAuthWorkflow(
                 authService,
@@ -24,10 +24,10 @@ abstract class DefaultDiContainer : MapLibDiContainer {
             )
         }
 
-        override val maps: MapsWorkflow by lazy {
-            ActualMapsWorkflow(
-                mapsService,
-                MapAddItemWorkflow(mapsService)
+        override val charts: ChartsWorkflow by lazy {
+            ActualChartsWorkflow(
+                chartsService,
+                ChartAddItemWorkflow(chartsService)
             )
         }
     }

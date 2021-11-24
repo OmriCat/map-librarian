@@ -11,8 +11,8 @@ internal class MapModelSerializationTest : StringSpec({
 
     "serializing map model gives a map with correct keys" {
         val testMap =
-            DbMapModel(
-                mapId = MapId("map1"),
+            DbChartModel(
+                id = ChartId("map1"),
                 userId = UserUid("user1"),
                 title = "A nice map"
             )
@@ -23,8 +23,8 @@ internal class MapModelSerializationTest : StringSpec({
     }
     "serializing map model gives a map with all string values" {
         val testMap =
-            DbMapModel(
-                mapId = MapId("map1"),
+            DbChartModel(
+                id = ChartId("map1"),
                 userId = UserUid("user1"),
                 title = "A nice map"
             )
@@ -38,18 +38,18 @@ internal class MapModelSerializationTest : StringSpec({
         val serialized = mapOf("title" to "A nice map", "userId" to "user1")
         val id = "map1"
 
-        val deserialized = DbMapModelDeserializer(id, serialized)
+        val deserialized = DbChartModelDeserializer(id, serialized)
 
-        deserialized.shouldBeTypeOf<Ok<DbMapModel>>()
+        deserialized.shouldBeTypeOf<Ok<DbChartModel>>()
     }
 
     "deserializing should fail if title property is missing" {
         val serialized = mapOf("userId" to "user1")
         val id = "map1"
 
-        val deserialized = DbMapModelDeserializer(id, serialized)
+        val deserialized = DbChartModelDeserializer(id, serialized)
 
-        deserialized.shouldBeTypeOf<Err<DbMapModelDeserializer.Error>>()
+        deserialized.shouldBeTypeOf<Err<DbChartModelDeserializer.Error>>()
         deserialized.error.message shouldContain "Property title not found"
     }
 
@@ -57,9 +57,9 @@ internal class MapModelSerializationTest : StringSpec({
         val serialized = mapOf("title" to "A nice map", "userId" to 1.0)
         val id = "map1"
 
-        val deserialized = DbMapModelDeserializer(id, serialized)
+        val deserialized = DbChartModelDeserializer(id, serialized)
 
-        deserialized.shouldBeTypeOf<Err<DbMapModelDeserializer.Error>>()
+        deserialized.shouldBeTypeOf<Err<DbChartModelDeserializer.Error>>()
         deserialized.error.message shouldContain "Can't cast property userId"
     }
 })

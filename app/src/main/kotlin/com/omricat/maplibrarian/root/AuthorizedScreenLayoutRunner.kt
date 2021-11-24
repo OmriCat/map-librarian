@@ -5,8 +5,8 @@ import android.view.View
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.omricat.maplibrarian.R
 import com.omricat.maplibrarian.auth.AuthorizedScreen
+import com.omricat.maplibrarian.chartlist.AddItemDecoratorScreen
 import com.omricat.maplibrarian.databinding.AuthorizedScreenBinding
-import com.omricat.maplibrarian.maplist.AddItemDecoratorScreen
 import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.LayoutRunner.Companion.bind
 import com.squareup.workflow1.ui.ViewEnvironment

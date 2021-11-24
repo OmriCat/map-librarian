@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.omricat.maplibrarian.mapLibDiContainer
+import com.omricat.maplibrarian.diContainer
 import com.squareup.workflow1.SimpleLoggingWorkflowInterceptor
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowLayout
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val model: MainViewModel by viewModels()
-        val viewRegistry: ViewRegistry = mapLibDiContainer.viewRegistry
+        val viewRegistry: ViewRegistry = diContainer.viewRegistry
 
         setContentView(WorkflowLayout(this).apply { start(model.renderings, viewRegistry) })
     }
@@ -32,13 +32,13 @@ class MainActivity : AppCompatActivity() {
 
 internal class MainViewModel(app: Application, private val savedState: SavedStateHandle) :
     AndroidViewModel(app) {
-    private val diContainer = app.mapLibDiContainer
+    private val diContainer = app.diContainer
     val renderings: StateFlow<Screen> by lazy {
         renderWorkflowIn(
             workflow = RootWorkflow(
                 diContainer.authService,
                 diContainer.workflows.auth,
-                diContainer.workflows.maps
+                diContainer.workflows.charts
             ),
             scope = viewModelScope,
             savedStateHandle = savedState,
