@@ -21,6 +21,8 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
 
@@ -32,7 +34,7 @@ public class ActualChartsWorkflow(
     public data class Props(val user: User)
 
     override fun initialState(props: Props, snapshot: Snapshot?): ChartsState =
-        RequestData
+        snapshot?.let { ChartsState.fromSnapshot(it) } ?: RequestData
 
     override fun render(
         renderProps: Props,
@@ -66,10 +68,9 @@ public class ActualChartsWorkflow(
         is ErrorLoadingCharts -> ShowError(renderState.error.message)
     }
 
-    internal fun onItemAdded() = action { state = RequestData }
+    override fun snapshotState(state: ChartsState): Snapshot = state.toSnapshot()
 
-    override fun snapshotState(state: ChartsState): Snapshot? =
-        null // TODO(#18) Implement snapshots
+    internal fun onItemAdded() = action { state = RequestData }
 
     internal fun onSelectItem(itemIndex: Int) = action {}
 
@@ -92,12 +93,28 @@ public class ActualChartsWorkflow(
     }
 }
 
-public sealed interface ChartsState {
-    public object RequestData : ChartsState
-    public data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsState
-    public object AddingItem : ChartsState
-    public data class ErrorLoadingCharts(val error: ChartsServiceError) : ChartsState
+@Serializable
+public sealed class ChartsState {
+    @Serializable
+    public object RequestData : ChartsState()
+
+    @Serializable
+    public data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsState()
+
+    @Serializable
+    public object AddingItem : ChartsState()
+
+    @Serializable
+    public data class ErrorLoadingCharts(val error: ChartsServiceError) : ChartsState()
+
+    internal companion object
 }
+
+internal fun ChartsState.Companion.fromSnapshot(snapshot: Snapshot) =
+    Json.decodeFromString(serializer(), snapshot.bytes.utf8())
+
+internal fun ChartsState.toSnapshot(): Snapshot =
+    Snapshot.of(Json.encodeToString(ChartsState.serializer(), this))
 
 public sealed interface ChartsScreen {
     public object Loading : ChartsScreen
