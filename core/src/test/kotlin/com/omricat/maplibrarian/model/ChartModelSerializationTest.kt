@@ -13,7 +13,7 @@ internal class ChartModelSerializationTest : StringSpec({
     "serializing chart model gives a map with correct keys" {
         val testMap =
             DbChartModel(
-                id = ChartId("map1"),
+                chartId = ChartId("map1"),
                 userId = UserUid("user1"),
                 title = "A nice map"
             )
@@ -26,7 +26,7 @@ internal class ChartModelSerializationTest : StringSpec({
     "serializing chart model gives a map with all string values" {
         val testMap =
             DbChartModel(
-                id = ChartId("map1"),
+                chartId = ChartId("map1"),
                 userId = UserUid("user1"),
                 title = "A nice map"
             )

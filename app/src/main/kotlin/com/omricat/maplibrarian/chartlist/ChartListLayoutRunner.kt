@@ -71,7 +71,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
 
     private object ChartDiffCallback : DiffUtil.ItemCallback<DbChartModel>() {
         override fun areItemsTheSame(oldItem: DbChartModel, newItem: DbChartModel): Boolean =
-            oldItem.id == newItem.id
+            oldItem.chartId == newItem.chartId
 
         override fun areContentsTheSame(oldItem: DbChartModel, newItem: DbChartModel): Boolean =
             oldItem == newItem

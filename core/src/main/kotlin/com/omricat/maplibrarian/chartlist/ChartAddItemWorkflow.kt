@@ -3,7 +3,6 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.EditingChartModel
 import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event
 import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Discard
 import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Saved
@@ -22,19 +21,19 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
+private fun unsavedChartModel(userUid: UserUid, title: String): UnsavedChartModel =
+    ChartModel(userUid, title, null)
+
 public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public data class EditingChartModel(
-        override val title: String,
-        override val userId: UserUid
-    ) : ChartModel
-
     public sealed interface State {
-        public data class Editing(val chart: EditingChartModel, val errorMessage: String = "") :
-            State
+        public data class Editing(
+            val chart: UnsavedChartModel,
+            val errorMessage: String = ""
+        ) : State
 
-        public data class Saving(val chart: ChartModel) : State
+        public data class Saving(val chart: UnsavedChartModel) : State
     }
 
     public sealed interface Event {
@@ -43,7 +42,7 @@ public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
     }
 
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        Editing(EditingChartModel("", props.id))
+        Editing(unsavedChartModel(props.id, ""))
 
     override fun render(
         renderProps: User,
@@ -81,11 +80,11 @@ public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
 
     private fun saveNewItem(
         user: User,
-        chart: ChartModel
+        chart: ChartModel<Nothing?>
     ): Worker<Result<DbChartModel, ChartsServiceError>> =
         resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
 
-    private fun onSave(chart: ChartModel) = action { state = Saving(chart) }
+    private fun onSave(chart: UnsavedChartModel) = action { state = Saving(chart) }
 
     private fun onDiscard() = action { setOutput(Discard) }
 
@@ -95,20 +94,20 @@ public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
 }
 
 public sealed interface AddingItemScreen : ChartsScreen {
-    public val chart: ChartModel
+    public val chart: ChartModel<*>
 }
 
 public data class AddItemScreen(
-    override val chart: ChartModel,
+    override val chart: ChartModel<*>,
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
     val saveChanges: () -> Unit
 ) : AddingItemScreen
 
-public data class SavingItemScreen(override val chart: ChartModel) : AddingItemScreen
+public data class SavingItemScreen(override val chart: ChartModel<*>) : AddingItemScreen
 
-private fun EditingChartModel.withTitle(newTitle: String) = copy(title = newTitle)
+private fun UnsavedChartModel.withTitle(newTitle: String) = copy(title = newTitle)
 
-private fun editingChart(chart: ChartModel) =
-    EditingChartModel(title = chart.title.toString(), userId = chart.userId)
+private fun editingChart(chart: ChartModel<*>) =
+    unsavedChartModel(title = chart.title.toString(), userUid = chart.userId)

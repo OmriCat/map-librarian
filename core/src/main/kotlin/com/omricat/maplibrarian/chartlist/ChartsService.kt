@@ -9,9 +9,11 @@ public interface ChartsService {
     public suspend fun chartsListForUser(user: User): Result<List<DbChartModel>, ChartsServiceError>
     public suspend fun addNewChart(
         user: User,
-        newChart: ChartModel
+        newChart: UnsavedChartModel
     ): Result<DbChartModel, ChartsServiceError>
 }
+
+public typealias UnsavedChartModel = ChartModel<Nothing?>
 
 public data class ChartsServiceError(val message: String) {
     private constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")

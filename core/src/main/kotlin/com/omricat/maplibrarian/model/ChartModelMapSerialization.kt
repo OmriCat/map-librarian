@@ -17,15 +17,15 @@ private object MapModelProperties {
     const val USER_ID = "userId"
 }
 
-public object ChartModelToMapSerializer : ToMapSerializer<ChartModel> {
-    override operator fun invoke(model: ChartModel): Map<String, String> =
+public object ChartModelToMapSerializer : ToMapSerializer<ChartModel<*>> {
+    override operator fun invoke(model: ChartModel<*>): Map<String, String> =
         hashMapOf(
             TITLE to model.title.toString(),
             USER_ID to model.userId.id
         )
 }
 
-public fun ChartModel.serializedToMap(): Map<String, Any?> =
+public fun ChartModel<*>.serializedToMap(): Map<String, Any?> =
     ChartModelToMapSerializer(this)
 
 public object DbChartModelFromMapDeserializer :
@@ -37,6 +37,6 @@ public object DbChartModelFromMapDeserializer :
         val mapId = ChartId(id)
         val userId = properties.getProperty<String>(USER_ID).map { UserId(it) }.bind()
         val title = properties.getProperty<String>(TITLE).bind()
-        DbChartModel(userId = userId, id = mapId, title = title)
+        DbChartModel(userId = userId, chartId = mapId, title = title)
     }
 }

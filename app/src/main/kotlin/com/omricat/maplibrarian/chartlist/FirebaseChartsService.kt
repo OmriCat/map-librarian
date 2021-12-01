@@ -39,7 +39,7 @@ class FirebaseChartsService(
 
     override suspend fun addNewChart(
         user: User,
-        newChart: ChartModel
+        newChart: UnsavedChartModel
     ): Result<DbChartModel, ChartsServiceError> {
         require(user.id == newChart.userId) {
             "UserId of newMap (was ${newChart.userId}) must be " +
@@ -52,7 +52,9 @@ class FirebaseChartsService(
                     .await()
             }
         }.logErrorAndMap(ChartsServiceError::fromThrowable)
-            .map { ref -> DbChartModel(ChartId(ref.id), newChart) }
+            .map { ref ->
+                newChart.withChartId(ChartId(ref.id))
+            }
     }
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
@@ -60,6 +62,17 @@ class FirebaseChartsService(
             .document(user.id.toString())
             .collection("maps")
 }
+
+/*
+    It is always safe to upcast ChartModel<Nothing?> to ChartModel<ChartId?> since the only
+    possible value for a val of type Nothing? is null.
+
+    It is safe to cast ChartModel<ChartId?> to ChartModel<ChartId> immediately after setting
+    the chartId parameter to a non-null value.
+ */
+@Suppress("UNCHECKED_CAST")
+private fun ChartModel<Nothing?>.withChartId(chartId: ChartId): DbChartModel =
+    (this as ChartModel<ChartId?>).copy(chartId = chartId) as ChartModel<ChartId>
 
 internal fun DocumentSnapshot.parseMapModel() =
     DbChartModelFromMapDeserializer(id, data ?: emptyMap())
