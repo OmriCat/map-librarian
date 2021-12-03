@@ -5,7 +5,7 @@ import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.SignUpWorkflow
 import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.omricat.maplibrarian.chartlist.MapListViewRegistry
 import com.omricat.maplibrarian.root.AuthorizedScreenLayoutRunner
@@ -27,7 +27,7 @@ abstract class DefaultDiContainer : DiContainer {
         override val charts: ChartsWorkflow by lazy {
             ActualChartsWorkflow(
                 chartsService,
-                ChartAddItemWorkflow(chartsService)
+                AddNewChartWorkflow(chartsService)
             )
         }
     }

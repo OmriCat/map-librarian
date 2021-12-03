@@ -26,7 +26,7 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
 
 public class ActualChartsWorkflow(
     private val chartsService: ChartsService,
-    private val chartAddItemWorkflow: ChartAddItemWorkflow
+    private val addNewChartWorkflow: AddNewChartWorkflow
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
     public data class Props(val user: User)
@@ -61,7 +61,7 @@ public class ActualChartsWorkflow(
             )
         }
         is AddingItem ->
-            context.renderChild(chartAddItemWorkflow, props = renderProps.user) { onItemAdded() }
+            context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
 
         is ErrorLoadingCharts -> ShowError(renderState.error.message)
     }

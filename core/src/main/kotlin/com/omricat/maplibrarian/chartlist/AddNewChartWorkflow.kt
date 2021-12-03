@@ -3,12 +3,12 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Discard
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Saved
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Editing
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Saving
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Discard
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.User
@@ -24,16 +24,16 @@ import com.squareup.workflow1.runningWorker
 private fun unsavedChartModel(userUid: UserUid, title: String): UnsavedChartModel =
     ChartModel(userUid, title, null)
 
-public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
+public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public sealed interface State {
+    public sealed class State {
         public data class Editing(
             val chart: UnsavedChartModel,
             val errorMessage: String = ""
-        ) : State
+        ) : State()
 
-        public data class Saving(val chart: UnsavedChartModel) : State
+        public data class Saving(val chart: UnsavedChartModel) : State()
     }
 
     public sealed interface Event {
