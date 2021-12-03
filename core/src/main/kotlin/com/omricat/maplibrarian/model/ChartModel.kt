@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class ChartModel<IdT : ChartId?>(
     public val userId: UserUid,
-    public val title: CharSequence,
+    public val title: String,
     public val chartId: IdT
 )
 

@@ -20,7 +20,7 @@ private object MapModelProperties {
 public object ChartModelToMapSerializer : ToMapSerializer<ChartModel<*>> {
     override operator fun invoke(model: ChartModel<*>): Map<String, String> =
         hashMapOf(
-            TITLE to model.title.toString(),
+            TITLE to model.title,
             USER_ID to model.userId.id
         )
 }
