@@ -11,6 +11,7 @@ import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
+import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.workflow.eventHandler
@@ -22,7 +23,7 @@ import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 
 private fun unsavedChartModel(userUid: UserUid, title: String): UnsavedChartModel =
-    ChartModel(userUid, title, null)
+    UnsavedChartModel(userUid, title)
 
 public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
@@ -80,7 +81,7 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
 
     private fun saveNewItem(
         user: User,
-        chart: ChartModel<Nothing?>
+        chart: UnsavedChartModel
     ): Worker<Result<DbChartModel, ChartsServiceError>> =
         resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
 
@@ -94,20 +95,20 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
 }
 
 public sealed interface AddingItemScreen : ChartsScreen {
-    public val chart: ChartModel<*>
+    public val chart: ChartModel
 }
 
 public data class AddItemScreen(
-    override val chart: ChartModel<*>,
+    override val chart: ChartModel,
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
     val saveChanges: () -> Unit
 ) : AddingItemScreen
 
-public data class SavingItemScreen(override val chart: ChartModel<*>) : AddingItemScreen
+public data class SavingItemScreen(override val chart: ChartModel) : AddingItemScreen
 
 private fun UnsavedChartModel.withTitle(newTitle: String) = copy(title = newTitle)
 
-private fun editingChart(chart: ChartModel<*>) =
+private fun editingChart(chart: ChartModel) =
     unsavedChartModel(title = chart.title.toString(), userUid = chart.userId)

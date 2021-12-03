@@ -2,14 +2,23 @@ package com.omricat.maplibrarian.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-public data class ChartModel<IdT : ChartId?>(
-    public val userId: UserUid,
-    public val title: String,
-    public val chartId: IdT
-)
+public sealed interface ChartModel {
+    public val userId: UserUid
+    public val title: String
+}
 
-public typealias DbChartModel = ChartModel<ChartId>
+@Serializable
+public data class DbChartModel(
+    override val userId: UserUid,
+    override val title: String,
+    public val chartId: ChartId
+) : ChartModel
+
+@Serializable
+public data class UnsavedChartModel(
+    override val userId: UserUid,
+    override val title: String
+) : ChartModel
 
 @Serializable
 @JvmInline

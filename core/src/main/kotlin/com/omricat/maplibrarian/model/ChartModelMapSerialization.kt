@@ -17,15 +17,15 @@ private object MapModelProperties {
     const val USER_ID = "userId"
 }
 
-public object ChartModelToMapSerializer : ToMapSerializer<ChartModel<*>> {
-    override operator fun invoke(model: ChartModel<*>): Map<String, String> =
+public object ChartModelToMapSerializer : ToMapSerializer<UnsavedChartModel> {
+    override operator fun invoke(model: UnsavedChartModel): Map<String, String> =
         hashMapOf(
             TITLE to model.title,
             USER_ID to model.userId.id
         )
 }
 
-public fun ChartModel<*>.serializedToMap(): Map<String, Any?> =
+public fun UnsavedChartModel.serializedToMap(): Map<String, Any?> =
     ChartModelToMapSerializer(this)
 
 public object DbChartModelFromMapDeserializer :

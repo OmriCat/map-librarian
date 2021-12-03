@@ -1,8 +1,8 @@
 package com.omricat.maplibrarian.chartlist
 
 import com.github.michaelbull.result.Result
-import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
+import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
 import kotlinx.serialization.Serializable
 
@@ -14,7 +14,6 @@ public interface ChartsService {
     ): Result<DbChartModel, ChartsServiceError>
 }
 
-public typealias UnsavedChartModel = ChartModel<Nothing?>
 
 @Serializable
 public data class ChartsServiceError(val message: String) {
