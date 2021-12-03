@@ -24,18 +24,18 @@ class FirebaseChartsService(
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
 ) : ChartsService {
 
-    override suspend fun chartsListForUser(user: User): Result<List<DbChartModel>, ChartsServiceError> =
-        withContext(dispatchers.io) {
-            runSuspendCatching {
-                db.mapsCollection(user)
-                    .get()
-                    .await()
-            }
-        }.mapError(ChartsServiceError::fromThrowable)
-            .andThen { snapshot ->
-                snapshot.map { m -> m.parseMapModel() }.combine()
-                    .mapError { e -> ChartsServiceError(e.message) }
-            }
+    override suspend fun chartsListForUser(user: User):
+        Result<List<DbChartModel>, ChartsServiceError> = withContext(dispatchers.io) {
+        runSuspendCatching {
+            db.mapsCollection(user)
+                .get()
+                .await()
+        }
+    }.mapError(ChartsServiceError::fromThrowable)
+        .andThen { snapshot ->
+            snapshot.map { m -> m.parseMapModel() }.combine()
+                .mapError { e -> ChartsServiceError(e.message) }
+        }
 
     override suspend fun addNewChart(
         user: User,
