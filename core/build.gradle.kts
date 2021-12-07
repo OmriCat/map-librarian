@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 tasks.withType<Test> {
@@ -18,6 +19,8 @@ dependencies {
     implementation(workflow("core-jvm"))
 
     implementation("com.michael-bull.kotlin-result:kotlin-result:_")
+
+    implementation(KotlinX.serialization.json)
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)

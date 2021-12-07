@@ -1,5 +1,8 @@
 package com.omricat.maplibrarian.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 @JvmInline
 public value class UserUid(public val id: String)
 

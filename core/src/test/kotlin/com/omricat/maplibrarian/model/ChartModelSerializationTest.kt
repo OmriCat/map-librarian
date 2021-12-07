@@ -2,34 +2,34 @@ package com.omricat.maplibrarian.model
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.omricat.maplibrarian.model.serialization.DeserializerError
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeTypeOf
 
-internal class MapModelSerializationTest : StringSpec({
+internal class ChartModelSerializationTest : StringSpec({
 
-    "serializing map model gives a map with correct keys" {
+    "serializing chart model gives a map with correct keys" {
         val testMap =
-            DbChartModel(
-                id = ChartId("map1"),
+            UnsavedChartModel(
                 userId = UserUid("user1"),
                 title = "A nice map"
             )
 
-        val serialized: Map<String, Any?> = testMap.serialized()
+        val serialized: Map<String, Any?> = testMap.serializedToMap()
 
         serialized.keys shouldContainExactly setOf("title", "userId")
     }
-    "serializing map model gives a map with all string values" {
+
+    "serializing chart model gives a map with all string values" {
         val testMap =
-            DbChartModel(
-                id = ChartId("map1"),
+            UnsavedChartModel(
                 userId = UserUid("user1"),
                 title = "A nice map"
             )
 
-        val serialized: Map<String, Any?> = testMap.serialized()
+        val serialized: Map<String, Any?> = testMap.serializedToMap()
 
         serialized.values.forEach { it.shouldBeTypeOf<String>() }
     }
@@ -38,7 +38,7 @@ internal class MapModelSerializationTest : StringSpec({
         val serialized = mapOf("title" to "A nice map", "userId" to "user1")
         val id = "map1"
 
-        val deserialized = DbChartModelDeserializer(id, serialized)
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
 
         deserialized.shouldBeTypeOf<Ok<DbChartModel>>()
     }
@@ -47,9 +47,9 @@ internal class MapModelSerializationTest : StringSpec({
         val serialized = mapOf("userId" to "user1")
         val id = "map1"
 
-        val deserialized = DbChartModelDeserializer(id, serialized)
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
 
-        deserialized.shouldBeTypeOf<Err<DbChartModelDeserializer.Error>>()
+        deserialized.shouldBeTypeOf<Err<DeserializerError.PropertyNonFoundError>>()
         deserialized.error.message shouldContain "Property title not found"
     }
 
@@ -57,9 +57,9 @@ internal class MapModelSerializationTest : StringSpec({
         val serialized = mapOf("title" to "A nice map", "userId" to 1.0)
         val id = "map1"
 
-        val deserialized = DbChartModelDeserializer(id, serialized)
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
 
-        deserialized.shouldBeTypeOf<Err<DbChartModelDeserializer.Error>>()
-        deserialized.error.message shouldContain "Can't cast property userId"
+        deserialized.shouldBeTypeOf<Err<DeserializerError.CastError>>()
+        deserialized.error.message shouldContain "Can't cast"
     }
 })

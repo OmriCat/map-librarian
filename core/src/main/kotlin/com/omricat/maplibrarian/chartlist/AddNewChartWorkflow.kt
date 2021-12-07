@@ -3,17 +3,16 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.EditingChartModel
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Discard
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.Event.Saved
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Editing
-import com.omricat.maplibrarian.chartlist.ChartAddItemWorkflow.State.Saving
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Discard
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
+import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
-import com.omricat.maplibrarian.model.UserUid
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
@@ -21,20 +20,28 @@ import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
-public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
+public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
-    public data class EditingChartModel(
-        override val title: String,
-        override val userId: UserUid
-    ) : ChartModel
+    @Serializable
+    public sealed class State {
 
-    public sealed interface State {
-        public data class Editing(val chart: EditingChartModel, val errorMessage: String = "") :
-            State
+        @Serializable
+        public data class Editing(
+            val chart: UnsavedChartModel,
+            val errorMessage: String = ""
+        ) : State()
 
-        public data class Saving(val chart: ChartModel) : State
+        @Serializable
+        public data class Saving(val chart: UnsavedChartModel) : State()
+
+        internal companion object {
+            internal fun fromSnapshot(snapshot: Snapshot): State =
+                Json.decodeFromString(serializer(), snapshot.bytes.utf8())
+        }
     }
 
     public sealed interface Event {
@@ -43,7 +50,7 @@ public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
     }
 
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        Editing(EditingChartModel("", props.id))
+        snapshot?.let(State::fromSnapshot) ?: Editing(UnsavedChartModel(props.id, ""))
 
     override fun render(
         renderProps: User,
@@ -54,45 +61,48 @@ public class ChartAddItemWorkflow(private val chartsService: ChartsService) :
             AddItemScreen(
                 chart = renderState.chart,
                 errorMessage = renderState.errorMessage,
-                onTitleChanged = context.eventHandler(onTitleChanged(renderState)),
+                onTitleChanged = context.eventHandler(onTitleChanged(renderState.chart)),
                 discardChanges = context.eventHandler(::onDiscard),
                 saveChanges = context.eventHandler(onSave(renderState.chart))
             )
         }
         is Saving -> {
             context.runningWorker(saveNewItem(renderProps, renderState.chart)) { result ->
-                result.map { savedChart -> onNewItemSaved() }
-                    .getOrElse { e ->
-                        action {
-                            state = Editing(
-                                chart = editingChart(renderState.chart),
-                                errorMessage = e.message
-                            )
-                        }
-                    }
+                result.map { savedChart -> onNewItemSaved(savedChart) }
+                    .getOrElse { e -> onErrorSaving(renderState.chart, e) }
             }
             SavingItemScreen(renderState.chart)
         }
     }
 
-    internal fun onNewItemSaved() = action { setOutput(Saved) }
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
-    override fun snapshotState(state: State): Snapshot? = null // TODO(#18) Implement snapshots
+    internal fun onErrorSaving(
+        chart: UnsavedChartModel,
+        e: ChartsServiceError
+    ) = action {
+        state = Editing(chart, errorMessage = e.message)
+    }
+
+    internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved) }
 
     private fun saveNewItem(
         user: User,
-        chart: ChartModel
+        chart: UnsavedChartModel
     ): Worker<Result<DbChartModel, ChartsServiceError>> =
         resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
 
-    private fun onSave(chart: ChartModel) = action { state = Saving(chart) }
+    private fun onSave(chart: UnsavedChartModel) = action { state = Saving(chart) }
 
     private fun onDiscard() = action { setOutput(Discard) }
 
-    private fun onTitleChanged(editingState: Editing) = { newTitle: CharSequence ->
-        action { state = Editing(chart = editingState.chart.withTitle(newTitle.toString())) }
+    private fun onTitleChanged(chart: UnsavedChartModel) = { newTitle: CharSequence ->
+        action { state = Editing(chart.copy(title = newTitle.toString())) }
     }
 }
+
+internal fun State.toSnapshot(): Snapshot =
+    Snapshot.of(Json.encodeToString(State.serializer(), this))
 
 public sealed interface AddingItemScreen : ChartsScreen {
     public val chart: ChartModel
@@ -107,8 +117,3 @@ public data class AddItemScreen(
 ) : AddingItemScreen
 
 public data class SavingItemScreen(override val chart: ChartModel) : AddingItemScreen
-
-private fun EditingChartModel.withTitle(newTitle: String) = copy(title = newTitle)
-
-private fun editingChart(chart: ChartModel) =
-    EditingChartModel(title = chart.title.toString(), userId = chart.userId)

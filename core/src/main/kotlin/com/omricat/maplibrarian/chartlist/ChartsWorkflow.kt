@@ -7,10 +7,10 @@ import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow.Props
 import com.omricat.maplibrarian.chartlist.ChartsListWorkflow.Event.SelectItem
 import com.omricat.maplibrarian.chartlist.ChartsScreen.Loading
 import com.omricat.maplibrarian.chartlist.ChartsScreen.ShowError
-import com.omricat.maplibrarian.chartlist.ChartsState.AddingItem
-import com.omricat.maplibrarian.chartlist.ChartsState.ChartsListLoaded
-import com.omricat.maplibrarian.chartlist.ChartsState.ErrorLoadingCharts
-import com.omricat.maplibrarian.chartlist.ChartsState.RequestData
+import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.AddingItem
+import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ChartsListLoaded
+import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ErrorLoadingCharts
+import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.RequestData
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.eventHandler
@@ -26,17 +26,17 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
 
 public class ActualChartsWorkflow(
     private val chartsService: ChartsService,
-    private val chartAddItemWorkflow: ChartAddItemWorkflow
-) : StatefulWorkflow<Props, ChartsState, Nothing, ChartsScreen>(), ChartsWorkflow {
+    private val addNewChartWorkflow: AddNewChartWorkflow
+) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
     public data class Props(val user: User)
 
-    override fun initialState(props: Props, snapshot: Snapshot?): ChartsState =
-        RequestData
+    override fun initialState(props: Props, snapshot: Snapshot?): ChartsWorkflowState =
+        snapshot?.let { ChartsWorkflowState.fromSnapshot(it) } ?: RequestData
 
     override fun render(
         renderProps: Props,
-        renderState: ChartsState,
+        renderState: ChartsWorkflowState,
         context: RenderContext
     ): ChartsScreen = when (renderState) {
         is RequestData -> {
@@ -61,15 +61,14 @@ public class ActualChartsWorkflow(
             )
         }
         is AddingItem ->
-            context.renderChild(chartAddItemWorkflow, props = renderProps.user) { onItemAdded() }
+            context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
 
         is ErrorLoadingCharts -> ShowError(renderState.error.message)
     }
 
-    internal fun onItemAdded() = action { state = RequestData }
+    override fun snapshotState(state: ChartsWorkflowState): Snapshot = state.toSnapshot()
 
-    override fun snapshotState(state: ChartsState): Snapshot? =
-        null // TODO(#18) Implement snapshots
+    internal fun onItemAdded() = action { state = RequestData }
 
     internal fun onSelectItem(itemIndex: Int) = action {}
 
@@ -88,15 +87,10 @@ public class ActualChartsWorkflow(
             chartsService: ChartsService,
             user: User
         ): Worker<Result<List<DbChartModel>, ChartsServiceError>> =
-            resultWorker(ChartsServiceError::fromThrowable) { chartsService.chartsListForUser(user) }
+            resultWorker(ChartsServiceError::fromThrowable) {
+                chartsService.chartsListForUser(user)
+            }
     }
-}
-
-public sealed interface ChartsState {
-    public object RequestData : ChartsState
-    public data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsState
-    public object AddingItem : ChartsState
-    public data class ErrorLoadingCharts(val error: ChartsServiceError) : ChartsState
 }
 
 public sealed interface ChartsScreen {

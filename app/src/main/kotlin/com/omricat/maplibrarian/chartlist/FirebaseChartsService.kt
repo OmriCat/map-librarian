@@ -8,11 +8,11 @@ import com.github.michaelbull.result.mapError
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.model.ChartId
-import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
-import com.omricat.maplibrarian.model.DbChartModelDeserializer
+import com.omricat.maplibrarian.model.DbChartModelFromMapDeserializer
+import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
-import com.omricat.maplibrarian.model.serialized
+import com.omricat.maplibrarian.model.serializedToMap
 import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logErrorAndMap
 import com.omricat.maplibrarian.utils.runSuspendCatching
@@ -24,22 +24,24 @@ class FirebaseChartsService(
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
 ) : ChartsService {
 
-    override suspend fun chartsListForUser(user: User): Result<List<DbChartModel>, ChartsServiceError> =
+    override suspend fun chartsListForUser(user: User):
+        Result<List<DbChartModel>, ChartsServiceError> =
         withContext(dispatchers.io) {
             runSuspendCatching {
                 db.mapsCollection(user)
                     .get()
                     .await()
             }
-        }.mapError(ChartsServiceError::fromThrowable)
+        }
+            .mapError(ChartsServiceError::fromThrowable)
             .andThen { snapshot ->
-                snapshot.map { m: DocumentSnapshot -> m.parseMapModel() }.combine()
-                    .mapError { ChartsServiceError(it.message) }
+                snapshot.map { m -> m.parseMapModel() }.combine()
+                    .mapError { e -> ChartsServiceError(e.message) }
             }
 
     override suspend fun addNewChart(
         user: User,
-        newChart: ChartModel
+        newChart: UnsavedChartModel
     ): Result<DbChartModel, ChartsServiceError> {
         require(user.id == newChart.userId) {
             "UserId of newMap (was ${newChart.userId}) must be " +
@@ -48,11 +50,14 @@ class FirebaseChartsService(
         return withContext(dispatchers.io) {
             runSuspendCatching {
                 db.mapsCollection(user)
-                    .add(newChart.serialized())
+                    .add(newChart.serializedToMap())
                     .await()
             }
-        }.logErrorAndMap(ChartsServiceError::fromThrowable)
-            .map { ref -> DbChartModel(ChartId(ref.id), newChart) }
+        }
+            .logErrorAndMap(ChartsServiceError::fromThrowable)
+            .map { ref ->
+                newChart.withChartId(ChartId(ref.id))
+            }
     }
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
@@ -61,5 +66,20 @@ class FirebaseChartsService(
             .collection("maps")
 }
 
+/*
+    It is always safe to upcast ChartModel<Nothing?> to ChartModel<ChartId?> since the only
+    possible value for a val of type Nothing? is null.
+
+    It is safe to cast ChartModel<ChartId?> to ChartModel<ChartId> immediately after setting
+    the chartId parameter to a non-null value.
+ */
+@Suppress("UNCHECKED_CAST")
+private fun UnsavedChartModel.withChartId(chartId: ChartId): DbChartModel =
+    DbChartModel(
+        userId = userId,
+        title = title,
+        chartId = chartId
+    )
+
 internal fun DocumentSnapshot.parseMapModel() =
-    DbChartModelDeserializer(id, data ?: emptyMap())
+    DbChartModelFromMapDeserializer(id, data ?: emptyMap())
