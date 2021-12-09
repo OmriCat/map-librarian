@@ -9,6 +9,10 @@ import io.kotest.matchers.shouldBe
 internal class ChartsWorkflowTest : WordSpec({
 
     "ChartsState.toSnapshot composed with fromSnapshot" should {
+        val dbChart = DbChartModel(
+            UserUid("user"), "title",
+            ChartId("chart")
+        )
         "be the identity for RequestData" {
             val state = ChartsWorkflowState.RequestData
 
@@ -21,15 +25,8 @@ internal class ChartsWorkflowTest : WordSpec({
             ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
         }
 
-        "be the identity for AddingItem" {
-            val state = ChartsWorkflowState.ChartsListLoaded(
-                listOf(
-                    DbChartModel(
-                        UserUid("user"), "title",
-                        ChartId("chart")
-                    )
-                )
-            )
+        "be the identity for ChartsListLoaded" {
+            val state = ChartsWorkflowState.ChartsListLoaded(listOf(dbChart))
 
             ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
         }
@@ -39,6 +36,12 @@ internal class ChartsWorkflowTest : WordSpec({
 
             ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe
                 ChartsWorkflowState.RequestData
+        }
+
+        "be the identity for ShowingDetails" {
+            val state = ChartsWorkflowState.ShowingDetails(dbChart)
+
+            ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
         }
     }
 })
