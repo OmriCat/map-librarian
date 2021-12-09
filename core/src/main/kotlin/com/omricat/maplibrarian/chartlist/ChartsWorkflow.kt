@@ -65,7 +65,10 @@ public class ActualChartsWorkflow(
         }
 
         is ShowingDetails ->
-            context.renderChild(showingDetailsWorkflow, props = renderState.chartModel)
+            context.renderChild(
+                showingDetailsWorkflow,
+                props = ChartDetailsWorkflow.Props(renderProps.user, renderState.chartModel)
+            )
 
         is AddingItem ->
             context.renderChild(

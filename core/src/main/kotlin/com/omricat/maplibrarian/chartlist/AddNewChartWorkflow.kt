@@ -26,20 +26,21 @@ import kotlinx.serialization.json.Json
 
 public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     StatefulWorkflow<Props, State, Event, EditingItemScreen>() {
-
-    public data class Props(val user: User, val existingChart: DbChartModel? = null)
+    public data class Props(
+        val user: User,
+        val initialChart: ChartModel<*> = emptyChartModel(user)
+    )
 
     @Serializable
     public sealed class State {
-
         @Serializable
-        public data class Editing(
-            val chart: UnsavedChartModel,
+        public data class Editing<T : ChartModel<T>>(
+            val chart: ChartModel<T>,
             val errorMessage: String = ""
         ) : State()
 
         @Serializable
-        public data class Saving(val chart: UnsavedChartModel) : State()
+        public data class Saving<T : ChartModel<T>>(val chart: ChartModel<T>) : State()
 
         internal companion object {
             internal fun fromSnapshot(snapshot: Snapshot): State =
@@ -49,18 +50,18 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
 
     public sealed interface Event {
         public object Discard : Event
-        public object Saved : Event
+        public data class Saved(val savedChart: DbChartModel) : Event
     }
 
     override fun initialState(props: Props, snapshot: Snapshot?): State =
-        snapshot?.let(State::fromSnapshot) ?: Editing(UnsavedChartModel(props.user.id, ""))
+        snapshot?.let(State::fromSnapshot) ?: Editing(props.initialChart)
 
     override fun render(
         renderProps: Props,
         renderState: State,
         context: RenderContext
     ): EditingItemScreen = when (renderState) {
-        is Editing -> {
+        is Editing<*> -> {
             EditItemScreen(
                 chart = renderState.chart,
                 errorMessage = renderState.errorMessage,
@@ -69,8 +70,8 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
                 saveChanges = context.eventHandler(onSave(renderState.chart))
             )
         }
-        is Saving -> {
-            context.runningWorker(saveNewItem(renderProps.user, renderState.chart)) { result ->
+        is Saving<*> -> {
+            context.runningWorker(saveChart(renderProps, renderState.chart)) { result ->
                 result.map { savedChart -> onNewItemSaved(savedChart) }
                     .getOrElse { e -> onErrorSaving(renderState.chart, e) }
             }
@@ -81,42 +82,47 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
     internal fun onErrorSaving(
-        chart: UnsavedChartModel,
+        chart: ChartModel<*>,
         e: ChartsServiceError
     ) = action {
         state = Editing(chart, errorMessage = e.message)
     }
 
-    internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved) }
+    internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved(savedChart)) }
 
-    private fun saveNewItem(
-        user: User,
-        chart: UnsavedChartModel
+    private fun <T : ChartModel<T>> saveChart(
+        props: Props,
+        chart: ChartModel<T>
     ): Worker<Result<DbChartModel, ChartsServiceError>> =
-        resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
+        resultWorker(ChartsServiceError::fromThrowable) {
+            chartsService.saveChart(props.user, chart)
+        }
 
-    private fun onSave(chart: UnsavedChartModel) = action { state = Saving(chart) }
+    private fun <T : ChartModel<T>> onSave(chart: ChartModel<T>) = action { state = Saving(chart) }
 
     private fun onDiscard() = action { setOutput(Discard) }
 
-    private fun onTitleChanged(chart: UnsavedChartModel) = { newTitle: CharSequence ->
-        action { state = Editing(chart.copy(title = newTitle.toString())) }
+    private fun onTitleChanged(chart: ChartModel<*>) = { newTitle: CharSequence ->
+        action { state = Editing(chart.clone(title = newTitle.toString())) }
     }
 }
 
 internal fun State.toSnapshot(): Snapshot =
     Snapshot.of(Json.encodeToString(State.serializer(), this))
 
+private fun emptyChartModel(user: User) =
+    UnsavedChartModel(user.id, "")
+
 public sealed interface EditingItemScreen : ChartsScreen {
-    public val chart: ChartModel
+    public val chart: ChartModel<*>
 }
 
 public data class EditItemScreen(
-    override val chart: ChartModel,
+    override val chart: ChartModel<*>,
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
     val saveChanges: () -> Unit
 ) : EditingItemScreen
 
-public data class SavingItemScreen(override val chart: ChartModel) : EditingItemScreen
+public data class SavingItemScreen(override val chart: ChartModel<*>) : EditingItemScreen

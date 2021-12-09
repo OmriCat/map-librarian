@@ -2,9 +2,10 @@ package com.omricat.maplibrarian.model
 
 import kotlinx.serialization.Serializable
 
-public sealed interface ChartModel {
+public sealed interface ChartModel<SelfT : ChartModel<SelfT>> {
     public val userId: UserUid
     public val title: String
+    public fun clone(title: String = this.title): SelfT
 }
 
 @Serializable
@@ -12,13 +13,17 @@ public data class DbChartModel(
     override val userId: UserUid,
     override val title: String,
     public val chartId: ChartId
-) : ChartModel
+) : ChartModel<DbChartModel> {
+    override fun clone(title: String): DbChartModel = copy(title = title)
+}
 
 @Serializable
 public data class UnsavedChartModel(
     override val userId: UserUid,
     override val title: String
-) : ChartModel
+) : ChartModel<UnsavedChartModel> {
+    override fun clone(title: String): UnsavedChartModel = copy(title = title)
+}
 
 @Serializable
 @JvmInline
