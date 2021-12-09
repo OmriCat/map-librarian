@@ -68,7 +68,10 @@ public class ActualChartsWorkflow(
             context.renderChild(showingDetailsWorkflow, props = renderState.chartModel)
 
         is AddingItem ->
-            context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
+            context.renderChild(
+                addNewChartWorkflow,
+                props = AddNewChartWorkflow.Props(renderProps.user)
+            ) { onItemAdded() }
 
         is ErrorLoadingCharts -> ShowError(renderState.error.message)
     }
