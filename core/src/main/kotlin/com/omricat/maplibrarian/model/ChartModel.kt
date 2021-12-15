@@ -1,11 +1,24 @@
 package com.omricat.maplibrarian.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 public sealed interface ChartModel<SelfT : ChartModel<SelfT>> {
     public val userId: UserUid
     public val title: String
     public fun clone(title: String = this.title): SelfT
+
+    public companion object {
+
+        public val serializerModule: SerializersModule = SerializersModule {
+            polymorphic(ChartModel::class) {
+                subclass(DbChartModel::class)
+                subclass(UnsavedChartModel::class)
+            }
+        }
+    }
 }
 
 @Serializable
