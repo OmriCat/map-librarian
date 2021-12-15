@@ -3,6 +3,10 @@ package com.omricat.maplibrarian.auth
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
+import com.omricat.maplibrarian.auth.ActualSignUpWorkflow.Actions.OnErrorCreatingUser
+import com.omricat.maplibrarian.auth.ActualSignUpWorkflow.Actions.OnSignUpCancelled
+import com.omricat.maplibrarian.auth.ActualSignUpWorkflow.Actions.OnSignUpClicked
+import com.omricat.maplibrarian.auth.ActualSignUpWorkflow.Actions.OnUserCreated
 import com.omricat.maplibrarian.auth.SignUpOutput.SignUpCancelled
 import com.omricat.maplibrarian.auth.SignUpOutput.UserCreated
 import com.omricat.maplibrarian.auth.SignUpScreen.EmailAndPasswordSignUpScreen
@@ -11,13 +15,14 @@ import com.omricat.maplibrarian.auth.SignUpScreen.Step.EnteringEmailAndPassword
 import com.omricat.maplibrarian.auth.State.AttemptingUserCreation
 import com.omricat.maplibrarian.auth.State.SignUpPrompt
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.AbstractWorkflowAction
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
-import com.squareup.workflow1.action
+import com.squareup.workflow1.WorkflowAction
 import com.squareup.workflow1.runningWorker
 
 public interface SignUpWorkflow : Workflow<Unit, SignUpOutput, SignUpScreen> {
@@ -70,17 +75,33 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
     internal fun onErrorCreatingUser(
         credential: EmailPasswordCredential,
         e: AuthError
-    ) = action {
-        this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
+    ) = OnErrorCreatingUser(credential, e)
+
+    internal fun onUserCreated(user: User) = OnUserCreated(user)
+
+    internal fun onSignUpClicked(credential: EmailPasswordCredential) = OnSignUpClicked(credential)
+
+    internal fun onSignUpCancelled() = OnSignUpCancelled
+
+    internal object Actions {
+
+        class OnErrorCreatingUser(credential: EmailPasswordCredential, e: AuthError) : Action(
+            { state = SignUpPrompt(credential = credential, errorMessage = e.message) },
+            "$this"
+        )
+
+        class OnSignUpClicked(credential: EmailPasswordCredential) :
+            Action({ state = AttemptingUserCreation(credential) }, "$this")
+
+        class OnUserCreated(user: User) : Action({ setOutput(UserCreated(user)) }, "$this")
+
+        object OnSignUpCancelled : Action({ setOutput(SignUpCancelled) }, "$this")
     }
 
-    internal fun onUserCreated(user: User) = action { setOutput(UserCreated(user)) }
-
-    internal fun onSignUpClicked(credential: EmailPasswordCredential) = action {
-        state = AttemptingUserCreation(credential)
-    }
-
-    internal fun onSignUpCancelled() = action { setOutput(SignUpCancelled) }
+    internal open class Action(
+        updater: WorkflowAction<Unit, State, SignUpOutput>.Updater.() -> Unit,
+        name: String
+    ) : AbstractWorkflowAction<Unit, State, SignUpOutput>({ name }, updater)
 
     internal fun attemptUserCreation(credential: EmailPasswordCredential):
         Worker<Result<User, AuthError>> =

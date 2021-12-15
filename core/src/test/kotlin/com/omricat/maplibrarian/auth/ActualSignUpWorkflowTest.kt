@@ -1,5 +1,6 @@
 package com.omricat.maplibrarian.auth
 
+import com.omricat.maplibrarian.auth.ActualSignUpWorkflow.Actions
 import com.omricat.maplibrarian.auth.State.AttemptingUserCreation
 import com.omricat.maplibrarian.auth.State.SignUpPrompt
 import com.omricat.maplibrarian.model.UserUid
@@ -17,25 +18,23 @@ internal class ActualSignUpWorkflowTest : WordSpec({
 
     "actions work correctly" should {
         "onSignUpClicked sets correct state and no output" {
-            val workflow = ActualSignUpWorkflow(TestAuthService())
             val credential = EmailPasswordCredential("blah@blah", "password")
 
-            val (newState, maybeOutput) = workflow.onSignUpClicked(credential).applyTo(
+            val (newState, maybeOutput) = Actions.OnSignUpClicked(credential).applyTo(
                 props = Unit,
                 state = SignUpPrompt()
             )
 
             assertSoftly {
                 maybeOutput.shouldBeNull()
-                newState.shouldBeTypeOf<State.AttemptingUserCreation>()
+                newState.shouldBeTypeOf<AttemptingUserCreation>()
             }
         }
 
         "onErrorCreatingUser sets correct state and no output" {
-            val workflow = ActualSignUpWorkflow(TestAuthService())
             val credential = EmailPasswordCredential("blah@blah", "password")
 
-            val (newState, maybeOutput) = workflow.onErrorCreatingUser(
+            val (newState, maybeOutput) = Actions.OnErrorCreatingUser(
                 credential,
                 AuthError("Error creating user")
             ).applyTo(
@@ -45,16 +44,15 @@ internal class ActualSignUpWorkflowTest : WordSpec({
 
             assertSoftly {
                 maybeOutput.shouldBeNull()
-                newState.shouldBeTypeOf<State.SignUpPrompt>()
+                newState.shouldBeTypeOf<SignUpPrompt>()
             }
         }
 
         "onUserCreated sets output to created user" {
-            val workflow = ActualSignUpWorkflow(TestAuthService())
             val credential = EmailPasswordCredential("blah@blah", "password")
             val user = TestUser("user1", UserUid("1234"))
 
-            val (_, maybeOutput) = workflow.onUserCreated(user).applyTo(
+            val (_, maybeOutput) = Actions.OnUserCreated(user).applyTo(
                 props = Unit,
                 state = AttemptingUserCreation(credential)
             )
@@ -69,10 +67,9 @@ internal class ActualSignUpWorkflowTest : WordSpec({
         }
 
         "onSignUpCancelled sets output to null applied to AttemptingUserCreation state" {
-            val workflow = ActualSignUpWorkflow(TestAuthService())
             val credential = EmailPasswordCredential("blah@blah", "password")
 
-            val (_, maybeOutput) = workflow.onSignUpCancelled().applyTo(
+            val (_, maybeOutput) = Actions.OnSignUpCancelled.applyTo(
                 props = Unit,
                 state = AttemptingUserCreation(credential)
             )
@@ -84,9 +81,7 @@ internal class ActualSignUpWorkflowTest : WordSpec({
         }
 
         "onSignUpCancelled sets output to null applied to SignUpPrompt state" {
-            val workflow = ActualSignUpWorkflow(TestAuthService())
-
-            val (_, maybeOutput) = workflow.onSignUpCancelled().applyTo(
+            val (_, maybeOutput) = Actions.OnSignUpCancelled.applyTo(
                 props = Unit,
                 state = SignUpPrompt()
             )
@@ -109,9 +104,8 @@ internal class ActualSignUpWorkflowTest : WordSpec({
                         it.password.shouldBeEmpty()
                     }
                     screen.backPressHandler.invoke()
-                }.verifyActionResult { _, output ->
-                    output.shouldNotBeNull()
-                    output.value.shouldBe(SignUpOutput.SignUpCancelled)
+                }.verifyAction {
+                    it.shouldBeTypeOf<Actions.OnSignUpCancelled>()
                 }
         }
     }

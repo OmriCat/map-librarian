@@ -6,10 +6,11 @@ import com.omricat.maplibrarian.chartlist.ChartDetailsWorkflow.State.EditingChar
 import com.omricat.maplibrarian.chartlist.ChartDetailsWorkflow.State.ShowingDetails
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.AbstractWorkflowAction
 import com.omricat.workflow.eventHandler
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
-import com.squareup.workflow1.action
+import com.squareup.workflow1.WorkflowAction
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -44,7 +45,7 @@ public class ChartDetailsWorkflow(private val editChartWorkflow: AddNewChartWork
     ): ChartDetailsScreen {
         val showingChartDetailsScreen = ShowingChartDetailsScreen(
             title = renderState.chart.title,
-            onEditPressed = context.eventHandler(onEdit(renderState))
+            onEditPressed = context.eventHandler(Actions.OnEdit(renderState.chart))
         )
         return when (renderState) {
             is ShowingDetails -> {
@@ -57,16 +58,21 @@ public class ChartDetailsWorkflow(private val editChartWorkflow: AddNewChartWork
                     overlaidEditingScreen = context.renderChild(
                         editChartWorkflow,
                         props = AddNewChartWorkflow.Props(renderProps.user, renderState.chart)
-                    ) { action { } }
+                    ) { WorkflowAction.noAction() }
                 )
         }
     }
 
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
-    private fun onEdit(renderState: State) = action {
-        state = EditingChart(renderState.chart)
+    internal object Actions {
+        class OnEdit(chart: DbChartModel) : Action({ state = EditingChart(chart) }, "OnEdit")
     }
+
+    internal open class Action(
+        updater: WorkflowAction<Props, State, Nothing>.Updater.() -> Unit,
+        name: String
+    ) : AbstractWorkflowAction<Props, State, Nothing>({ name }, updater)
 }
 
 internal fun State.toSnapshot(): Snapshot =
