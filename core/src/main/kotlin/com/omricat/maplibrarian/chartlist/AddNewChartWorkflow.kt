@@ -3,6 +3,11 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnDiscard
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnErrorSaving
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnNewItemSaved
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnSave
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnTitleChanged
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Discard
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
@@ -14,12 +19,13 @@ import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.workflow.AbstractWorkflowAction
 import com.omricat.workflow.StateSnapshotSerializer
 import com.omricat.workflow.StatefulWorkflowWithSnapshots
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Worker
-import com.squareup.workflow1.action
+import com.squareup.workflow1.WorkflowAction
 import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
@@ -71,28 +77,55 @@ public class AddNewChartWorkflow(
             EditItemScreen(
                 chart = renderState.chart,
                 errorMessage = renderState.errorMessage,
-                onTitleChanged = context.eventHandler(onTitleChanged(renderState.chart)),
-                discardChanges = context.eventHandler(::onDiscard),
-                saveChanges = context.eventHandler(onSave(renderState.chart))
+                onTitleChanged = { newTitle ->
+                    context.actionSink.send(
+                        OnTitleChanged(renderState.chart, newTitle)
+                    )
+                },
+                discardChanges = context.eventHandler(OnDiscard),
+                saveChanges = context.eventHandler(OnSave(renderState.chart))
             )
         }
         is Saving<*> -> {
             context.runningWorker(saveChart(renderProps, renderState.chart)) { result ->
-                result.map { savedChart -> onNewItemSaved(savedChart) }
-                    .getOrElse { e -> onErrorSaving(renderState.chart, e) }
+                result.map { savedChart -> OnNewItemSaved(savedChart) }
+                    .getOrElse { e -> OnErrorSaving(renderState.chart, e) }
             }
             SavingItemScreen(renderState.chart)
         }
     }
 
-    internal fun onErrorSaving(
-        chart: ChartModel<*>,
-        e: ChartsServiceError
-    ) = action {
-        state = Editing(chart, errorMessage = e.message)
+    internal object Actions {
+        class OnErrorSaving(
+            private val chart: ChartModel<*>,
+            private val error: ChartsServiceError
+        ) : Action("OnErrorSaving", {
+            state = Editing(chart, errorMessage = error.message)
+        })
+
+        class OnNewItemSaved(private val savedChart: DbChartModel) : Action("OnNewItemSaved",
+            {
+                setOutput(Saved(savedChart))
+            })
+
+        object OnDiscard : Action("OnDiscard", { setOutput(Discard) })
+
+        class OnTitleChanged(private val chart: ChartModel<*>, private val newTitle: CharSequence) :
+            Action("OnTitleChanged", {
+                state = Editing(
+                    chart.clone(title = newTitle.toString())
+                )
+            })
+
+        class OnSave<T : ChartModel<T>>(private val chart: ChartModel<T>) : Action("OnSave", {
+            state = Saving(chart)
+        })
     }
 
-    internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved(savedChart)) }
+    internal open class Action(
+        name: String,
+        updater: WorkflowAction<Props, State, Event>.Updater.() -> Unit
+    ) : AbstractWorkflowAction<Props, State, Event>({ name }, updater)
 
     private fun <T : ChartModel<T>> saveChart(
         props: Props,
@@ -101,14 +134,6 @@ public class AddNewChartWorkflow(
         resultWorker(ChartsServiceError::fromThrowable) {
             chartsService.saveChart(props.user, chart)
         }
-
-    private fun <T : ChartModel<T>> onSave(chart: ChartModel<T>) = action { state = Saving(chart) }
-
-    private fun onDiscard() = action { setOutput(Discard) }
-
-    private fun onTitleChanged(chart: ChartModel<*>) = { newTitle: CharSequence ->
-        action { state = Editing(chart.clone(title = newTitle.toString())) }
-    }
 }
 
 public sealed interface EditingItemScreen : ChartsScreen {
