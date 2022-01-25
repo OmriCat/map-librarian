@@ -9,7 +9,7 @@ import com.squareup.workflow1.ui.setTextChangedListener
 import com.squareup.workflow1.ui.updateText
 
 @OptIn(WorkflowUiExperimentalApi::class)
-internal object AddItemScreenViewFactory : ViewFactory<EditItemScreen> by bind(
+internal object EditChartDetailsScreenViewFactory : ViewFactory<EditChartDetailsScreen> by bind(
     bindingInflater = EditChartBinding::inflate,
     showRendering = { screen, _ ->
         editTitle.updateText(screen.chart.title)
@@ -29,7 +29,7 @@ internal object SavingItemScreenViewFactory : ViewFactory<SavingItemScreen> by b
 
 @WorkflowUiExperimentalApi
 private fun EditChartBinding.enableSaveAndDiscard(
-    screen: EditItemScreen?
+    screen: EditChartDetailsScreen?
 ) {
     fun (() -> Unit).asClickListener(): (View) -> Unit = { _ ->
         this.invoke()

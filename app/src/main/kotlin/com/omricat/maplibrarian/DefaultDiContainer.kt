@@ -5,9 +5,9 @@ import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.SignUpWorkflow
 import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow
 import com.omricat.maplibrarian.chartlist.ChartDetailsWorkflow
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow
 import com.omricat.maplibrarian.chartlist.MapListViewRegistry
 import com.omricat.maplibrarian.root.AuthorizedScreenLayoutRunner
 import com.squareup.workflow1.ui.ViewRegistry
@@ -25,13 +25,13 @@ abstract class DefaultDiContainer : DiContainer {
             )
         }
 
-        override val addNewChartWorkflow by lazy { AddNewChartWorkflow(chartsService) }
+        override val editChartDetailsWorkflow by lazy { EditChartDetailsWorkflow(chartsService) }
 
         override val charts: ChartsWorkflow by lazy {
             ActualChartsWorkflow(
                 chartsService,
-                addNewChartWorkflow,
-                ChartDetailsWorkflow(addNewChartWorkflow)
+                editChartDetailsWorkflow,
+                ChartDetailsWorkflow(editChartDetailsWorkflow)
             )
         }
     }

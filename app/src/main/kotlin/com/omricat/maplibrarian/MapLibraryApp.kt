@@ -7,9 +7,9 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow
 import com.omricat.maplibrarian.chartlist.ChartsService
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
@@ -35,7 +35,7 @@ interface DiContainer {
     interface Workflows {
         val auth: AuthWorkflow
         val charts: ChartsWorkflow
-        val addNewChartWorkflow: AddNewChartWorkflow
+        val editChartDetailsWorkflow: EditChartDetailsWorkflow
     }
 }
 

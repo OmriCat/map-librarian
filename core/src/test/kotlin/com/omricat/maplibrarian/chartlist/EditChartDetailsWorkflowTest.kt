@@ -1,6 +1,6 @@
 package com.omricat.maplibrarian.chartlist
 
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.State
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.workflow.StateSnapshotSerializer
@@ -8,9 +8,9 @@ import com.squareup.workflow1.Snapshot
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
-internal class AddNewChartWorkflowTest : WordSpec({
+internal class EditChartDetailsWorkflowTest : WordSpec({
 
-    "AddNewChartWorkflow.State#toSnapshot composed with fromSnapshot" should {
+    "EditChartDetailsWorkflow.State#toSnapshot composed with fromSnapshot" should {
 
         val stateSerializer = State.snapshotSerializer(StateSnapshotSerializer.json)
 

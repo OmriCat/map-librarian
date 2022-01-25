@@ -14,7 +14,7 @@ import com.squareup.workflow1.WorkflowAction
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-public class ChartDetailsWorkflow(private val editChartWorkflow: AddNewChartWorkflow) :
+public class ChartDetailsWorkflow(private val editChartDetailsWorkflow: EditChartDetailsWorkflow) :
     StatefulWorkflow<Props, State, Nothing, ChartDetailsScreen>() {
 
     public data class Props(val user: User, val chart: DbChartModel)
@@ -56,8 +56,8 @@ public class ChartDetailsWorkflow(private val editChartWorkflow: AddNewChartWork
                 EditingOverlayDetailsScreen(
                     detailsScreen = showingChartDetailsScreen,
                     overlaidEditingScreen = context.renderChild(
-                        editChartWorkflow,
-                        props = AddNewChartWorkflow.Props(renderProps.user, renderState.chart)
+                        editChartDetailsWorkflow,
+                        props = EditChartDetailsWorkflow.Props(renderProps.user, renderState.chart)
                     ) { WorkflowAction.noAction() }
                 )
         }

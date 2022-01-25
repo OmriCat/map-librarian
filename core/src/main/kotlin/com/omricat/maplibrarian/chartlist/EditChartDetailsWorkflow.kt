@@ -3,18 +3,18 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnDiscard
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnErrorSaving
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnNewItemSaved
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnSave
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Actions.OnTitleChanged
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Discard
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Props
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Actions.OnDiscard
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Actions.OnErrorSaving
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Actions.OnNewItemSaved
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Actions.OnSave
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Actions.OnTitleChanged
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Event
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Event.Discard
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Event.Saved
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.Props
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.State
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.State.Editing
+import com.omricat.maplibrarian.chartlist.EditChartDetailsWorkflow.State.Saving
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
@@ -30,7 +30,7 @@ import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
 
-public class AddNewChartWorkflow(
+public class EditChartDetailsWorkflow(
     private val chartsService: ChartsService,
     serializationFormat: StringFormat = StateSnapshotSerializer.json
 ) :
@@ -74,7 +74,7 @@ public class AddNewChartWorkflow(
         context: RenderContext
     ): EditingItemScreen = when (renderState) {
         is Editing<*> -> {
-            EditItemScreen(
+            EditChartDetailsScreen(
                 chart = renderState.chart,
                 errorMessage = renderState.errorMessage,
                 onTitleChanged = { newTitle ->
@@ -140,7 +140,7 @@ public sealed interface EditingItemScreen : ChartsScreen {
     public val chart: ChartModel<*>
 }
 
-public data class EditItemScreen(
+public data class EditChartDetailsScreen(
     override val chart: ChartModel<*>,
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,

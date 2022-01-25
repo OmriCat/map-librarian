@@ -22,6 +22,6 @@ internal val MapListViewRegistry = ViewRegistry(
     ChartListLoadingViewFactory,
     ChartErrorViewFactory,
     ChartListLayoutRunner,
-    AddItemScreenViewFactory,
+    EditChartDetailsScreenViewFactory,
     SavingItemScreenViewFactory
 )
