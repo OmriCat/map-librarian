@@ -13,14 +13,14 @@ kotlin {
 }
 
 dependencies {
-    implementation(KotlinX.coroutines.core)
+    api(KotlinX.coroutines.core)
 
     fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
-    implementation(workflow("core-jvm"))
+    api(workflow("core-jvm"))
 
-    implementation("com.michael-bull.kotlin-result:kotlin-result:_")
+    api("com.michael-bull.kotlin-result:kotlin-result:_")
 
-    implementation(KotlinX.serialization.json)
+    api(KotlinX.serialization.json)
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
