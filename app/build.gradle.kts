@@ -71,7 +71,7 @@ dependencies {
     implementation(AndroidX.appCompat)
     implementation(AndroidX.core.ktx)
 
-    implementation(AndroidX.activityKtx)
+    implementation(AndroidX.activity.ktx)
     implementation(AndroidX.lifecycle.viewModelKtx)
     implementation(AndroidX.lifecycle.commonJava8)
 
