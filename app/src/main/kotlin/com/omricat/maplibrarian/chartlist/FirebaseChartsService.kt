@@ -70,7 +70,7 @@ class FirebaseChartsService(
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
         collection("users")
-            .document(user.id.toString())
+            .document(user.id.id)
             .collection("maps")
 }
 
