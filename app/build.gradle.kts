@@ -91,6 +91,7 @@ dependencies {
     implementation(workflow("ui-backstack-android"))
 
     implementation("com.michael-bull.kotlin-result:kotlin-result:_")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:_")
 
     implementation(JakeWharton.timber)
 
