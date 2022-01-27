@@ -3,6 +3,7 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
+import com.github.michaelbull.result.coroutines.runSuspendCatching
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.google.firebase.firestore.DocumentSnapshot
@@ -15,7 +16,6 @@ import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.serializedToMap
 import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logErrorAndMap
-import com.omricat.maplibrarian.utils.runSuspendCatching
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
