@@ -21,7 +21,7 @@ internal class ChartsWorkflowTest : WordSpec({
             ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
         }
 
-        "be the identity for AddingItem" {
+        "be the identity for ChartsListLoaded" {
             val state = ChartsWorkflowState.ChartsListLoaded(
                 listOf(
                     DbChartModel(
