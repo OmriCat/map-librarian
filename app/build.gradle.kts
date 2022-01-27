@@ -99,6 +99,8 @@ dependencies {
 
     testImplementation(Testing.kotest.runner.junit5)
     testImplementation(Testing.kotest.assertions.core)
+    testImplementation(Testing.kotestExtensions.robolectric)
+    testImplementation(AndroidX.test.ext.junit)
 
     testImplementation(workflow("testing-jvm"))
 
