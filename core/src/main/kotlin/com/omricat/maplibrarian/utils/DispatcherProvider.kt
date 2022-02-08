@@ -10,7 +10,9 @@ public interface DispatcherProvider {
     public val main: CoroutineDispatcher
     public val unconfined: CoroutineDispatcher
 
-    public companion object Default : DispatcherProvider {
+    public companion object Default : DefaultDispatcherProvider()
+
+    public abstract class DefaultDispatcherProvider : DispatcherProvider {
         override val default: CoroutineDispatcher get() = Dispatchers.Default
         override val io: CoroutineDispatcher get() = Dispatchers.IO
         override val main: CoroutineDispatcher get() = Dispatchers.Main
