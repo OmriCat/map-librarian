@@ -55,8 +55,8 @@ android {
     }
 
     testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
+        unitTests {
+            isIncludeAndroidResources = true
         }
     }
 }
@@ -97,10 +97,19 @@ dependencies {
 
     compileOnly("dev.ahmedmourad.nocopy:nocopy-annotations:_")
 
-    testImplementation(Testing.kotest.runner.junit5)
+    testImplementation(KotlinX.coroutines.test)
+
     testImplementation(Testing.kotest.assertions.core)
-    testImplementation(Testing.kotestExtensions.robolectric)
-    testImplementation(AndroidX.test.ext.junit)
+    testImplementation(Testing.robolectric)
+    testImplementation(Testing.junit4)
+
+    testImplementation(platform("org.testcontainers:testcontainers-bom:_"))
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:gcloud")
+    testImplementation("org.slf4j:slf4j-simple:_") // for testcontainers logs
+
+    testImplementation(AndroidX.test.ext.junitKtx)
+    testImplementation(AndroidX.test.coreKtx)
 
     testImplementation(workflow("testing-jvm"))
 
