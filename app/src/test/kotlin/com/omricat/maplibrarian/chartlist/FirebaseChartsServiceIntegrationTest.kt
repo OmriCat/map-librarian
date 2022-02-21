@@ -23,7 +23,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.testcontainers.containers.FirestoreEmulatorContainer
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,10 +32,7 @@ import org.testcontainers.utility.DockerImageName
 class FirebaseChartsServiceIntegrationTest {
 
     @get:Rule
-    val emulator =
-        FirestoreEmulatorContainer(
-            DockerImageName.parse("gcr.io/google.com/cloudsdktool/cloud-sdk:367.0.0-emulators")
-        )
+    val emulator = FirebaseEmulatorContainer()
 
     private lateinit var firestoreInstance: FirebaseFirestore
 
@@ -78,5 +76,15 @@ class FirebaseChartsServiceIntegrationTest {
                 it.shouldHaveSize(3)
             }
         }
+    }
+}
+
+class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
+    DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v1.1.0")
+) {
+    init {
+        withExposedPorts(8080, 9091)
+        waitingFor(Wait.forHealthcheck())
+        withCommand("emulators:start")
     }
 }
