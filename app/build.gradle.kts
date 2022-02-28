@@ -45,9 +45,9 @@ android {
     }
 
     lint {
-        isWarningsAsErrors = false
-        isAbortOnError = false
-        disable("GradleDependency")
+        warningsAsErrors = false
+        abortOnError = false
+        disable += listOf("GradleDependency")
     }
 
     buildFeatures {
