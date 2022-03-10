@@ -61,6 +61,10 @@ android {
     }
 }
 
+repositories {
+    maven("https://jitpack.io")
+}
+
 dependencies {
 
     implementation(project(":core"))
@@ -96,6 +100,8 @@ dependencies {
     implementation(JakeWharton.timber)
 
     compileOnly("dev.ahmedmourad.nocopy:nocopy-annotations:_")
+
+    debugImplementation("com.github.pandulapeter.beagle:ui-drawer:_")
 
     testImplementation(KotlinX.coroutines.test)
 
