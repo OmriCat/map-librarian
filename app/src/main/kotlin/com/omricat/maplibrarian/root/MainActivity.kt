@@ -18,6 +18,7 @@ import com.squareup.workflow1.ui.WorkflowLayout
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.renderWorkflowIn
 import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,13 @@ internal class MainViewModel(app: Application, private val savedState: SavedStat
             ),
             scope = viewModelScope,
             savedStateHandle = savedState,
-            interceptors = listOf(SimpleLoggingWorkflowInterceptor())
+            interceptors = listOf(TimberLoggingWorkflowInterceptor)
         )
+    }
+}
+
+internal object TimberLoggingWorkflowInterceptor : SimpleLoggingWorkflowInterceptor() {
+    override fun log(text: String) {
+        Timber.d(text)
     }
 }
