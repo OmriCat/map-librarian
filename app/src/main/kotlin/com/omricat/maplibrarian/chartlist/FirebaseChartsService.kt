@@ -6,6 +6,7 @@ import com.github.michaelbull.result.combine
 import com.github.michaelbull.result.coroutines.runSuspendCatching
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
+import com.github.michaelbull.result.onFailure
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.model.ChartId
@@ -18,6 +19,7 @@ import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logErrorAndMap
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class FirebaseChartsService(
     private val db: FirebaseFirestore,
@@ -34,6 +36,7 @@ class FirebaseChartsService(
             }
         }
             .mapError(ChartsServiceError::fromThrowable)
+            .onFailure { Timber.e(it.message) }
             .andThen { snapshot ->
                 snapshot.map { m -> m.parseMapModel() }.combine()
                     .mapError { e -> ChartsServiceError(e.message) }
