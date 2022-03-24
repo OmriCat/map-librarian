@@ -88,7 +88,7 @@ dependencies {
 
     fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
     implementation(workflow("ui-core-android"))
-    implementation(workflow("ui-backstack-android"))
+    implementation(workflow("ui-container-android"))
 
     implementation("com.michael-bull.kotlin-result:kotlin-result:_")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:_")
