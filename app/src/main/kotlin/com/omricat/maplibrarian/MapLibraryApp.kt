@@ -15,13 +15,16 @@ import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 @Suppress("unused")
 class MapLibraryApp : Application() {
 
-    lateinit var diContainer: DiContainer
+    internal lateinit var diContainer: DiContainer
+        private set
 
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        diContainer = initializeDI()
-        initializeMapLibApp() // Any initialization that varies for different build variants
+        diContainer = initializeDI(this)
+
+        // Any initialization that varies for different build variants
+        initializeMapLibApp(this)
     }
 }
 
