@@ -14,7 +14,7 @@ import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
  * Setup DI container for release variant
  */
 @WorkflowUiExperimentalApi
-internal fun MapLibraryApp.initializeDI(context: Context): DiContainer =
+internal fun MapLibraryApp.initializeDI(): DiContainer =
     object : DefaultDiContainer() {
         override val authService: AuthService by lazy { FirebaseAuthService(Firebase.auth) }
         override val chartsService: ChartsService by lazy { FirebaseChartsService(Firebase.firestore) }

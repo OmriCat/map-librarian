@@ -1,6 +1,5 @@
 package com.omricat.maplibrarian
 
-import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,6 +9,7 @@ import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.FirebaseAuthService
 import com.omricat.maplibrarian.chartlist.ChartsService
 import com.omricat.maplibrarian.chartlist.FirebaseChartsService
+import com.omricat.maplibrarian.debugdrawer.DebugPreferencesRepository
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import kotlinx.coroutines.runBlocking
 
@@ -21,12 +21,13 @@ private const val FIREBASE_EMULATOR_AUTH_PORT = 9099
 private const val FIREBASE_EMULATOR_FIRESTORE_PORT = 8080
 
 @WorkflowUiExperimentalApi
-internal fun MapLibraryApp.initializeDI(context: Context): DiContainer =
+internal fun MapLibraryApp.initializeDI(): DiContainer =
     object : DefaultDiContainer() {
 
         private val firebaseEmulatorHost: String by lazy {
             runBlocking {
-                DebugPreferencesRepository(context).emulatorHost.value() ?: FIREBASE_EMULATOR_HOST
+                DebugPreferencesRepository(this@initializeDI).emulatorHost.value()
+                    ?: FIREBASE_EMULATOR_HOST
             }
         }
 

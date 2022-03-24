@@ -21,10 +21,10 @@ class MapLibraryApp : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        diContainer = initializeDI(this)
+        diContainer = initializeDI()
 
         // Any initialization that varies for different build variants
-        initializeMapLibApp(this)
+        initializeMapLibApp()
     }
 }
 
