@@ -61,6 +61,10 @@ android {
     }
 }
 
+repositories {
+    maven("https://jitpack.io")
+}
+
 dependencies {
 
     implementation(project(":core"))
@@ -82,6 +86,8 @@ dependencies {
     implementation(AndroidX.recyclerView)
     implementation(Google.android.material)
 
+    implementation(AndroidX.dataStore.preferences)
+
     implementation(platform(Firebase.bom))
     implementation(Firebase.cloudFirestoreKtx)
     implementation(Firebase.authenticationKtx)
@@ -96,6 +102,9 @@ dependencies {
     implementation(JakeWharton.timber)
 
     compileOnly("dev.ahmedmourad.nocopy:nocopy-annotations:_")
+
+    debugImplementation("com.github.pandulapeter.beagle:ui-drawer:_")
+    debugImplementation("com.jakewharton:process-phoenix:_")
 
     testImplementation(KotlinX.coroutines.test)
 
