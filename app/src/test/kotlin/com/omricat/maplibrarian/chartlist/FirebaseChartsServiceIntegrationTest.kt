@@ -7,6 +7,7 @@ import com.github.michaelbull.result.Result
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestoreSettings
+import com.omricat.firebaseemulatorcontainer.FirebaseEmulatorContainer
 import com.omricat.maplibrarian.auth.AuthError
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.Credential

@@ -1,4 +1,4 @@
-package com.omricat.maplibrarian.chartlist
+package com.omricat.firebaseemulatorcontainer
 
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait

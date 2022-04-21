@@ -34,4 +34,5 @@ include(
     ":app",
     ":core",
     "kotlin-result-kotest",
+    ":firebase-emulator-container",
 )
