@@ -136,9 +136,14 @@ class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
     DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v1.2.0")
 ) {
     init {
-        withExposedPorts(8080, 9099)
+        withExposedPorts(FIRESTORE_PORT, AUTH_PORT)
         waitingFor(Wait.forHealthcheck())
         withCommand("emulators:start")
+    }
+
+    companion object {
+        const val FIRESTORE_PORT = 8080
+        const val AUTH_PORT = 9099
     }
 }
 
