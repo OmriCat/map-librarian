@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     resolutionStrategy {
         val pluginIdToCoordinates = mapOf(

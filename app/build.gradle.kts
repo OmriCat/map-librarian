@@ -67,7 +67,7 @@ repositories {
 
 dependencies {
 
-    implementation(project(":core"))
+    implementation(projects.core)
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)
