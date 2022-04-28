@@ -109,6 +109,7 @@ dependencies {
     testImplementation(KotlinX.coroutines.test)
 
     testImplementation(Testing.kotest.assertions.core)
+    testImplementation(projects.kotlinResultKotest)
     testImplementation(Testing.robolectric)
     testImplementation(Testing.junit4)
 

@@ -33,4 +33,5 @@ rootProject.name = ("map-librarian")
 include(
     ":app",
     ":core",
+    "kotlin-result-kotest",
 )
