@@ -113,9 +113,7 @@ dependencies {
     testImplementation(Testing.robolectric)
     testImplementation(Testing.junit4)
 
-    testImplementation(platform("org.testcontainers:testcontainers-bom:_"))
-    testImplementation("org.testcontainers:testcontainers")
-    testImplementation("org.testcontainers:gcloud")
+    testImplementation(projects.firebaseEmulatorContainer)
     testImplementation("org.slf4j:slf4j-simple:_") // for testcontainers logs
 
     testImplementation(AndroidX.test.ext.junitKtx)

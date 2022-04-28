@@ -7,6 +7,7 @@ import com.github.michaelbull.result.Result
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestoreSettings
+import com.omricat.firebaseemulatorcontainer.FirebaseEmulatorContainer
 import com.omricat.maplibrarian.auth.AuthError
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.Credential
@@ -29,9 +30,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.utility.DockerImageName
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -130,16 +128,6 @@ class FirebaseChartsServiceIntegrationTest {
 private val user = object : User {
     override val displayName: String = "User 1"
     override val id: UserUid = UserUid("XbmeeiiyihVjM5aBtVT0frNiGall")
-}
-
-class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
-    DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v1.2.0")
-) {
-    init {
-        withExposedPorts(8080, 9099)
-        waitingFor(Wait.forHealthcheck())
-        withCommand("emulators:start")
-    }
 }
 
 internal class TestAuthService : AuthService {
