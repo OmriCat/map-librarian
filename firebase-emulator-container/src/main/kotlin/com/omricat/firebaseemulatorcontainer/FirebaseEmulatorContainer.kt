@@ -9,9 +9,9 @@ class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
     DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v$DOCKER_IMAGE_VERSION")
 ) {
     init {
+        withClasspathResourceMapping("firestore.rules", "./firestore.rules", READ_ONLY)
         withExposedPorts(FIRESTORE_PORT, AUTH_PORT)
         waitingFor(Wait.forHealthcheck())
-        withClasspathResourceMapping("firestore.rules", "./firestore.rules", READ_ONLY)
         withCommand("emulators:start")
     }
 
