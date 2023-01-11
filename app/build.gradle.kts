@@ -116,7 +116,7 @@ dependencies {
     testImplementation(projects.firebaseEmulatorContainer)
     testImplementation("org.slf4j:slf4j-simple:_") // for testcontainers logs
 
-    testImplementation(AndroidX.test.ext.junitKtx)
+    testImplementation(AndroidX.test.ext.junit.ktx)
     testImplementation(AndroidX.test.coreKtx)
 
     testImplementation(workflow("testing-jvm"))
