@@ -59,6 +59,7 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    namespace = "com.omricat.maplibrarian"
 }
 
 repositories {
