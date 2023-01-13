@@ -16,7 +16,7 @@ class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
     }
 
     companion object {
-        const val DOCKER_IMAGE_VERSION = "1.2.0"
+        const val DOCKER_IMAGE_VERSION = "1.4.0"
         const val FIRESTORE_PORT = 8080
         const val AUTH_PORT = 9099
     }
