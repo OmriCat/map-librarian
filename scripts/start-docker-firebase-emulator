@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -eo pipefail
+
+docker pull ghcr.io/grodin/firebase-emulator-docker:latest
+
+function cleanup() {
+  docker rm -f firebase-emulator > /dev/null
+}
+
+trap cleanup SIGTERM SIGINT
+
+ui_port=4000
+ui_websocket_port=9150
+ui_logging_port=4500
+hub_port=4400
+auth_port=9099
+firestore_port=8080
+
+docker run -it \
+    --rm \
+    --publish "$ui_port":"$ui_port" \
+    --publish "$ui_websocket_port":"$ui_websocket_port" \
+    --publish "$ui_logging_port":"$ui_logging_port" \
+    --publish "$hub_port":"$hub_port" \
+    --publish "$auth_port":"$auth_port" \
+    --publish "$firestore_port":"$firestore_port" \
+    --name firebase-emulator \
+    firebase-emulator-docker
+
+cleanup
