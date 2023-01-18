@@ -18,7 +18,6 @@ plugins {
     kotlin("android") apply false
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
-    id("dev.ahmedmourad.nocopy.nocopy-gradle-plugin").apply(false)
     id("com.dorongold.task-tree")
     id("com.autonomousapps.dependency-analysis")
     idea
@@ -35,7 +34,6 @@ subprojects {
     apply {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jlleitschuh.gradle.ktlint")
-        plugin("dev.ahmedmourad.nocopy.nocopy-gradle-plugin")
         plugin("org.gradle.idea")
     }
 

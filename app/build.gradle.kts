@@ -102,8 +102,6 @@ dependencies {
 
     implementation(JakeWharton.timber)
 
-    compileOnly("dev.ahmedmourad.nocopy:nocopy-annotations:_")
-
     debugImplementation("com.github.pandulapeter.beagle:ui-drawer:_")
     debugImplementation("com.jakewharton:process-phoenix:_")
 
