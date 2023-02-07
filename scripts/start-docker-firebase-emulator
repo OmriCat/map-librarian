@@ -26,6 +26,7 @@ docker run -it \
     --publish "$auth_port":"$auth_port" \
     --publish "$firestore_port":"$firestore_port" \
     --name firebase-emulator \
+    --volume "$(git rev-parse --show-toplevel)/firestore.rules:/home/firestore-emulator/firestore.rules" \
     firebase-emulator-docker
 
 cleanup
