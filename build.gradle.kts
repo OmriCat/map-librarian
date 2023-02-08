@@ -17,7 +17,6 @@ plugins {
     id("com.dorongold.task-tree")
     id("com.autonomousapps.dependency-analysis")
     id("com.osacky.doctor")
-    idea
 }
 
 allprojects {
@@ -44,11 +43,6 @@ subprojects {
                 destination = file("build/reports/detekt.html")
             }
         }
-    }
-
-    idea.module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -82,11 +76,6 @@ subprojects {
             }
         }
     }
-}
-
-idea.module {
-    isDownloadJavadoc = true
-    isDownloadSources = true
 }
 
 @Suppress("MagicNumber")
