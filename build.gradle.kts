@@ -6,9 +6,7 @@ buildscript {
         mavenCentral()
     }
 
-    dependencies {
-        classpath(Google.playServicesGradlePlugin)
-    }
+    dependencies { classpath(Google.playServicesGradlePlugin) }
 }
 
 plugins {
@@ -36,9 +34,7 @@ subprojects {
         plugin("org.gradle.idea")
     }
 
-    ktfmt {
-        kotlinLangStyle()
-    }
+    ktfmt { kotlinLangStyle() }
 
     detekt {
         config = rootProject.files("config/detekt/detekt.yml")
@@ -57,28 +53,26 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            freeCompilerArgs = listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-            )
+            freeCompilerArgs =
+                listOf(
+                    "-Xopt-in=kotlin.RequiresOptIn",
+                )
         }
     }
     afterEvaluate {
-        val hasKotlin = plugins.any {
-            it is org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
-        }
+        val hasKotlin =
+            plugins.any { it is org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper }
         if (hasKotlin) {
             extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension>().apply {
                 jvmToolchain {
-                    (this as JavaToolchainSpec).languageVersion.set(
-                        JavaLanguageVersion.of(buildVersions.javaLanguageVersion)
-                    )
+                    (this as JavaToolchainSpec)
+                        .languageVersion
+                        .set(JavaLanguageVersion.of(buildVersions.javaLanguageVersion))
                 }
             }
         }
 
-        val hasAndroidPlugin = plugins.any {
-            it is com.android.build.gradle.api.AndroidBasePlugin
-        }
+        val hasAndroidPlugin = plugins.any { it is com.android.build.gradle.api.AndroidBasePlugin }
         if (hasAndroidPlugin) {
             extensions.getByType<com.android.build.gradle.BaseExtension>().apply {
                 compileOptions {
@@ -96,11 +90,12 @@ idea.module {
 }
 
 @Suppress("MagicNumber")
-val buildVersions by extra(
-    com.omricat.gradle.BuildVersions(
-        compileSdk = 31,
-        minSdk = 21,
-        targetSdk = 29,
-        javaLanguageVersion = 11,
+val buildVersions by
+    extra(
+        com.omricat.gradle.BuildVersions(
+            compileSdk = 31,
+            minSdk = 21,
+            targetSdk = 29,
+            javaLanguageVersion = 11,
+        )
     )
-)

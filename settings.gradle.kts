@@ -4,9 +4,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     resolutionStrategy {
-        val pluginIdToCoordinates = mapOf(
-            "com.google.gms.google-services" to "com.google.gms:google-services"
-        )
+        val pluginIdToCoordinates =
+            mapOf("com.google.gms.google-services" to "com.google.gms:google-services")
         eachPlugin {
             pluginIdToCoordinates[requested.id.id]?.also { useModule("$it:${requested.version}") }
         }
@@ -32,10 +31,9 @@ gradleEnterprise {
 }
 
 refreshVersions {
-    rejectVersionIf {
-        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel)
-    }
+    rejectVersionIf { candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) }
 }
+
 rootProject.name = ("map-librarian")
 
 include(
