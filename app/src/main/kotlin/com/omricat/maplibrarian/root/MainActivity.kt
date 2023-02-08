@@ -1,6 +1,4 @@
-@file:OptIn(
-    WorkflowUiExperimentalApi::class
-)
+@file:OptIn(WorkflowUiExperimentalApi::class)
 
 package com.omricat.maplibrarian.root
 
@@ -36,11 +34,12 @@ internal class MainViewModel(app: Application, private val savedState: SavedStat
     private val diContainer = app.diContainer
     val renderings: StateFlow<Screen> by lazy {
         renderWorkflowIn(
-            workflow = RootWorkflow(
-                diContainer.authService,
-                diContainer.workflows.auth,
-                diContainer.workflows.charts
-            ),
+            workflow =
+                RootWorkflow(
+                    diContainer.authService,
+                    diContainer.workflows.auth,
+                    diContainer.workflows.charts
+                ),
             scope = viewModelScope,
             savedStateHandle = savedState,
             interceptors = listOf(TimberLoggingWorkflowInterceptor)

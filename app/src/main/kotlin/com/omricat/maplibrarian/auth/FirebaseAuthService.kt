@@ -26,37 +26,46 @@ internal class FirebaseAuthService(
 
     override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
         when (credential) {
-            is EmailPasswordCredential -> withContext(dispatchers.io) {
-                runSuspendCatching {
-                    auth.signInWithEmailAndPassword(credential.emailAddress, credential.password)
-                        .await()
-                        .user
+            is EmailPasswordCredential ->
+                withContext(dispatchers.io) {
+                    runSuspendCatching {
+                            auth
+                                .signInWithEmailAndPassword(
+                                    credential.emailAddress,
+                                    credential.password
+                                )
+                                .await()
+                                .user
+                        }
+                        .mapError(::AuthError)
+                        .andThen { user -> // If user is null, no user is signed in
+                            user
+                                .toResultOr { AuthError("No currently signed in user") }
+                                .map { FirebaseUser(it) }
+                        }
                 }
-                    .mapError(::AuthError)
-                    .andThen { user -> // If user is null, no user is signed in
-                        user.toResultOr { AuthError("No currently signed in user") }
-                            .map { FirebaseUser(it) }
-                    }
-            }
         }
 
     override suspend fun createUser(credential: Credential): Result<User, AuthError> =
         when (credential) {
-            is EmailPasswordCredential -> withContext(dispatchers.io) {
-                runSuspendCatching {
-                    auth.createUserWithEmailAndPassword(
-                        credential.emailAddress,
-                        credential.password
-                    )
-                        .await()
-                        .user
+            is EmailPasswordCredential ->
+                withContext(dispatchers.io) {
+                    runSuspendCatching {
+                            auth
+                                .createUserWithEmailAndPassword(
+                                    credential.emailAddress,
+                                    credential.password
+                                )
+                                .await()
+                                .user
+                        }
+                        .mapError(::AuthError)
+                        .andThen { maybeUser ->
+                            maybeUser
+                                .toResultOr { AuthError("User was created but not signed in") }
+                                .map { FirebaseUser(it) }
+                        }
                 }
-                    .mapError(::AuthError)
-                    .andThen { maybeUser ->
-                        maybeUser.toResultOr { AuthError("User was created but not signed in") }
-                            .map { FirebaseUser(it) }
-                    }
-            }
         }
 
     override fun signOut() = auth.signOut()

@@ -12,16 +12,15 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 
-public class ActualAuthWorkflowTest : StringSpec(
-    {
+public class ActualAuthWorkflowTest :
+    StringSpec({
         "onAuthError action returns to login prompt" {
             val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
-            val (newState, maybeOutput) = workflow.onAuthError(AuthError("Authentication failure"))
-                .applyTo(
-                    props = Unit,
-                    state = State.AttemptingAuthorization(fakeCredential)
-                )
+            val (newState, maybeOutput) =
+                workflow
+                    .onAuthError(AuthError("Authentication failure"))
+                    .applyTo(props = Unit, state = State.AttemptingAuthorization(fakeCredential))
 
             assertSoftly {
                 maybeOutput.shouldBeNull()
@@ -33,8 +32,8 @@ public class ActualAuthWorkflowTest : StringSpec(
 
         "onNoAuthenticatedUser action transitions to LoginPrompt" {
             val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
-            val (newState, maybeOutput) = workflow.onNoAuthenticatedUser
-                .applyTo(
+            val (newState, maybeOutput) =
+                workflow.onNoAuthenticatedUser.applyTo(
                     props = Unit,
                     state = State.PossibleLoggedInUser
                 )
@@ -49,11 +48,10 @@ public class ActualAuthWorkflowTest : StringSpec(
             val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
             val fakeUser = TestUser("user1", UserUid("1"))
-            val (_, maybeOutput) = workflow.onAuthenticated(fakeUser)
-                .applyTo(
-                    props = Unit,
-                    state = State.AttemptingAuthorization(fakeCredential)
-                )
+            val (_, maybeOutput) =
+                workflow
+                    .onAuthenticated(fakeUser)
+                    .applyTo(props = Unit, state = State.AttemptingAuthorization(fakeCredential))
 
             assertSoftly {
                 maybeOutput.shouldNotBeNull()
@@ -63,11 +61,10 @@ public class ActualAuthWorkflowTest : StringSpec(
                 }
             }
         }
-    }
-)
+    })
 
-private object NullSignupWorkflow : SignUpWorkflow,
-    StatelessWorkflow<Unit, SignUpOutput, SignUpScreen>() {
+private object NullSignupWorkflow :
+    SignUpWorkflow, StatelessWorkflow<Unit, SignUpOutput, SignUpScreen>() {
     override fun render(renderProps: Unit, context: RenderContext): SignUpScreen =
         object : SignUpScreen {}
 }

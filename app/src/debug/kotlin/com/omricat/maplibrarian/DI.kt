@@ -37,10 +37,8 @@ internal fun MapLibraryApp.initializeDI(): DiContainer =
             FirebaseAuthService(Firebase.auth)
         }
         override val chartsService: ChartsService by lazy {
-            FirebaseFirestore.getInstance().useEmulator(
-                firebaseEmulatorHost,
-                FIREBASE_EMULATOR_FIRESTORE_PORT
-            )
+            FirebaseFirestore.getInstance()
+                .useEmulator(firebaseEmulatorHost, FIREBASE_EMULATOR_FIRESTORE_PORT)
             FirebaseChartsService(Firebase.firestore)
         }
     }

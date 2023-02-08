@@ -11,7 +11,4 @@ public fun <V, E> resultWorker(
     exceptionWrapper: (Throwable) -> E,
     body: suspend () -> Result<V, E>
 ): Worker<Result<V, E>> =
-    flow {
-        emit(body())
-    }.catch { e -> emit(Err(exceptionWrapper(e))) }
-        .asWorker()
+    flow { emit(body()) }.catch { e -> emit(Err(exceptionWrapper(e))) }.asWorker()

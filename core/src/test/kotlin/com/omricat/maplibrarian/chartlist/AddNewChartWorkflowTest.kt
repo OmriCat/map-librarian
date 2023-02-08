@@ -6,22 +6,22 @@ import com.omricat.maplibrarian.model.UserUid
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
-internal class AddNewChartWorkflowTest : WordSpec({
+internal class AddNewChartWorkflowTest :
+    WordSpec({
+        "AddNewChartWorkflow.State#toSnapshot composed with fromSnapshot" should
+            {
+                val chart = UnsavedChartModel(UserUid("user"), "title")
 
-    "AddNewChartWorkflow.State#toSnapshot composed with fromSnapshot" should {
+                "be the identity for State.Editing" {
+                    val state = State.Editing(chart, "error message")
 
-        val chart = UnsavedChartModel(UserUid("user"), "title")
+                    State.fromSnapshot(state.toSnapshot()) shouldBe state
+                }
 
-        "be the identity for State.Editing" {
-            val state = State.Editing(chart, "error message")
+                "be the identity for State.Saving" {
+                    val state = State.Saving(chart)
 
-            State.fromSnapshot(state.toSnapshot()) shouldBe state
-        }
-
-        "be the identity for State.Saving" {
-            val state = State.Saving(chart)
-
-            State.fromSnapshot(state.toSnapshot()) shouldBe state
-        }
-    }
-})
+                    State.fromSnapshot(state.toSnapshot()) shouldBe state
+                }
+            }
+    })

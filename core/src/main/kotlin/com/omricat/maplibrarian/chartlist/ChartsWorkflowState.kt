@@ -9,14 +9,12 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 public sealed class ChartsWorkflowState {
-    @Serializable
-    public object RequestData : ChartsWorkflowState()
+    @Serializable public object RequestData : ChartsWorkflowState()
 
     @Serializable
     public data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsWorkflowState()
 
-    @Serializable
-    public object AddingItem : ChartsWorkflowState()
+    @Serializable public object AddingItem : ChartsWorkflowState()
 
     public data class ErrorLoadingCharts(val error: ChartsServiceError) : ChartsWorkflowState()
 

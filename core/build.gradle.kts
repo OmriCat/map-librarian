@@ -4,13 +4,9 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.withType<Test> { useJUnitPlatform() }
 
-kotlin {
-    explicitApi()
-}
+kotlin { explicitApi() }
 
 dependencies {
     api(KotlinX.coroutines.core)

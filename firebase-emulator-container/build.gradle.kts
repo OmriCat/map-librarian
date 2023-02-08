@@ -8,6 +8,4 @@ dependencies {
     api("org.testcontainers:testcontainers")
 }
 
-tasks.processResources {
-    from(rootProject.layout.projectDirectory.file("firestore.rules"))
-}
+tasks.processResources { from(rootProject.layout.projectDirectory.file("firestore.rules")) }

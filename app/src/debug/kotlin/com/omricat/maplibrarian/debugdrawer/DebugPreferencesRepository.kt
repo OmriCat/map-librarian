@@ -7,7 +7,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.omricat.maplibrarian.preferences.AppPreference
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "debug-settings")
+private val Context.dataStore: DataStore<Preferences> by
+    preferencesDataStore(name = "debug-settings")
 
 internal class DebugPreferencesRepository(context: Context) {
 

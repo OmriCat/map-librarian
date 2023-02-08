@@ -15,11 +15,7 @@ public data class DbChartModel(
 ) : ChartModel
 
 @Serializable
-public data class UnsavedChartModel(
-    override val userId: UserUid,
-    override val title: String
-) : ChartModel
+public data class UnsavedChartModel(override val userId: UserUid, override val title: String) :
+    ChartModel
 
-@Serializable
-@JvmInline
-public value class ChartId(public val id: String)
+@Serializable @JvmInline public value class ChartId(public val id: String)

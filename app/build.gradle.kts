@@ -40,9 +40,7 @@ android {
         }
     }
 
-    sourceSets.forEach { srcSet ->
-        srcSet.java.srcDir("src/${srcSet.name}/kotlin")
-    }
+    sourceSets.forEach { srcSet -> srcSet.java.srcDir("src/${srcSet.name}/kotlin") }
 
     lint {
         warningsAsErrors = false
@@ -50,24 +48,15 @@ android {
         disable += listOf("GradleDependency")
     }
 
-    buildFeatures {
-        viewBinding = true
-    }
+    buildFeatures { viewBinding = true }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
+    testOptions { unitTests { isIncludeAndroidResources = true } }
     namespace = "com.omricat.maplibrarian"
 }
 
-repositories {
-    maven("https://jitpack.io")
-}
+repositories { maven("https://jitpack.io") }
 
 dependencies {
-
     implementation(projects.core)
 
     implementation(KotlinX.coroutines.core)

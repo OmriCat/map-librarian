@@ -6,39 +6,37 @@ import com.omricat.maplibrarian.model.UserUid
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
-internal class ChartsWorkflowTest : WordSpec({
+internal class ChartsWorkflowTest :
+    WordSpec({
+        "ChartsState.toSnapshot composed with fromSnapshot" should
+            {
+                "be the identity for RequestData" {
+                    val state = ChartsWorkflowState.RequestData
 
-    "ChartsState.toSnapshot composed with fromSnapshot" should {
-        "be the identity for RequestData" {
-            val state = ChartsWorkflowState.RequestData
+                    ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
+                }
 
-            ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
-        }
+                "be the identity for AddingItem" {
+                    val state = ChartsWorkflowState.AddingItem
 
-        "be the identity for AddingItem" {
-            val state = ChartsWorkflowState.AddingItem
+                    ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
+                }
 
-            ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
-        }
+                "be the identity for ChartsListLoaded" {
+                    val state =
+                        ChartsWorkflowState.ChartsListLoaded(
+                            listOf(DbChartModel(UserUid("user"), "title", ChartId("chart")))
+                        )
 
-        "be the identity for ChartsListLoaded" {
-            val state = ChartsWorkflowState.ChartsListLoaded(
-                listOf(
-                    DbChartModel(
-                        UserUid("user"), "title",
-                        ChartId("chart")
-                    )
-                )
-            )
+                    ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
+                }
 
-            ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe state
-        }
+                "transform ErrorLoadingCharts to RequestData" {
+                    val state =
+                        ChartsWorkflowState.ErrorLoadingCharts(ChartsServiceError("Error message"))
 
-        "transform ErrorLoadingCharts to RequestData" {
-            val state = ChartsWorkflowState.ErrorLoadingCharts(ChartsServiceError("Error message"))
-
-            ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe
-                ChartsWorkflowState.RequestData
-        }
-    }
-})
+                    ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe
+                        ChartsWorkflowState.RequestData
+                }
+            }
+    })

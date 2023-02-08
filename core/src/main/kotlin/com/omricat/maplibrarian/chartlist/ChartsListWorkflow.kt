@@ -13,14 +13,9 @@ public object ChartsListWorkflow : StatelessWorkflow<List<DbChartModel>, Event, 
     }
 
     override fun render(renderProps: List<DbChartModel>, context: RenderContext): ChartListScreen =
-        ChartListScreen(
-            list = renderProps,
-            onItemSelect = context.eventHandler(::onSelectItem)
-        )
+        ChartListScreen(list = renderProps, onItemSelect = context.eventHandler(::onSelectItem))
 
-    internal fun onSelectItem(index: Int) = action {
-        setOutput(SelectItem(index))
-    }
+    internal fun onSelectItem(index: Int) = action { setOutput(SelectItem(index)) }
 }
 
 public data class ChartListScreen(val list: List<DbChartModel>, val onItemSelect: (Int) -> Unit) :
