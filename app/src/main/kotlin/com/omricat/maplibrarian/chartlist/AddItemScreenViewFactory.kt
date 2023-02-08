@@ -9,31 +9,29 @@ import com.squareup.workflow1.ui.setTextChangedListener
 import com.squareup.workflow1.ui.updateText
 
 @OptIn(WorkflowUiExperimentalApi::class)
-internal object AddItemScreenViewFactory : ViewFactory<AddItemScreen> by bind(
-    bindingInflater = EditChartBinding::inflate,
-    showRendering = { screen, _ ->
-        editTitle.updateText(screen.chart.title)
-        savingError.text = screen.errorMessage
-        enableSaveAndDiscard(screen)
-    }
-)
+internal object AddItemScreenViewFactory :
+    ViewFactory<AddItemScreen> by bind(
+        bindingInflater = EditChartBinding::inflate,
+        showRendering = { screen, _ ->
+            editTitle.updateText(screen.chart.title)
+            savingError.text = screen.errorMessage
+            enableSaveAndDiscard(screen)
+        }
+    )
 
 @OptIn(WorkflowUiExperimentalApi::class)
-internal object SavingItemScreenViewFactory : ViewFactory<SavingItemScreen> by bind(
-    bindingInflater = EditChartBinding::inflate,
-    showRendering = { screen, _ ->
-        editTitle.updateText(screen.chart.title)
-        enableSaveAndDiscard(null)
-    }
-)
+internal object SavingItemScreenViewFactory :
+    ViewFactory<SavingItemScreen> by bind(
+        bindingInflater = EditChartBinding::inflate,
+        showRendering = { screen, _ ->
+            editTitle.updateText(screen.chart.title)
+            enableSaveAndDiscard(null)
+        }
+    )
 
 @WorkflowUiExperimentalApi
-private fun EditChartBinding.enableSaveAndDiscard(
-    screen: AddItemScreen?
-) {
-    fun (() -> Unit).asClickListener(): (View) -> Unit = { _ ->
-        this.invoke()
-    }
+private fun EditChartBinding.enableSaveAndDiscard(screen: AddItemScreen?) {
+    fun (() -> Unit).asClickListener(): (View) -> Unit = { _ -> this.invoke() }
 
     val enabled = screen != null
     btnDiscard.setOnClickListener(screen?.discardChanges?.asClickListener())

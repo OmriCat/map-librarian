@@ -16,22 +16,16 @@ import com.squareup.workflow1.ui.plus
 @WorkflowUiExperimentalApi
 abstract class DefaultDiContainer : DiContainer {
 
-    override val workflows: DiContainer.Workflows = object : DiContainer.Workflows {
-        override val auth: AuthWorkflow by lazy {
-            ActualAuthWorkflow(
-                authService,
-                SignUpWorkflow.instance(authService)
-            )
-        }
+    override val workflows: DiContainer.Workflows =
+        object : DiContainer.Workflows {
+            override val auth: AuthWorkflow by lazy {
+                ActualAuthWorkflow(authService, SignUpWorkflow.instance(authService))
+            }
 
-        override val charts: ChartsWorkflow by lazy {
-            ActualChartsWorkflow(
-                chartsService,
-                AddNewChartWorkflow(chartsService)
-            )
+            override val charts: ChartsWorkflow by lazy {
+                ActualChartsWorkflow(chartsService, AddNewChartWorkflow(chartsService))
+            }
         }
-    }
     override val viewRegistry: ViewRegistry =
-        ViewRegistry(AuthorizedScreenLayoutRunner) +
-            AuthViewRegistry + MapListViewRegistry
+        ViewRegistry(AuthorizedScreenLayoutRunner) + AuthViewRegistry + MapListViewRegistry
 }

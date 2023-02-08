@@ -30,8 +30,5 @@ internal val AuthAttemptingAuthViewFactory: ViewFactory<AuthorizingScreen.Attemp
         root.backPressedHandler = screen.backPressHandler
     }
 
-internal val AuthViewRegistry = ViewRegistry(
-    AuthLoginViewFactory,
-    AuthAttemptingAuthViewFactory,
-    SignUpScreenLayoutRunner
-)
+internal val AuthViewRegistry =
+    ViewRegistry(AuthLoginViewFactory, AuthAttemptingAuthViewFactory, SignUpScreenLayoutRunner)

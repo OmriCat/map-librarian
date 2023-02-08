@@ -23,6 +23,5 @@ internal class TestAuthService(
         onGetSignedInUserIfAny?.invoke() ?: Ok(null)
 
     override suspend fun createUser(credential: Credential): Result<User, AuthError> =
-        onCreateUser?.invoke(credential)
-            ?: Err(AuthError("Can't create user with $credential"))
+        onCreateUser?.invoke(credential) ?: Err(AuthError("Can't create user with $credential"))
 }

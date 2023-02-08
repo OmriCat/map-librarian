@@ -21,25 +21,28 @@ internal class AuthorizedScreenLayoutRunner(binding: AuthorizedScreenBinding) :
     private val contentStub = binding.authorizedContentStub
     private val fab = binding.fabPrimaryAction
 
-    private val logoutMenu = toolbar.menu.add("Log out").apply {
-        setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-    }
+    private val logoutMenu =
+        toolbar.menu.add("Log out").apply { setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER) }
 
     override fun showRendering(rendering: AuthorizedScreen<*>, viewEnvironment: ViewEnvironment) {
-        logoutMenu.setOnMenuItemClickListener { rendering.onLogoutClicked(); true }
+        logoutMenu.setOnMenuItemClickListener {
+            rendering.onLogoutClicked()
+            true
+        }
 
-        val childRendering: Screen = rendering.childRendering.let { child ->
-            when (child) {
-                is AddItemDecoratorScreen<*> -> {
-                    fab.setAsAdd(child.onAddItemClicked)
-                    child.childScreen
-                }
-                else -> {
-                    fab.reset()
-                    child
+        val childRendering: Screen =
+            rendering.childRendering.let { child ->
+                when (child) {
+                    is AddItemDecoratorScreen<*> -> {
+                        fab.setAsAdd(child.onAddItemClicked)
+                        child.childScreen
+                    }
+                    else -> {
+                        fab.reset()
+                        child
+                    }
                 }
             }
-        }
         contentStub.update(childRendering, viewEnvironment)
     }
 
@@ -49,16 +52,15 @@ internal class AuthorizedScreenLayoutRunner(binding: AuthorizedScreenBinding) :
         visibility = View.INVISIBLE
     }
 
-    private fun FloatingActionButton.setAsAdd(
-        onAddItemClicked: () -> Unit
-    ) {
+    private fun FloatingActionButton.setAsAdd(onAddItemClicked: () -> Unit) {
         setImageResource(R.drawable.ic_add)
         show()
         setOnClickListener { onAddItemClicked() }
     }
 
-    companion object : ViewFactory<AuthorizedScreen<*>> by bind(
-        AuthorizedScreenBinding::inflate,
-        ::AuthorizedScreenLayoutRunner
-    )
+    companion object :
+        ViewFactory<AuthorizedScreen<*>> by bind(
+            AuthorizedScreenBinding::inflate,
+            ::AuthorizedScreenLayoutRunner
+        )
 }

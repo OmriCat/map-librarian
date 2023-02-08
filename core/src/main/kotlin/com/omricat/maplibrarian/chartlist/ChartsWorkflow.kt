@@ -38,33 +38,30 @@ public class ActualChartsWorkflow(
         renderProps: Props,
         renderState: ChartsWorkflowState,
         context: RenderContext
-    ): ChartsScreen = when (renderState) {
-        is RequestData -> {
-            context.runningWorker(loadChartList(chartsService, renderProps.user)) { result ->
-                result.map { onChartListLoaded(it) }.getOrElse { onLoadingError(it) }
-            }
-            Loading
-        }
-
-        is ChartsListLoaded -> {
-            val listScreen = context.renderChild(
-                ChartsListWorkflow,
-                props = renderState.list
-            ) { event ->
-                when (event) {
-                    is SelectItem -> onSelectItem(event.itemIndex)
+    ): ChartsScreen =
+        when (renderState) {
+            is RequestData -> {
+                context.runningWorker(loadChartList(chartsService, renderProps.user)) { result ->
+                    result.map { onChartListLoaded(it) }.getOrElse { onLoadingError(it) }
                 }
+                Loading
             }
-            AddItemDecoratorScreen(
-                childScreen = listScreen,
-                onAddItemClicked = context.eventHandler(::onAddItemClicked)
-            )
+            is ChartsListLoaded -> {
+                val listScreen =
+                    context.renderChild(ChartsListWorkflow, props = renderState.list) { event ->
+                        when (event) {
+                            is SelectItem -> onSelectItem(event.itemIndex)
+                        }
+                    }
+                AddItemDecoratorScreen(
+                    childScreen = listScreen,
+                    onAddItemClicked = context.eventHandler(::onAddItemClicked)
+                )
+            }
+            is AddingItem ->
+                context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
+            is ErrorLoadingCharts -> ShowError(renderState.error.message)
         }
-        is AddingItem ->
-            context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
-
-        is ErrorLoadingCharts -> ShowError(renderState.error.message)
-    }
 
     override fun snapshotState(state: ChartsWorkflowState): Snapshot = state.toSnapshot()
 
@@ -72,14 +69,15 @@ public class ActualChartsWorkflow(
 
     internal fun onSelectItem(itemIndex: Int) = action {}
 
-    internal fun onChartListLoaded(list: List<DbChartModel>) =
-        action { state = ChartsListLoaded(list) }
+    internal fun onChartListLoaded(list: List<DbChartModel>) = action {
+        state = ChartsListLoaded(list)
+    }
 
-    internal fun onLoadingError(error: ChartsServiceError) =
-        action { state = ErrorLoadingCharts(error) }
+    internal fun onLoadingError(error: ChartsServiceError) = action {
+        state = ErrorLoadingCharts(error)
+    }
 
-    internal fun onAddItemClicked() =
-        action { state = AddingItem }
+    internal fun onAddItemClicked() = action { state = AddingItem }
 
     internal companion object {
 

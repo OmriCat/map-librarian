@@ -41,6 +41,8 @@ class SignUpScreenLayoutRunner(private val binding: SignUpScreenBinding) :
         }
 
     companion object SignUpScreenViewFactory :
-        ViewFactory<SignUpScreen.EmailAndPasswordSignUpScreen> by
-        LayoutRunner.bind(SignUpScreenBinding::inflate, ::SignUpScreenLayoutRunner)
+        ViewFactory<SignUpScreen.EmailAndPasswordSignUpScreen> by LayoutRunner.bind(
+            SignUpScreenBinding::inflate,
+            ::SignUpScreenLayoutRunner
+        )
 }

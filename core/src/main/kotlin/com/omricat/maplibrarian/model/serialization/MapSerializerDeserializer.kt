@@ -8,10 +8,7 @@ import com.omricat.maplibrarian.model.serialization.DeserializerError.PropertyNo
 import kotlin.reflect.KClass
 
 public interface FromMapWithIdDeserializer<ValueT, ErrorT : DeserializerError> {
-    public operator fun invoke(
-        id: String,
-        properties: Map<String, Any?>
-    ): Result<ValueT, ErrorT>
+    public operator fun invoke(id: String, properties: Map<String, Any?>): Result<ValueT, ErrorT>
 }
 
 public interface DeserializerError {
@@ -31,13 +28,13 @@ public interface DeserializerError {
     }
 }
 
-public inline fun <reified T> Map<String, Any?>.getProperty(propertyName: String):
-    Result<T, DeserializerError> =
-    get(propertyName).toResultOr { PropertyNonFoundError(propertyName, this) }
+public inline fun <reified T> Map<String, Any?>.getProperty(
+    propertyName: String
+): Result<T, DeserializerError> =
+    get(propertyName)
+        .toResultOr { PropertyNonFoundError(propertyName, this) }
         .flatMap {
-            (it as? T).toResultOr {
-                CastError(sourceClass = it::class, targetClass = T::class)
-            }
+            (it as? T).toResultOr { CastError(sourceClass = it::class, targetClass = T::class) }
         }
 
 public interface ToMapSerializer<in ModelT> {

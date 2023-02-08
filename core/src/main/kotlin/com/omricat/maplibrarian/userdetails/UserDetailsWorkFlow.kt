@@ -14,7 +14,4 @@ public object UserDetailsWorkFlow :
         )
 }
 
-public data class UserDetailsScreen(
-    val user: User,
-    val onLogOutClicked: () -> Unit
-)
+public data class UserDetailsScreen(val user: User, val onLogOutClicked: () -> Unit)

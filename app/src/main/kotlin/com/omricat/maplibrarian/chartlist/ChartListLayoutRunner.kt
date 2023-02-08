@@ -35,10 +35,11 @@ internal class ChartListLayoutRunner(private val binding: ChartlistBinding) :
         adapter.onClick = rendering.onItemSelect
     }
 
-    companion object : ViewFactory<ChartListScreen> by LayoutRunner.bind(
-        ChartlistBinding::inflate,
-        ::ChartListLayoutRunner
-    )
+    companion object :
+        ViewFactory<ChartListScreen> by LayoutRunner.bind(
+            ChartlistBinding::inflate,
+            ::ChartListLayoutRunner
+        )
 }
 
 internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(ChartDiffCallback) {
@@ -46,11 +47,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChartViewHolder =
         ChartViewHolder(
-            ChartlistItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            ),
+            ChartlistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClick
         )
 

@@ -5,11 +5,11 @@ import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.model.MapModelProperties.TITLE
 import com.omricat.maplibrarian.model.MapModelProperties.USER_ID
+import com.omricat.maplibrarian.model.UserUid as UserId
 import com.omricat.maplibrarian.model.serialization.DeserializerError
 import com.omricat.maplibrarian.model.serialization.FromMapWithIdDeserializer
 import com.omricat.maplibrarian.model.serialization.ToMapSerializer
 import com.omricat.maplibrarian.model.serialization.getProperty
-import com.omricat.maplibrarian.model.UserUid as UserId
 
 private object MapModelProperties {
 
@@ -19,14 +19,10 @@ private object MapModelProperties {
 
 public object ChartModelToMapSerializer : ToMapSerializer<UnsavedChartModel> {
     override operator fun invoke(model: UnsavedChartModel): Map<String, String> =
-        hashMapOf(
-            TITLE to model.title,
-            USER_ID to model.userId.id
-        )
+        hashMapOf(TITLE to model.title, USER_ID to model.userId.id)
 }
 
-public fun UnsavedChartModel.serializedToMap(): Map<String, Any?> =
-    ChartModelToMapSerializer(this)
+public fun UnsavedChartModel.serializedToMap(): Map<String, Any?> = ChartModelToMapSerializer(this)
 
 public object DbChartModelFromMapDeserializer :
     FromMapWithIdDeserializer<DbChartModel, DeserializerError> {

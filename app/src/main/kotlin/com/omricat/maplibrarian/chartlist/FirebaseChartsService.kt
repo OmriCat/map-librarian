@@ -26,19 +26,16 @@ class FirebaseChartsService(
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
 ) : ChartsService {
 
-    override suspend fun chartsListForUser(user: User):
-        Result<List<DbChartModel>, ChartsServiceError> =
-        withContext(dispatchers.io) {
-            runSuspendCatching {
-                db.mapsCollection(user)
-                    .get()
-                    .await()
-            }
-        }
+    override suspend fun chartsListForUser(
+        user: User
+    ): Result<List<DbChartModel>, ChartsServiceError> =
+        withContext(dispatchers.io) { runSuspendCatching { db.mapsCollection(user).get().await() } }
             .mapError(ChartsServiceError::fromThrowable)
             .onFailure { Timber.e(it.message) }
             .andThen { snapshot ->
-                snapshot.map { m -> m.parseMapModel() }.combine()
+                snapshot
+                    .map { m -> m.parseMapModel() }
+                    .combine()
                     .mapError { e -> ChartsServiceError(e.message) }
             }
 
@@ -51,38 +48,28 @@ class FirebaseChartsService(
                 "same as userId of user (was ${user.id})"
         }
         return withContext(dispatchers.io) {
-            runSuspendCatching {
-                db.mapsCollection(user)
-                    .add(newChart.serializedToMap())
-                    .await()
+                runSuspendCatching {
+                    db.mapsCollection(user).add(newChart.serializedToMap()).await()
+                }
             }
-        }
             .logErrorAndMap(ChartsServiceError::fromThrowable)
-            .map { ref ->
-                newChart.withChartId(ChartId(ref.id))
-            }
+            .map { ref -> newChart.withChartId(ChartId(ref.id)) }
     }
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
-        collection("users")
-            .document(user.id.toString())
-            .collection("maps")
+        collection("users").document(user.id.toString()).collection("maps")
 }
 
 /*
-    It is always safe to upcast ChartModel<Nothing?> to ChartModel<ChartId?> since the only
-    possible value for a val of type Nothing? is null.
+   It is always safe to upcast ChartModel<Nothing?> to ChartModel<ChartId?> since the only
+   possible value for a val of type Nothing? is null.
 
-    It is safe to cast ChartModel<ChartId?> to ChartModel<ChartId> immediately after setting
-    the chartId parameter to a non-null value.
- */
+   It is safe to cast ChartModel<ChartId?> to ChartModel<ChartId> immediately after setting
+   the chartId parameter to a non-null value.
+*/
 @Suppress("UNCHECKED_CAST")
 private fun UnsavedChartModel.withChartId(chartId: ChartId): DbChartModel =
-    DbChartModel(
-        userId = userId,
-        title = title,
-        chartId = chartId
-    )
+    DbChartModel(userId = userId, title = title, chartId = chartId)
 
 internal fun DocumentSnapshot.parseMapModel() =
     DbChartModelFromMapDeserializer(id, data ?: emptyMap())

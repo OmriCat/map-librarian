@@ -20,16 +20,17 @@ internal object DebugDrawerModules {
     private fun emulatorConnectionSettingsModules(
         initialHost: String,
         onValueChanged: (String) -> Unit
-    ) = arrayOf(
-        TextModule("Emulator connection", type = SECTION_HEADER),
-        TextInputModule(
-            text = { host -> "Host: $host".toText() },
-            initialValue = initialHost,
-            areRealTimeUpdatesEnabled = false,
-            id = "EMULATOR_HOST",
-            onValueChanged = onValueChanged
+    ) =
+        arrayOf(
+            TextModule("Emulator connection", type = SECTION_HEADER),
+            TextInputModule(
+                text = { host -> "Host: $host".toText() },
+                initialValue = initialHost,
+                areRealTimeUpdatesEnabled = false,
+                id = "EMULATOR_HOST",
+                onValueChanged = onValueChanged
+            )
         )
-    )
 
     fun modules(context: Context, debugPreferences: DebugPreferencesRepository): Array<Module<*>> =
         arrayOf(
@@ -38,20 +39,24 @@ internal object DebugDrawerModules {
             ),
             KeyValueListModule(
                 title = "Build config",
-                pairs = listOf(
-                    "application id" to BuildConfig.APPLICATION_ID,
-                    "version name" to BuildConfig.VERSION_NAME,
-                    "version code" to BuildConfig.VERSION_CODE.toString(),
-                )
+                pairs =
+                    listOf(
+                        "application id" to BuildConfig.APPLICATION_ID,
+                        "version name" to BuildConfig.VERSION_NAME,
+                        "version code" to BuildConfig.VERSION_CODE.toString(),
+                    )
             ),
             DividerModule(),
             KeylineOverlaySwitchModule(),
             DividerModule(),
-        ) + emulatorConnectionSettingsModules(onValueChanged = { host ->
-            runBlocking { debugPreferences.emulatorHost.edit { host } }
-            Timber.i("Restarting app to reflect updated emulator connection settings")
-            ProcessPhoenix.triggerRebirth(context)
-        },
-            initialHost = runBlocking { debugPreferences.emulatorHost.value() }
-                ?: "(No host set)")
+        ) +
+            emulatorConnectionSettingsModules(
+                onValueChanged = { host ->
+                    runBlocking { debugPreferences.emulatorHost.edit { host } }
+                    Timber.i("Restarting app to reflect updated emulator connection settings")
+                    ProcessPhoenix.triggerRebirth(context)
+                },
+                initialHost = runBlocking { debugPreferences.emulatorHost.value() }
+                        ?: "(No host set)"
+            )
 }

@@ -43,15 +43,13 @@ public class RootWorkflow(
             }
             is ChartList -> {
                 val mapsScreen = context.renderChild(chartsWorkflow, Props(renderState.user))
-                AuthorizedScreen(
-                    mapsScreen,
-                    onLogoutClicked = context.eventHandler(::unauthorized)
-                )
+                AuthorizedScreen(mapsScreen, onLogoutClicked = context.eventHandler(::unauthorized))
             }
         }
 
-    private fun onAuthenticated(authResult: Authenticated) =
-        action { state = ChartList(authResult.user) }
+    private fun onAuthenticated(authResult: Authenticated) = action {
+        state = ChartList(authResult.user)
+    }
 
     private fun unauthorized() = action {
         authService.signOut()

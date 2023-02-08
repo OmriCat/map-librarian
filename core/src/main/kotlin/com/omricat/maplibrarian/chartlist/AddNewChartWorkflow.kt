@@ -30,13 +30,10 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     public sealed class State {
 
         @Serializable
-        public data class Editing(
-            val chart: UnsavedChartModel,
-            val errorMessage: String = ""
-        ) : State()
+        public data class Editing(val chart: UnsavedChartModel, val errorMessage: String = "") :
+            State()
 
-        @Serializable
-        public data class Saving(val chart: UnsavedChartModel) : State()
+        @Serializable public data class Saving(val chart: UnsavedChartModel) : State()
 
         internal companion object {
             internal fun fromSnapshot(snapshot: Snapshot): State =
@@ -56,31 +53,30 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
         renderProps: User,
         renderState: State,
         context: RenderContext
-    ): AddingItemScreen = when (renderState) {
-        is Editing -> {
-            AddItemScreen(
-                chart = renderState.chart,
-                errorMessage = renderState.errorMessage,
-                onTitleChanged = context.eventHandler(onTitleChanged(renderState.chart)),
-                discardChanges = context.eventHandler(::onDiscard),
-                saveChanges = context.eventHandler(onSave(renderState.chart))
-            )
-        }
-        is Saving -> {
-            context.runningWorker(saveNewItem(renderProps, renderState.chart)) { result ->
-                result.map { savedChart -> onNewItemSaved(savedChart) }
-                    .getOrElse { e -> onErrorSaving(renderState.chart, e) }
+    ): AddingItemScreen =
+        when (renderState) {
+            is Editing -> {
+                AddItemScreen(
+                    chart = renderState.chart,
+                    errorMessage = renderState.errorMessage,
+                    onTitleChanged = context.eventHandler(onTitleChanged(renderState.chart)),
+                    discardChanges = context.eventHandler(::onDiscard),
+                    saveChanges = context.eventHandler(onSave(renderState.chart))
+                )
             }
-            SavingItemScreen(renderState.chart)
+            is Saving -> {
+                context.runningWorker(saveNewItem(renderProps, renderState.chart)) { result ->
+                    result
+                        .map { savedChart -> onNewItemSaved(savedChart) }
+                        .getOrElse { e -> onErrorSaving(renderState.chart, e) }
+                }
+                SavingItemScreen(renderState.chart)
+            }
         }
-    }
 
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
-    internal fun onErrorSaving(
-        chart: UnsavedChartModel,
-        e: ChartsServiceError
-    ) = action {
+    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsServiceError) = action {
         state = Editing(chart, errorMessage = e.message)
     }
 

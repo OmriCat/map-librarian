@@ -14,7 +14,6 @@ public interface ChartsService {
     ): Result<DbChartModel, ChartsServiceError>
 }
 
-
 @Serializable
 public data class ChartsServiceError(val message: String) {
     private constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")

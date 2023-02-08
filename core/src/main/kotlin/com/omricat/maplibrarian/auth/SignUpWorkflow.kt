@@ -28,49 +28,45 @@ public interface SignUpWorkflow : Workflow<Unit, SignUpOutput, SignUpScreen> {
 }
 
 internal class ActualSignUpWorkflow(private val authService: AuthService) :
-    StatefulWorkflow<Unit, State, SignUpOutput, SignUpScreen>(),
-    SignUpWorkflow {
+    StatefulWorkflow<Unit, State, SignUpOutput, SignUpScreen>(), SignUpWorkflow {
     override fun initialState(props: Unit, snapshot: Snapshot?): State = SignUpPrompt()
 
     override fun render(
         renderProps: Unit,
         renderState: State,
         context: RenderContext
-    ): SignUpScreen = when (renderState) {
-        is SignUpPrompt -> EmailAndPasswordSignUpScreen(
-            credential = renderState.credential,
-            step = EnteringEmailAndPassword(
-                errorMessage = renderState.errorMessage,
-                onSignUpClicked = context.eventHandler(::onSignUpClicked),
-            ),
-            backPressHandler = context.eventHandler(::onSignUpCancelled)
-        )
-
-        is AttemptingUserCreation -> {
-            context.runningWorker(attemptUserCreation(renderState.credential)) {
-                handleUserCreationResult(it, renderState.credential)
+    ): SignUpScreen =
+        when (renderState) {
+            is SignUpPrompt ->
+                EmailAndPasswordSignUpScreen(
+                    credential = renderState.credential,
+                    step =
+                        EnteringEmailAndPassword(
+                            errorMessage = renderState.errorMessage,
+                            onSignUpClicked = context.eventHandler(::onSignUpClicked),
+                        ),
+                    backPressHandler = context.eventHandler(::onSignUpCancelled)
+                )
+            is AttemptingUserCreation -> {
+                context.runningWorker(attemptUserCreation(renderState.credential)) {
+                    handleUserCreationResult(it, renderState.credential)
+                }
+                EmailAndPasswordSignUpScreen(
+                    credential = renderState.credential,
+                    backPressHandler = context.eventHandler(::onSignUpCancelled),
+                    step = Step.CreatingUser
+                )
             }
-            EmailAndPasswordSignUpScreen(
-                credential = renderState.credential,
-                backPressHandler = context.eventHandler(::onSignUpCancelled),
-                step = Step.CreatingUser
-            )
         }
-    }
 
     override fun snapshotState(state: State): Snapshot? = null
 
     private fun handleUserCreationResult(
         result: Result<User, AuthError>,
         credential: EmailPasswordCredential
-    ) = result
-        .map { onUserCreated(it) }
-        .getOrElse { e -> onErrorCreatingUser(credential, e) }
+    ) = result.map { onUserCreated(it) }.getOrElse { e -> onErrorCreatingUser(credential, e) }
 
-    internal fun onErrorCreatingUser(
-        credential: EmailPasswordCredential,
-        e: AuthError
-    ) = action {
+    internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: AuthError) = action {
         this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
     }
 
@@ -82,8 +78,9 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
 
     internal fun onSignUpCancelled() = action { setOutput(SignUpCancelled) }
 
-    internal fun attemptUserCreation(credential: EmailPasswordCredential):
-        Worker<Result<User, AuthError>> =
+    internal fun attemptUserCreation(
+        credential: EmailPasswordCredential
+    ): Worker<Result<User, AuthError>> =
         resultWorker(::AuthError) { authService.createUser(credential) }
 }
 
@@ -111,12 +108,9 @@ public interface SignUpScreen : AuthorizingScreen {
 
 internal sealed interface State {
     data class SignUpPrompt(
-        val credential: EmailPasswordCredential =
-            EmailPasswordCredential("", ""),
+        val credential: EmailPasswordCredential = EmailPasswordCredential("", ""),
         val errorMessage: String = "",
     ) : State
 
-    data class AttemptingUserCreation(
-        val credential: EmailPasswordCredential
-    ) : State
+    data class AttemptingUserCreation(val credential: EmailPasswordCredential) : State
 }

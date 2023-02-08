@@ -13,15 +13,14 @@ internal val ChartListLoadingViewFactory: ViewFactory<ChartsScreen.Loading> =
     bind(ChartlistLoadingBinding::inflate) { _, _ -> }
 
 internal val ChartErrorViewFactory: ViewFactory<ChartsScreen.ShowError> =
-    bind(ErrorBinding::inflate) { error, _ ->
-        errorMessage.text = error.message
-    }
+    bind(ErrorBinding::inflate) { error, _ -> errorMessage.text = error.message }
 
 @WorkflowUiExperimentalApi
-internal val MapListViewRegistry = ViewRegistry(
-    ChartListLoadingViewFactory,
-    ChartErrorViewFactory,
-    ChartListLayoutRunner,
-    AddItemScreenViewFactory,
-    SavingItemScreenViewFactory
-)
+internal val MapListViewRegistry =
+    ViewRegistry(
+        ChartListLoadingViewFactory,
+        ChartErrorViewFactory,
+        ChartListLayoutRunner,
+        AddItemScreenViewFactory,
+        SavingItemScreenViewFactory
+    )

@@ -5,9 +5,10 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 
-class FirebaseEmulatorContainer : GenericContainer<FirebaseEmulatorContainer>(
-    DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v$DOCKER_IMAGE_VERSION")
-) {
+class FirebaseEmulatorContainer :
+    GenericContainer<FirebaseEmulatorContainer>(
+        DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v$DOCKER_IMAGE_VERSION")
+    ) {
     init {
         withClasspathResourceMapping("firestore.rules", "./firestore.rules", READ_ONLY)
         withExposedPorts(FIRESTORE_PORT, AUTH_PORT)

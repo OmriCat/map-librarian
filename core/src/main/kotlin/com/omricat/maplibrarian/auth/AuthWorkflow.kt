@@ -30,7 +30,8 @@ public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScr
 public class ActualAuthWorkflow(
     private val authService: AuthService,
     private val signUpWorkflow: SignUpWorkflow
-) : AuthWorkflow,
+) :
+    AuthWorkflow,
     StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
     public sealed interface State {
         public object PossibleLoggedInUser : State
@@ -54,14 +55,12 @@ public class ActualAuthWorkflow(
                 )
                 AuthorizingScreen.AttemptingLogin("")
             }
-
             is LoginPrompt ->
                 AuthorizingScreen.Login(
                     errorMessage = renderState.errorMessage,
                     onLoginClicked = context.eventHandler(::onLoginClicked),
                     onSignUpClicked = context.eventHandler(::onSignUpClicked)
                 )
-
             is AttemptingAuthorization -> {
                 context.runningWorker(
                     attemptAuthenticationWorker(renderState.credential),
@@ -69,18 +68,17 @@ public class ActualAuthWorkflow(
                 )
                 AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
-                    backPressHandler = context.eventHandler {
-                        setOutput(AuthResult.NotAuthenticated)
-                    }
+                    backPressHandler =
+                        context.eventHandler { setOutput(AuthResult.NotAuthenticated) }
                 )
             }
-
-            is SigningUp -> context.renderChild(signUpWorkflow, Unit) { output: SignUpOutput ->
-                when (output) {
-                    is SignUpOutput.SignUpCancelled -> onNoAuthenticatedUser
-                    is SignUpOutput.UserCreated -> onAuthenticated(output.user)
+            is SigningUp ->
+                context.renderChild(signUpWorkflow, Unit) { output: SignUpOutput ->
+                    when (output) {
+                        is SignUpOutput.SignUpCancelled -> onNoAuthenticatedUser
+                        is SignUpOutput.UserCreated -> onAuthenticated(output.user)
+                    }
                 }
-            }
         }
 
     // Don't need to store state of in progress sign in
@@ -104,11 +102,11 @@ public class ActualAuthWorkflow(
         get() = resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
 
     internal fun handlePossibleUserResult(result: Result<User?, AuthError>) =
-        result.map { maybeUser ->
-            maybeUser
-                ?.let { user -> onAuthenticated(user) }
-                ?: onNoAuthenticatedUser
-        }.getOrElse { error -> onAuthError(error) }
+        result
+            .map { maybeUser ->
+                maybeUser?.let { user -> onAuthenticated(user) } ?: onNoAuthenticatedUser
+            }
+            .getOrElse { error -> onAuthError(error) }
 
     internal fun attemptAuthenticationWorker(
         credential: Credential
@@ -116,8 +114,7 @@ public class ActualAuthWorkflow(
         resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
 
     internal fun handleAuthenticationResult(result: Result<User, AuthError>) =
-        result.map { user -> onAuthenticated(user) }
-            .getOrElse { error -> onAuthError(error) }
+        result.map { user -> onAuthenticated(user) }.getOrElse { error -> onAuthError(error) }
 }
 
 public sealed interface AuthorizingScreen {
