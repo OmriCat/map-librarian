@@ -1,7 +1,5 @@
 @file:Suppress("SpellCheckingInspection")
 
-import de.fayard.refreshVersions.core.versionFor
-
 buildscript {
     repositories {
         google()
@@ -17,7 +15,6 @@ plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
     id("io.gitlab.arturbosch.detekt")
-    id("org.jlleitschuh.gradle.ktlint")
     id("com.dorongold.task-tree")
     id("com.autonomousapps.dependency-analysis")
     id("com.osacky.doctor")
@@ -34,24 +31,9 @@ allprojects {
 subprojects {
     apply {
         plugin("io.gitlab.arturbosch.detekt")
-        plugin("org.jlleitschuh.gradle.ktlint")
         plugin("org.gradle.idea")
     }
 
-    ktlint {
-        debug.set(false)
-        version.set(versionFor("com.pinterest:ktlint:_"))
-        verbose.set(true)
-        android.set(false)
-        outputToConsole.set(true)
-        ignoreFailures.set(true)
-        enableExperimentalRules.set(true)
-        disabledRules.addAll("experimental:argument-list-wrapping")
-        filter {
-            exclude("**/generated/**")
-            include("**/kotlin/**")
-        }
-    }
 
     detekt {
         config = rootProject.files("config/detekt/detekt.yml")
