@@ -67,7 +67,15 @@ subprojects {
         isDownloadSources = true
     }
 
-     afterEvaluate {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+            )
+            languageVersion = "1.5"
+        }
+    }
+    afterEvaluate {
         val hasKotlin = plugins.any {
             it is org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
         }
