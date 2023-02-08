@@ -14,6 +14,7 @@ buildscript {
 plugins {
     id("com.android.application") apply false
     kotlin("android") apply false
+    id("com.ncorti.ktfmt.gradle")
     id("io.gitlab.arturbosch.detekt")
     id("com.dorongold.task-tree")
     id("com.autonomousapps.dependency-analysis")
@@ -30,10 +31,14 @@ allprojects {
 
 subprojects {
     apply {
+        plugin("com.ncorti.ktfmt.gradle")
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.gradle.idea")
     }
 
+    ktfmt {
+        kotlinLangStyle()
+    }
 
     detekt {
         config = rootProject.files("config/detekt/detekt.yml")
