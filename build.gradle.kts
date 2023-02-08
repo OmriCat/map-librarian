@@ -73,7 +73,6 @@ subprojects {
             freeCompilerArgs = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
             )
-            languageVersion = "1.5"
         }
     }
     afterEvaluate {
