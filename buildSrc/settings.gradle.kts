@@ -4,3 +4,5 @@ pluginManagement {
 }
 
 plugins { id("de.fayard.refreshVersions") }
+
+rootProject.name = "buildSrc"
