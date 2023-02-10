@@ -39,6 +39,9 @@ rootProject.name = ("map-librarian")
 include(
     ":app",
     ":core",
-    "kotlin-result-kotest",
+    ":kotlin-result-kotest",
     ":firebase-emulator-container",
+    ":firebase:auth",
+    //TODO: Create firebase:auth subproject to hold firebase auth integration code/tests
+    // see https://github.com/grodin/map-librarian/issues/82
 )
