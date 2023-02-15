@@ -58,6 +58,7 @@ repositories { maven("https://jitpack.io") }
 
 dependencies {
     implementation(projects.core)
+    implementation(projects.firebase.auth)
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)

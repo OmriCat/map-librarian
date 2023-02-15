@@ -1,4 +1,4 @@
-package com.omricat.maplibrarian.auth
+package com.omricat.maplibrarian.firebase.auth
 
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
@@ -7,13 +7,17 @@ import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import com.google.firebase.auth.FirebaseAuth
+import com.omricat.maplibrarian.auth.AuthError
+import com.omricat.maplibrarian.auth.AuthService
+import com.omricat.maplibrarian.auth.Credential
+import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.maplibrarian.utils.DispatcherProvider
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-internal class FirebaseAuthService(
+public class FirebaseAuthService(
     private val auth: FirebaseAuth,
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
 ) : AuthService {

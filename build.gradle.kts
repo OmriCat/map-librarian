@@ -11,6 +11,7 @@ buildscript {
 
 plugins {
     id("com.android.application") apply false
+    id("com.android.library") apply false
     kotlin("android") apply false
     id("com.ncorti.ktfmt.gradle")
     id("io.gitlab.arturbosch.detekt")
