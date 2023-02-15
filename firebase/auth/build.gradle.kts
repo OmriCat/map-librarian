@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
 import com.omricat.gradle.BuildVersions
 
 plugins {
@@ -24,6 +25,18 @@ android {
 
     kotlin {
         explicitApi()
+    }
+
+    testOptions {
+        managedDevices {
+            devices {
+                maybeCreate<ManagedVirtualDevice>("nexus5api27").apply {
+                    device = "Nexus 5"
+                    apiLevel = 27
+                    systemImageSource = "google"
+                }
+            }
+        }
     }
 
 }
