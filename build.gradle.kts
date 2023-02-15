@@ -45,14 +45,6 @@ subprojects {
         }
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs =
-                listOf(
-                    "-Xopt-in=kotlin.RequiresOptIn",
-                )
-        }
-    }
     afterEvaluate {
         val hasKotlin =
             plugins.any { it is org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper }
