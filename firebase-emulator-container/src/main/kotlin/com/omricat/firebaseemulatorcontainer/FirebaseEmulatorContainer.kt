@@ -13,7 +13,7 @@ class FirebaseEmulatorContainer :
         withClasspathResourceMapping("firestore.rules", "./firestore.rules", READ_ONLY)
         withExposedPorts(FIRESTORE_PORT, AUTH_PORT)
         waitingFor(Wait.forHealthcheck())
-        withCommand("emulators:start")
+        withCommand("emulators:start", "--project", "map-librarian")
     }
 
     companion object {
