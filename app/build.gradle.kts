@@ -54,8 +54,6 @@ android {
     namespace = "com.omricat.maplibrarian"
 }
 
-repositories { maven("https://jitpack.io") }
-
 dependencies {
     implementation(projects.core)
 
@@ -91,7 +89,7 @@ dependencies {
 
     implementation(JakeWharton.timber)
 
-    debugImplementation("com.github.pandulapeter.beagle:ui-drawer:_")
+    debugImplementation("io.github.pandulapeter.beagle:ui-drawer:_")
     debugImplementation("com.jakewharton:process-phoenix:_")
 
     testImplementation(KotlinX.coroutines.test)
