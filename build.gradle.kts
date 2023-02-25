@@ -75,8 +75,8 @@ subprojects {
 val buildVersions by
     extra(
         com.omricat.gradle.BuildVersions(
-            compileSdk = 31,
             minSdk = 21,
+            compileSdk = 33,
             targetSdk = 29,
             javaLanguageVersion = 11,
         )
