@@ -3,13 +3,6 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    resolutionStrategy {
-        val pluginIdToCoordinates =
-            mapOf("com.google.gms.google-services" to "com.google.gms:google-services")
-        eachPlugin {
-            pluginIdToCoordinates[requested.id.id]?.also { useModule("$it:${requested.version}") }
-        }
-    }
     repositories {
         gradlePluginPortal()
         google()
@@ -49,7 +42,4 @@ include(
     ":core",
     ":kotlin-result-kotest",
     ":firebase-emulator-container",
-    ":firebase:auth",
-    //TODO: Create firebase:auth subproject to hold firebase auth integration code/tests
-    // see https://github.com/grodin/map-librarian/issues/82
 )
