@@ -2,10 +2,23 @@
 
 set -eo pipefail
 
+function bail() {
+	echo $1
+	exit 1
+}
+
+project_name="$1"
+[[ -n "$project_name" ]] || bail "No project name given"
+echo "Project name: $project_name"
+
+firestore_rules="${2:-$(git rev-parse --show-toplevel)/firestore.rules}"
+[[ -f "$firestore_rules" ]] || bail "File $firestore_rules doesn't exist"
+echo "Firestore rules file: $firestore_rules"
+
 docker pull ghcr.io/grodin/firebase-emulator-docker:latest
 
 function cleanup() {
-  docker rm -f firebase-emulator > /dev/null
+  docker rm -f firebase-emulator > /dev/null 2>&1
 }
 
 trap cleanup SIGTERM SIGINT
@@ -26,8 +39,8 @@ docker run -it \
     --publish "$auth_port":"$auth_port" \
     --publish "$firestore_port":"$firestore_port" \
     --name firebase-emulator \
-    --volume "$(git rev-parse --show-toplevel)/firestore.rules:/home/firestore-emulator/firestore.rules" \
+    --volume "$firestore_rules:/home/firestore-emulator/firestore.rules" \
     firebase-emulator-docker \
- 	emulators:start --project "map-librarian"
+ 	emulators:start --project "$project_name"
 
 cleanup
