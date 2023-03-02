@@ -21,6 +21,11 @@ jobs:
           colima start
           docker --version # Sanity check
 
+      - name: Install coreutils
+        run: |
+          brew install coreutils
+          timeout --version
+
       - name: Checkout repo
         uses: actions/checkout@v3
 
