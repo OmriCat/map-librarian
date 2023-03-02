@@ -20,8 +20,6 @@ gradlew="$project_root/gradlew"
 image_name="ghcr.io/grodin/firebase-emulator-docker"
 image_digest="sha256:b79d5aa006df16fb7ab74ef3aa1a33a95d9fcecb9dee0802a93cc99328b7bb77"
 
-docker pull "$image_name"@"$image_digest"
-
 emulator="firebase-emulator"
 
 function cleanup() {
