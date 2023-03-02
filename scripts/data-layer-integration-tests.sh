@@ -65,7 +65,7 @@ docker run \
 
 export -f wait_for_emulator
 export emulator
-timeout --foreground 60s  bash -c wait_for_emulator
+timeout --foreground 120s  bash -c wait_for_emulator
 
 CDPATH="" cd "$project_root"
 
