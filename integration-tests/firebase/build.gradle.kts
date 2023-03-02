@@ -1,5 +1,17 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 import com.omricat.gradle.BuildVersions
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies { classpath(Square.okHttp3) }
+}
 
 plugins {
     id("com.android.test")
@@ -19,13 +31,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes.named("debug") {
-        isDebuggable = true
-    }
+    buildTypes.named("debug") { isDebuggable = true }
 
-    sourceSets.forEach { srcSet ->
-        srcSet.java.srcDir("src/${srcSet.name}/kotlin")
-    }
+    sourceSets.forEach { srcSet -> srcSet.java.srcDir("src/${srcSet.name}/kotlin") }
 
     testOptions {
         managedDevices {
@@ -42,6 +50,35 @@ android {
                 }
             }
         }
+    }
+}
+
+fun failBuildIfFirebaseEmulatorIsNotRunning() {
+    logger.lifecycle("Checking whether Firebase emulator is reachable")
+    val client = OkHttpClient()
+    val baseUrl = HttpUrl.Builder().scheme("http").host("localhost").build()
+
+    listOf(Ports.AUTH, Ports.FIRESTORE).forEach { port ->
+        val request = Request.Builder().url(baseUrl.newBuilder().port(port).build()).build()
+        try {
+            client.newCall(request).execute().use { resp ->
+                check(resp.isSuccessful) { "Can't connect to Firebase emulator at ${request.url}" }
+            }
+        } catch (e: okio.IOException) {
+            throw IllegalStateException("Can't connect to Firebase emulator at ${request.url}", e)
+        }
+    }
+    logger.lifecycle("Firebase emulator found!")
+}
+
+object Ports {
+    const val FIRESTORE = 8080
+    const val AUTH = 9099
+}
+
+gradle.taskGraph.whenReady {
+    if (allTasks.any { it.name.contains("androidTest", ignoreCase = true) }) {
+        failBuildIfFirebaseEmulatorIsNotRunning()
     }
 }
 
