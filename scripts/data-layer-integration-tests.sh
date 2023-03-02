@@ -17,9 +17,10 @@ project_name="map-librarian"
 gradlew="$project_root/gradlew"
 [[ -f "$gradlew" ]] || bail "Can't find gradle wrapper at $gradlew"
 
-image_name="firebase-emulator-docker"
+image_name="ghcr.io/grodin/firebase-emulator-docker"
+image_digest="sha256:b79d5aa006df16fb7ab74ef3aa1a33a95d9fcecb9dee0802a93cc99328b7bb77"
 
-docker pull ghcr.io/grodin/"$image_name":latest
+docker pull "$image_name"@"$image_digest"
 
 emulator="firebase-emulator"
 
