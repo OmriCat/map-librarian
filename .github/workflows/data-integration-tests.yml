@@ -8,7 +8,7 @@ on:
 jobs:
   data-layer-integration-tests:
     name: Data layer integration tests run against Firebase emulator in Docker
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
