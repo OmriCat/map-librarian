@@ -17,13 +17,13 @@ project_name="map-librarian"
 gradlew="$project_root/gradlew"
 [[ -f "$gradlew" ]] || bail "Can't find gradle wrapper at $gradlew"
 
-image_name="ghcr.io/grodin/firebase-emulator-docker"
 image_digest="sha256:b79d5aa006df16fb7ab74ef3aa1a33a95d9fcecb9dee0802a93cc99328b7bb77"
+image_name="ghcr.io/grodin/firebase-emulator-docker@$image_digest"
 
-emulator="firebase-emulator"
+container="firebase-emulator"
 
 function cleanup() {
-  docker rm -f "$emulator" #> /dev/null 2>&1
+  docker rm -f "$container" #> /dev/null 2>&1
 }
 
 trap cleanup SIGTERM SIGINT
@@ -33,7 +33,7 @@ function wait_for_emulator() {
   while [[ "$health" != "healthy" ]]
   do
     sleep 2
-    health=$(docker inspect -f '{{.State.Health.Status}}' "$emulator")
+    health=$(docker inspect -f '{{.State.Health.Status}}' "$container")
     echo "$(date -Iseconds): $health"
   done
 }
@@ -58,17 +58,13 @@ docker run \
     --publish "$hub_port":"$hub_port" \
     --publish "$auth_port":"$auth_port" \
     --publish "$firestore_port":"$firestore_port" \
-    --name "$emulator" \
+    --name "$container" \
     --volume "$firestore_rules:/home/firestore-emulator/firestore.rules" \
     "$image_name" \
  	  emulators:start --project "$project_name"
 
 export -f wait_for_emulator
-export emulator
+export container
 timeout --foreground 120s  bash -c wait_for_emulator
 
-CDPATH="" cd "$project_root"
-
-"$gradlew" :integration-tests:firebase:allDevicesCheck
-
-cleanup
+echo "container_name=$container" >> "$GITHUB_OUTPUT"

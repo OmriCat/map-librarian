@@ -12,6 +12,13 @@ jobs:
     # Use macos because GH linux runners don't have nested virtualization
     # Which is required to use gradle managed devices
     runs-on: macos-latest
+    strategy:
+      matrix:
+#        api-level: [ 30 ]
+#        target: [ google_apis ]
+        include:
+          - api-level: 30
+            target: google_atd
     steps:
 
         # Docker can't be pre-installed on macos due to licensing issues so this is a workaround
@@ -30,12 +37,67 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
-          cache: 'gradle'
 
-      - name: Start Firebase emulator and run integration tests
-        run: scripts/data-layer-integration-tests.sh
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2
+
+      ## Build before running tests
+      - name: Build instrumented integration tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            :app:packageDebug :integration-tests:firebase:packageDebug
+          cache-read-only: false
+
+      - name: Cache AVD
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          profile: "Galaxy Nexus"
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Created AVD snapshot for caching"
+
+      - name: Start Firebase emulator and wait for it to be ready
+        id: start-emulator
+        run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
+
+      - name: Run instrumented integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          profile: "Galaxy Nexus"
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew :integration-tests:firebase:connectedCheck
+
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: instrumentation-test-results-${{ matrix.api-level }}
+          path: ./**/build/reports/androidTests/connected/**
+
+      - name: Stop Firebase emulator
+        run: |
+          docker rm -f ${{ steps.start-emulator.outputs.container_name }}
+
 

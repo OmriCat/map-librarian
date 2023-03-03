@@ -77,8 +77,14 @@ object Ports {
 }
 
 gradle.taskGraph.whenReady {
-    if (allTasks.any { it.name.contains("androidTest", ignoreCase = true) }) {
-        failBuildIfFirebaseEmulatorIsNotRunning()
+    if (
+        allTasks.any {
+            it.project == project &&
+                it.name.contains("AndroidTest", ignoreCase = true) &&
+                it.name.contains("assemble", ignoreCase = true).not()
+        }
+    ) {
+                failBuildIfFirebaseEmulatorIsNotRunning()
     }
 }
 
