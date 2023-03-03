@@ -7,8 +7,6 @@ import retrofit2.create
 import retrofit2.http.DELETE
 import retrofit2.http.Path
 
-
-
 class FirebaseAuthEmulatorRestApi(private val projectId: String, baseUrl: HttpUrl) {
 
     private interface RetrofitEmulatorApi {
