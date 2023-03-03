@@ -67,4 +67,3 @@ export -f wait_for_emulator
 export container
 timeout --foreground 120s  bash -c wait_for_emulator
 
-echo "container_name=$container" >> "$GITHUB_OUTPUT"

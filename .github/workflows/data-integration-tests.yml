@@ -96,8 +96,4 @@ jobs:
           name: instrumentation-test-results-${{ matrix.api-level }}
           path: ./**/build/reports/androidTests/connected/**
 
-      - name: Stop Firebase emulator
-        run: |
-          docker rm -f ${{ steps.start-emulator.outputs.container_name }}
-
 
