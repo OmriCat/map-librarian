@@ -21,6 +21,7 @@ pluginManagement {
 plugins {
     id("com.gradle.enterprise") version "3.12.2"
     id("de.fayard.refreshVersions") version "0.51.0"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.1.5"
 }
 
 gradleEnterprise {
@@ -32,6 +33,16 @@ gradleEnterprise {
 
 refreshVersions {
     rejectVersionIf { candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) }
+}
+
+gitHooks {
+    preCommit {
+        from(rootDir.resolve("scripts").resolve("check-formatting"))
+    }
+    commitMsg {
+        conventionalCommits()
+    }
+    createHooks()
 }
 
 rootProject.name = ("map-librarian")
