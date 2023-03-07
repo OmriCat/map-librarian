@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -eo pipefail
+
+die() {
+    echo "$@"
+    error 1
+}
+
+ktfmt_version="0.43"
+ktfmt_jar="ktfmt-${ktfmt_version}-jar-with-dependencies.jar"
+
+scriptdir="$(cd "$(dirname "$0")" && pwd)"
+
+[[ -f "${scriptdir}/${ktfmt_jar}" ]] || die "Can't find $ktfmt_jar in $scriptdir"
+
+java -jar "${scriptdir}/${ktfmt_jar}" "$@"
