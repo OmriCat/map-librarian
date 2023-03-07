@@ -12,11 +12,12 @@ interface BuildVersions {
             minSdk: Int,
             targetSdk: Int,
             javaLanguageVersion: Int
-        ): BuildVersions = object : BuildVersions {
-            override val compileSdk: Int = compileSdk
-            override val minSdk: Int = minSdk
-            override val targetSdk: Int = targetSdk
-            override val javaLanguageVersion: Int = javaLanguageVersion
-        }
+        ): BuildVersions =
+            object : BuildVersions {
+                override val compileSdk: Int = compileSdk
+                override val minSdk: Int = minSdk
+                override val targetSdk: Int = targetSdk
+                override val javaLanguageVersion: Int = javaLanguageVersion
+            }
     }
 }

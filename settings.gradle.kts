@@ -36,12 +36,8 @@ refreshVersions {
 }
 
 gitHooks {
-    preCommit {
-        from(rootDir.resolve("scripts").resolve("check-formatting"))
-    }
-    commitMsg {
-        conventionalCommits()
-    }
+    preCommit { from(rootDir.resolve("scripts").resolve("check-formatting")) }
+    commitMsg { conventionalCommits() }
     createHooks()
 }
 
@@ -53,6 +49,6 @@ include(
     ":kotlin-result-kotest",
     ":firebase-emulator-container",
     ":firebase:auth",
-    //TODO: Create firebase:auth subproject to hold firebase auth integration code/tests
+    // TODO: Create firebase:auth subproject to hold firebase auth integration code/tests
     // see https://github.com/grodin/map-librarian/issues/82
 )
