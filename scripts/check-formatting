@@ -7,22 +7,12 @@ die() {
     exit 1
 }
 
-formatting_style="kotlinlang-style"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
 
-project_root="$(git rev-parse --show-toplevel)"
-ktfmt="$project_root/tools/ktfmt/ktfmt"
+format_script="$script_dir/format-kt-files"
 
-unformatted_files="$(find "$project_root" \
-    \( \
-    -iname '*.kt' \
-    -o \
-    -iname '*.kts' \
-    \) \
-    -exec "$ktfmt" \
-    --dry-run \
-    --set-exit-if-changed \
-    "--$formatting_style" \
-    '{}' +)" \
+
+unformatted_files="$($format_script --dry-run --set-exit-if-changed )" \
     || \
     die "Incorrectly formatted files found:" "$unformatted_files"
 
