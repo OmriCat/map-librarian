@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -o pipefail -o errexit -o noclobber -o nounset
+
+die() {
+    echo "$@"
+    error 1
+}
+
+formatting_style="kotlinlang-style"
+
+project_root="$(git rev-parse --show-toplevel)"
+ktfmt="$project_root/tools/ktfmt/ktfmt"
+
+find "$project_root" \
+    \( \
+    -iname '*.kt' \
+    -o \
+    -iname '*.kts' \
+    \) \
+    -exec "$ktfmt" \
+    --dry-run \
+    --set-exit-if-changed \
+    "--$formatting_style" \
+    '{}' +
