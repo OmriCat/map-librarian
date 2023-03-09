@@ -1,0 +1,78 @@
+name: Data layer integration tests
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  data-layer-integration-tests:
+    name: Data layer integration tests run against Firebase emulator in Docker
+
+    # Use macos because GH linux runners don't have nested virtualization
+    # Which is required to use gradle managed devices
+    runs-on: macos-latest
+    strategy:
+      matrix:
+#        api-level: [ 30 ]
+#        target: [ google_apis ]
+        include:
+          - api-level: 30
+            target: google_atd
+    steps:
+
+        # Docker can't be pre-installed on macos due to licensing issues so this is a workaround
+      - name: Setup docker on macos
+        run: |
+          brew install docker
+          colima start
+          docker --version # Sanity check
+
+      - name: Install coreutils
+        run: |
+          brew install coreutils
+          timeout --version
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2
+
+      ## Build before running tests
+      - name: Build instrumented integration tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            :app:packageDebug :integration-tests:firebase:packageDebug
+          cache-read-only: false
+
+      - name: Start Firebase emulator and wait for it to be ready
+        id: start-emulator
+        run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
+
+      - name: Run instrumented integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          profile: "Galaxy Nexus"
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew :integration-tests:firebase:connectedCheck
+
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: instrumentation-test-results-${{ matrix.api-level }}
+          path: ./**/build/reports/androidTests/connected/**
+
+

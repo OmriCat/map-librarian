@@ -13,11 +13,11 @@ class FirebaseEmulatorContainer :
         withClasspathResourceMapping("firestore.rules", "./firestore.rules", READ_ONLY)
         withExposedPorts(FIRESTORE_PORT, AUTH_PORT)
         waitingFor(Wait.forHealthcheck())
-        withCommand("emulators:start")
+        withCommand("emulators:start", "--project", "map-librarian")
     }
 
     companion object {
-        const val DOCKER_IMAGE_VERSION = "1.4.0"
+        const val DOCKER_IMAGE_VERSION = "1.4.1"
         const val FIRESTORE_PORT = 8080
         const val AUTH_PORT = 9099
     }

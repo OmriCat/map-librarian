@@ -1,17 +1,10 @@
 @file:Suppress("SpellCheckingInspection")
 
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies { classpath(Google.playServicesGradlePlugin) }
-}
-
 plugins {
     id("com.android.application") apply false
+    id("com.android.library") apply false
     kotlin("android") apply false
+    id("com.google.gms.google-services") apply false
     id("com.ncorti.ktfmt.gradle")
     id("io.gitlab.arturbosch.detekt")
     id("com.dorongold.task-tree")
@@ -74,8 +67,8 @@ subprojects {
 val buildVersions by
     extra(
         com.omricat.gradle.BuildVersions(
-            compileSdk = 31,
-            minSdk = 21,
+            compileSdk = 33,
+            minSdk = 23,
             targetSdk = 29,
             javaLanguageVersion = 11,
         )
