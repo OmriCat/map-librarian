@@ -4,9 +4,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.omricat.maplibrarian.auth.AuthService
-import com.omricat.maplibrarian.auth.FirebaseAuthService
 import com.omricat.maplibrarian.chartlist.ChartsService
 import com.omricat.maplibrarian.chartlist.FirebaseChartsService
+import com.omricat.maplibrarian.firebase.auth.FirebaseAuthService
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 /** Setup DI container for release variant */

@@ -89,8 +89,8 @@ gradle.taskGraph.whenReady {
 }
 
 dependencies {
-    implementation(projects.core)
-    implementation(projects.app)
+    debugImplementation(projects.core)
+    debugImplementation(projects.app)
 
     implementation(KotlinX.coroutines.core)
     implementation(KotlinX.coroutines.android)
