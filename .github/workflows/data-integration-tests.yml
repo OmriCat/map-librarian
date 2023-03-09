@@ -53,27 +53,6 @@ jobs:
             :app:packageDebug :integration-tests:firebase:packageDebug
           cache-read-only: false
 
-      - name: Cache AVD
-        uses: actions/cache@v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          profile: "Galaxy Nexus"
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Created AVD snapshot for caching"
-
       - name: Start Firebase emulator and wait for it to be ready
         id: start-emulator
         run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
