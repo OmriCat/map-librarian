@@ -2,7 +2,7 @@ package com.omricat.maplibrarian.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable @JvmInline public value class UserUid(public val id: String)
+@Serializable @JvmInline public value class UserUid(public val value: String)
 
 public interface User {
     public val displayName: String
