@@ -44,13 +44,14 @@ class FirebaseEndToEndTest {
 
         assert(addChartResult is Ok<DbChartModel>)
 
-        val queryChartResult =
-            chartsRepository.chartsListForUser(user)
+        val queryChartResult = chartsRepository.chartsListForUser(user)
 
-        queryChartResult.getOrThrow { AssertionError(it) }.run {
-            assert(size == 1)
-            assert(first().title == "New map")
-        }
+        queryChartResult
+            .getOrThrow { AssertionError(it) }
+            .run {
+                assert(size == 1)
+                assert(first().title == "New map")
+            }
     }
 
     companion object Fixtures {

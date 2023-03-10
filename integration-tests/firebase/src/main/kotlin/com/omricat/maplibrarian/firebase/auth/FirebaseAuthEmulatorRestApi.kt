@@ -16,7 +16,6 @@ class FirebaseAuthEmulatorRestApi(private val projectId: String, baseUrl: HttpUr
         fun deleteAllUsers(@Path("project-id") projectId: String): Call<Unit>
     }
 
-    private val wrappedApi: AuthEmulatorApi =
-        Retrofit.Builder().baseUrl(baseUrl).build().create()
+    private val wrappedApi: AuthEmulatorApi = Retrofit.Builder().baseUrl(baseUrl).build().create()
     fun deleteAllUsers(): Response<Unit> = wrappedApi.deleteAllUsers(projectId).execute()
 }

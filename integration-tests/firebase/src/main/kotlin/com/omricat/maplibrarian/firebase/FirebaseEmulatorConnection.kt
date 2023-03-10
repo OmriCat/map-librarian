@@ -8,5 +8,4 @@ object FirebaseEmulatorConnection {
     const val AUTH_PORT = 9099
 
     const val FIRESTORE_PORT = 8080
-
 }
