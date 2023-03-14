@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
+@Suppress("FunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
 class FirebaseEndToEndTest {
 
