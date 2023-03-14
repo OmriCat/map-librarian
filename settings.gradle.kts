@@ -29,9 +29,7 @@ refreshVersions {
 }
 
 gitHooks {
-    commitMsg {
-        conventionalCommits()
-    }
+    commitMsg { conventionalCommits() }
     createHooks()
 }
 
