@@ -25,6 +25,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Setup JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
       - name: Run ktfmt
         uses: gradle/gradle-build-action@v2
         with:
@@ -37,6 +43,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
       - name: Run lint
         uses: gradle/gradle-build-action@v2
