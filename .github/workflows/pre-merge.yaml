@@ -17,7 +17,40 @@ jobs:
         uses: actions/checkout@v3
       - name: Validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-  gradle:
+
+  ktfmt:
+    name: 'Check *.kt *.kts with ktfmt'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run ktfmt
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: ktfmtCheckAllKtsAndKt
+          cache-read-only: false
+
+  lint-detekt:
+    name: Run lint and detekt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run lint
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: lintReportDebug lintReportRelease
+          cache-read-only: false
+
+      - name: Run detekt
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: detektAll
+          cache-read-only: false
+
+  build:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
@@ -30,6 +63,28 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          cache: 'gradle'
-      - name: Run Gradle tasks
-        run: ./gradlew build check --continue --no-daemon
+
+      - name: Assemble all variants
+        uses: gradle/gradle-build-action@v2
+          with:
+            arguments: app:assemble --continue
+            cache-read-only: false
+
+  jvm-tests:
+    name: Run local tests for all projects
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Run local tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: test --continue --stacktrace
+          cache-read-only: false
