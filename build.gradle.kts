@@ -1,5 +1,9 @@
 @file:Suppress("SpellCheckingInspection")
 
+import com.ncorti.ktfmt.gradle.tasks.KtfmtBaseTask
+import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
+import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+
 plugins {
     id("com.android.application") apply false
     id("com.android.library") apply false
@@ -17,16 +21,14 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    apply { plugin("com.ncorti.ktfmt.gradle") }
+
+    ktfmt { kotlinLangStyle() }
 }
 
 subprojects {
-    apply {
-        plugin("com.ncorti.ktfmt.gradle")
-        plugin("io.gitlab.arturbosch.detekt")
-        plugin("org.gradle.idea")
-    }
-
-    ktfmt { kotlinLangStyle() }
+    apply { plugin("io.gitlab.arturbosch.detekt") }
 
     detekt {
         config = rootProject.files("config/detekt/detekt.yml")
@@ -73,3 +75,15 @@ val buildVersions by
             javaLanguageVersion = 11,
         )
     )
+
+// Check task below used for CI, and format task to easily format all kotlin source & script files
+fun KtfmtBaseTask.configureForAllKtsAndKt() {
+    source = fileTree(rootDir)
+    include("**/*.kt", "**/*.kts")
+    exclude("**/build/**", "**/tools/**", "**/scripts/**")
+    notCompatibleWithConfigurationCache("Not known why task isn't compatible with config cache")
+}
+
+tasks.register<KtfmtCheckTask>("ktfmtCheckAllKtsAndKt") { configureForAllKtsAndKt() }
+
+tasks.register<KtfmtFormatTask>("ktfmtFormatAllKtsAndKt") { configureForAllKtsAndKt() }
