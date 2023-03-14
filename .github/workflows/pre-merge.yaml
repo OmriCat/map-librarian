@@ -66,9 +66,9 @@ jobs:
 
       - name: Assemble all variants
         uses: gradle/gradle-build-action@v2
-          with:
-            arguments: app:assemble --continue
-            cache-read-only: false
+        with:
+          arguments: app:assemble --continue
+          cache-read-only: false
 
   jvm-tests:
     name: Run local tests for all projects
