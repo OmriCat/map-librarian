@@ -84,7 +84,7 @@ gradle.taskGraph.whenReady {
                 it.name.contains("assemble", ignoreCase = true).not()
         }
     ) {
-                failBuildIfFirebaseEmulatorIsNotRunning()
+        failBuildIfFirebaseEmulatorIsNotRunning()
     }
 }
 
