@@ -3,6 +3,7 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtBaseTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+import de.fayard.refreshVersions.core.versionFor
 
 plugins {
     id("com.android.application") apply false
@@ -87,3 +88,27 @@ fun KtfmtBaseTask.configureForAllKtsAndKt() {
 tasks.register<KtfmtCheckTask>("ktfmtCheckAllKtsAndKt") { configureForAllKtsAndKt() }
 
 tasks.register<KtfmtFormatTask>("ktfmtFormatAllKtsAndKt") { configureForAllKtsAndKt() }
+
+// Task for running detekt on all files, including *.kts
+
+val detektAll: Configuration by configurations.creating
+
+tasks.register<JavaExec>("detektAll") {
+    mainClass.set("io.gitlab.arturbosch.detekt.cli.Main")
+    classpath = detektAll
+    val input = rootDir.absolutePath
+    val config = rootDir.resolve("config").resolve("detekt").resolve("detekt.yml").absolutePath
+    val excludes =
+        listOf("build", "resources", "tools", "scripts").joinToString(separator = ",") {
+            "**/$it/*"
+        }
+    val params = listOf("--input", input, "--config", config, "--excludes", excludes)
+    logger.lifecycle("Running detekt cli tool with parameters: $params")
+    args = params
+}
+
+dependencies {
+    detektAll("io.gitlab.arturbosch.detekt:detekt-cli") {
+        version { strictly(versionFor("plugin.io.gitlab.arturbosch.detekt")) }
+    }
+}
