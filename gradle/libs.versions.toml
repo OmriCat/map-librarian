@@ -48,18 +48,18 @@ detekt_gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plug
 detekt_cli = {module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt"}
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-android-test = { id = "com.android.test", version.ref = "agp" }
+android_application = { id = "com.android.application", version.ref = "agp" }
+android_library = { id = "com.android.library", version.ref = "agp" }
+android_test = { id = "com.android.test", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "plugin_dependencyAnalysis" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "plugin_googleServices" }
 gradleDoctor = { id = "com.osacky.doctor", version.ref = "plugin_gradleDoctor" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "plugin_ktfmt" }
 taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 ######################################
 # convention plugins from build-logic
