@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
-import com.omricat.gradle.BuildVersions
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -14,19 +13,18 @@ buildscript {
 }
 
 plugins {
-    id("com.android.test")
-    kotlin("android")
+    alias(libs.plugins.android.test)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.omricat.maplibrarian.integrationtesting.debug"
     targetProjectPath = ":app"
 
-    val buildVersions: BuildVersions by rootProject.extra
-    compileSdk = buildVersions.compileSdk
+    compileSdk = 33
 
     defaultConfig {
-        minSdk = buildVersions.minSdk
+        minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

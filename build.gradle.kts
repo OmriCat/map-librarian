@@ -3,19 +3,30 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtBaseTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
-import de.fayard.refreshVersions.core.versionFor
 
 plugins {
-    id("com.android.application") apply false
-    id("com.android.library") apply false
-    kotlin("android") apply false
-    id("com.google.gms.google-services") apply false
-    id("com.ncorti.ktfmt.gradle")
-    id("io.gitlab.arturbosch.detekt")
-    id("com.dorongold.task-tree")
-    id("com.autonomousapps.dependency-analysis")
-    id("com.osacky.doctor")
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.ktfmt)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.taskTree)
+    alias(libs.plugins.dependencyAnalysis)
+    alias(libs.plugins.gradleDoctor)
+    id("com.omricat.maplib.root")
 }
+
+buildVersions {
+    javaLanguageVersion = 11
+    compileSdk = 33
+    minSdk = 23
+    targetSdk = 29
+}
+
+
 
 allprojects {
     repositories {
@@ -47,9 +58,7 @@ subprojects {
         if (hasKotlin) {
             extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension>().apply {
                 jvmToolchain {
-                    (this as JavaToolchainSpec)
-                        .languageVersion
-                        .set(JavaLanguageVersion.of(buildVersions.javaLanguageVersion))
+                    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11))
                 }
             }
         }
@@ -58,24 +67,24 @@ subprojects {
         if (hasAndroidPlugin) {
             extensions.getByType<com.android.build.gradle.BaseExtension>().apply {
                 compileOptions {
-                    sourceCompatibility = JavaVersion.toVersion(buildVersions.javaLanguageVersion)
-                    targetCompatibility = JavaVersion.toVersion(buildVersions.javaLanguageVersion)
+                    sourceCompatibility = JavaVersion.VERSION_11
+                    targetCompatibility = JavaVersion.VERSION_11
                 }
             }
         }
     }
 }
 
-@Suppress("MagicNumber")
-val buildVersions by
-    extra(
-        com.omricat.gradle.BuildVersions(
-            compileSdk = 33,
-            minSdk = 23,
-            targetSdk = 29,
-            javaLanguageVersion = 11,
-        )
-    )
+// @Suppress("MagicNumber")
+// val buildVersions by
+//    extra(
+//        com.omricat.gradle.BuildVersions(
+//            compileSdk = 33,
+//            minSdk = 23,
+//            targetSdk = 29,
+//            javaLanguageVersion = 11,
+//        )
+//    )
 
 // Check task below used for CI, and format task to easily format all kotlin source & script files
 fun KtfmtBaseTask.configureForAllKtsAndKt() {
@@ -109,6 +118,6 @@ tasks.register<JavaExec>("detektAll") {
 
 dependencies {
     detektAll("io.gitlab.arturbosch.detekt:detekt-cli") {
-        version { strictly(versionFor("plugin.io.gitlab.arturbosch.detekt")) }
+        version { strictly(libs.versions.plugin.detekt.get()) }
     }
 }

@@ -1,20 +1,18 @@
 @file:Suppress("SpellCheckingInspection")
 
-import com.omricat.gradle.BuildVersions
-
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.googleServices)
 }
 
 android {
-    val buildVersions: BuildVersions by rootProject.extra
-    compileSdk = buildVersions.compileSdk
+
+    compileSdk = 33
 
     defaultConfig {
-        minSdk = buildVersions.minSdk
-        targetSdk = buildVersions.targetSdk
+        minSdk = 23
+        targetSdk = 29
 
         applicationId = "com.omricat.maplibrarian"
         versionCode = 1
