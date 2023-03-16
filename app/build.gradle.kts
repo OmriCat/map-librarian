@@ -7,7 +7,6 @@ plugins {
 }
 
 android {
-
     compileSdk = 33
 
     defaultConfig {

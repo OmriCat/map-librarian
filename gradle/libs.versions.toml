@@ -1,48 +1,57 @@
 [versions]
-agp = '7.4.1'
-beagle = '2.9.0'
-firebaseBom = '29.0.0'
-kotest = '5.5.5'
-kotlin = '1.7.21'
-kotlinResult = '1.1.14'
-material = '1.2.1'
-okhttp3 = '4.10.0'
-processPhoenix = '2.1.2'
-retrofit2 = '2.9.0'
-robolectric = '4.7.3'
-slf4jSimple = '1.7.36'
-testcontainersBom = '1.16.3'
-timber = '5.0.1'
-workflow = '1.6.0'
-androidx_activity = '1.4.0'
-androidx_annotation = '1.1.0'
-androidx_appcompat = '1.2.0'
-androidx_constraintlayout = '2.1.3'
-androidx_core = '1.7.0'
-androidx_datastore = '1.0.0'
-androidx_espresso = '3.2.0'
-androidx_lifecycle = '2.4.0'
-androidx_recyclerview = '1.1.0'
-androidx_test = '1.2.0'
-androidx_testCore = '1.4.0'
-androidx_testExtTruth = '1.2.0'
-androidx_testRules = '1.2.0'
-androidx_testRunner = '1.2.0'
-androidx_testExtJunit = '1.1.1'
-kotlinx_coroutines = '1.6.0'
-kotlinx_serialization = '1.3.1'
-plugin_dependencyAnalysis = '1.18.0'
-plugin_detekt = '1.18.1'
-plugin_googleServices = '4.3.10'
-plugin_gradleDoctor = '0.8.1'
-plugin_ktfmt = '0.11.0'
-plugin_taskTree = '2.1.1'
+agp = "7.4.1"
+beagle = "2.9.0"
+firebaseBom = "29.0.0"
+kotest = "5.5.5"
+kotlin = "1.7.21"
+kotlinResult = "1.1.14"
+material = "1.2.1"
+okhttp3 = "4.10.0"
+processPhoenix = "2.1.2"
+retrofit2 = "2.9.0"
+robolectric = "4.7.3"
+slf4jSimple = "1.7.36"
+testcontainersBom = "1.16.3"
+timber = "5.0.1"
+workflow = "1.6.0"
+androidx_activity = "1.4.0"
+androidx_annotation = "1.1.0"
+androidx_appcompat = "1.2.0"
+androidx_constraintlayout = "2.1.3"
+androidx_core = "1.7.0"
+androidx_datastore = "1.0.0"
+androidx_espresso = "3.2.0"
+androidx_lifecycle = "2.4.0"
+androidx_recyclerview = "1.1.0"
+androidx_test = "1.2.0"
+androidx_testCore = "1.4.0"
+androidx_testExtTruth = "1.2.0"
+androidx_testRules = "1.2.0"
+androidx_testRunner = "1.2.0"
+androidx_testExtJunit = "1.1.1"
+kotlinx_coroutines = "1.6.0"
+kotlinx_serialization = "1.3.1"
+plugin_dependencyAnalysis = "1.18.0"
+detekt = "1.18.1"
+plugin_googleServices = "4.3.10"
+plugin_gradleDoctor = "0.8.1"
+plugin_ktfmt = "0.11.0"
+plugin_taskTree = "2.1.1"
+
+[libraries]
+
+# Used in build-logic
+android_gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin_gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+ktfmt_gradlePlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version.ref = "plugin_ktfmt" }
+detekt_gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
+detekt_cli = {module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "plugin_detekt" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "plugin_dependencyAnalysis" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "plugin_googleServices" }
 gradleDoctor = { id = "com.osacky.doctor", version.ref = "plugin_gradleDoctor" }
@@ -51,3 +60,8 @@ taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+######################################
+# convention plugins from build-logic
+######################################
+maplib_root = { id = "com.omricat.maplib.root", version = "_"}
