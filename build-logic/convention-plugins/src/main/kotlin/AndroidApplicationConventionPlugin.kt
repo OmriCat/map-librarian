@@ -24,6 +24,8 @@ public class AndroidApplicationConventionPlugin : Plugin<Project> {
                         versionNameSuffix = "-debug"
                     }
                 }
+
+                dataBinding.enable = false
             }
         }
     }
