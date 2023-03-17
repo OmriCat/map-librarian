@@ -5,7 +5,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 
-class FirebaseEmulatorContainer :
+public class FirebaseEmulatorContainer :
     GenericContainer<FirebaseEmulatorContainer>(
         DockerImageName.parse("ghcr.io/grodin/firebase-emulator-docker:v$DOCKER_IMAGE_VERSION")
     ) {
@@ -16,9 +16,9 @@ class FirebaseEmulatorContainer :
         withCommand("emulators:start", "--project", "map-librarian")
     }
 
-    companion object {
-        const val DOCKER_IMAGE_VERSION = "1.4.1"
-        const val FIRESTORE_PORT = 8080
-        const val AUTH_PORT = 9099
+    public companion object {
+        public const val DOCKER_IMAGE_VERSION: String = "1.4.1"
+        public const val FIRESTORE_PORT: Int = 8080
+        public const val AUTH_PORT: Int = 9099
     }
 }

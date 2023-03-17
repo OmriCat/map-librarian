@@ -9,7 +9,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.contracts.contract
 
-fun <V, E> ok() =
+public fun <V, E> ok(): Matcher<Result<V, E>> =
     Matcher<Result<V, E>> { result ->
         io.kotest.matchers.MatcherResult(
             passed = result.get() != null,
@@ -18,20 +18,20 @@ fun <V, E> ok() =
         )
     }
 
-fun <V, E> Result<V, E>.shouldBeOk(): Ok<V> {
+public fun <V, E> Result<V, E>.shouldBeOk(): Ok<V> {
     contract { returns() implies (this@shouldBeOk is Ok<V>) }
     val matcher = ok<V, E>()
     this.shouldBe(matcher)
     return this as Ok<V>
 }
 
-inline fun <V, E> Result<V, E>.shouldBeOk(block: (V) -> Unit) = shouldBeOk().value.also(block)
+public inline fun <V, E> Result<V, E>.shouldBeOk(block: (V) -> Unit): V = shouldBeOk().value.also(block)
 
-fun <V, E> Result<V, E>.shouldBeErr(): Err<E> {
+public fun <V, E> Result<V, E>.shouldBeErr(): Err<E> {
     contract { returns() implies (this@shouldBeErr is Err<E>) }
     val matcher = ok<V, E>()
     this.shouldNotBe(matcher)
     return this as Err<E>
 }
 
-inline fun <V, E> Result<V, E>.shouldBeErr(block: (E) -> Unit) = shouldBeErr().error.also(block)
+public inline fun <V, E> Result<V, E>.shouldBeErr(block: (E) -> Unit): E = shouldBeErr().error.also(block)
