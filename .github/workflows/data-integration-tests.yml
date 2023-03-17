@@ -71,6 +71,7 @@ jobs:
           script: ./gradlew :integration-tests:firebase:connectedCheck
 
       - name: Extract logs from firebase emulator container
+        if: ${{ always() }}
         run: |
           mkdir -p ./build/logs/firebase-emulator
           docker cp "firebase-emulator:/home/firebase-emulator" ./build/logs/firebase-emulator
