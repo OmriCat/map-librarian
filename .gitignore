@@ -311,3 +311,5 @@ fabric.properties
 
 
 firebase-emulator-data/
+
+!/build-logic

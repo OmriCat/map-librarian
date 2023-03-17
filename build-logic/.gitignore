@@ -1,2 +1,2 @@
 gradle/
-
+!convention-plugins/src/**
