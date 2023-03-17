@@ -1,12 +1,7 @@
 plugins {
-    `java-library`
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.maplib.kotlin.library)
     alias(libs.plugins.kotlin.serialization)
 }
-
-tasks.withType<Test> { useJUnitPlatform() }
-
-kotlin { explicitApi() }
 
 dependencies {
     api(KotlinX.coroutines.core)

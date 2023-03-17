@@ -25,7 +25,8 @@ public fun <V, E> Result<V, E>.shouldBeOk(): Ok<V> {
     return this as Ok<V>
 }
 
-public inline fun <V, E> Result<V, E>.shouldBeOk(block: (V) -> Unit): V = shouldBeOk().value.also(block)
+public inline fun <V, E> Result<V, E>.shouldBeOk(block: (V) -> Unit): V =
+    shouldBeOk().value.also(block)
 
 public fun <V, E> Result<V, E>.shouldBeErr(): Err<E> {
     contract { returns() implies (this@shouldBeErr is Err<E>) }
@@ -34,4 +35,5 @@ public fun <V, E> Result<V, E>.shouldBeErr(): Err<E> {
     return this as Err<E>
 }
 
-public inline fun <V, E> Result<V, E>.shouldBeErr(block: (E) -> Unit): E = shouldBeErr().error.also(block)
+public inline fun <V, E> Result<V, E>.shouldBeErr(block: (E) -> Unit): E =
+    shouldBeErr().error.also(block)

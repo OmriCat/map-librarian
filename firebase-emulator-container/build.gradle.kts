@@ -1,7 +1,4 @@
-plugins {
-    `java-library`
-    alias(libs.plugins.kotlin.jvm)
-}
+plugins { alias(libs.plugins.maplib.kotlin.library) }
 
 dependencies {
     api(platform("org.testcontainers:testcontainers-bom:_"))

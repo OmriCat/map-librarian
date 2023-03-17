@@ -1,6 +1,7 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtBaseTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+import com.omricat.maplibrarian.build.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -11,7 +12,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 @Suppress("unused")
-class RootProjectPlugin : Plugin<Project> {
+public class RootProjectPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {

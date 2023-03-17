@@ -5,17 +5,15 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 
-class DetektConventionPlugin : Plugin<Project> {
+internal class DetektConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply(DetektPlugin::class)
             configure<DetektExtension> {
                 config = rootProject.files(DETEKT_CONFIG_FILE)
-                reports {
-                    html {
-                        enabled = true
-                        destination = file("build/reports/detekt.html")
-                    }
+                reports.html {
+                    enabled = true
+                    destination = file("build/reports/detekt.html")
                 }
             }
         }

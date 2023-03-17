@@ -40,9 +40,13 @@ plugin_gradleDoctor = "0.8.1"
 plugin_ktfmt = "0.11.0"
 plugin_taskTree = "2.1.1"
 
+# convention plugins from build-logic
+plugin_convention_maplib = "0.1"
+
 [libraries]
 
 # Used in build-logic
+android_gradlePlugin_api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 android_gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detekt_cli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
 detekt_gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
@@ -66,4 +70,6 @@ taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
 ######################################
 # convention plugins from build-logic
 ######################################
-maplib_root = { id = "com.omricat.maplib.root", version = "_" }
+maplib_root = { id = "com.omricat.maplib.root", version.ref = "plugin_convention_maplib" }
+maplib_kotlin_library = { id = "com.omricat.maplib.kotlin.library", version.ref = "plugin_convention_maplib" }
+maplib_android_application = { id = "com.omricat.maplib.android.application", version.ref = "plugin_convention_maplib" }
