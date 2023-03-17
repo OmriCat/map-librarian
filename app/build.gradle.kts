@@ -1,18 +1,13 @@
 @file:Suppress("SpellCheckingInspection")
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maplib.android.application)
     alias(libs.plugins.googleServices)
 }
 
 android {
-    compileSdk = 33
-
+    namespace = "com.omricat.maplibrarian"
     defaultConfig {
-        minSdk = 23
-        targetSdk = 29
-
         applicationId = "com.omricat.maplibrarian"
         versionCode = 1
         versionName = "0.0.1"
@@ -29,15 +24,7 @@ android {
                 "proguard-rules.pro"
             )
         }
-        getByName("debug") {
-            isMinifyEnabled = false
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-        }
     }
-
-    sourceSets.forEach { srcSet -> srcSet.java.srcDir("src/${srcSet.name}/kotlin") }
 
     lint {
         warningsAsErrors = false
@@ -48,7 +35,6 @@ android {
     buildFeatures { viewBinding = true }
 
     testOptions { unitTests { isIncludeAndroidResources = true } }
-    namespace = "com.omricat.maplibrarian"
 }
 
 dependencies {
