@@ -1,7 +1,7 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtBaseTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
-import com.omricat.maplibrarian.build.libs
+import com.omricat.maplibrarian.gradle.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration

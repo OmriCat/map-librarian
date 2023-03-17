@@ -1,6 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.omricat.maplibrarian.build.configureAndroidKotlin
-import com.omricat.maplibrarian.build.targetSdkFromGradleProperties
+import com.omricat.maplibrarian.gradle.configureAndroidKotlin
+import com.omricat.maplibrarian.gradle.targetSdkFromGradleProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

@@ -1,4 +1,4 @@
-package com.omricat.maplibrarian.build
+package com.omricat.maplibrarian.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project

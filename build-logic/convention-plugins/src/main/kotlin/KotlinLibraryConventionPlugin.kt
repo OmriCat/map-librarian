@@ -1,4 +1,4 @@
-import com.omricat.maplibrarian.build.javaLanguageVersionFromGradleProperties
+import com.omricat.maplibrarian.gradle.javaLanguageVersionFromGradleProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
