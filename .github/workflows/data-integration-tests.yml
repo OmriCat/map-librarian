@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: firebase-debug-logs-api-${{ matrix.api-level }}-${{ matrix.target }}
-          path: ./build/logs/firebase-emulator/*-debug.log
+          path: ./build/logs/firebase-emulator/**/*.log
 
       - name: Upload test results
         if: ${{ always() }}
