@@ -12,6 +12,7 @@ plugins {
     // Convention plugins used within the build
     alias(libs.plugins.maplib.kotlin.library) apply false
     alias(libs.plugins.maplib.android.application) apply false
+    alias(libs.plugins.maplib.android.test) apply false
 
     // Convention plugin for the root project
     alias(libs.plugins.maplib.root)

@@ -12,26 +12,11 @@ buildscript {
     dependencies { classpath(Square.okHttp3) }
 }
 
-plugins {
-    alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.android)
-}
+plugins { alias(libs.plugins.maplib.android.test) }
 
 android {
     namespace = "com.omricat.maplibrarian.integrationtesting.debug"
     targetProjectPath = ":app"
-
-    compileSdk = 33
-
-    defaultConfig {
-        minSdk = 23
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes.named("debug") { isDebuggable = true }
-
-    sourceSets.forEach { srcSet -> srcSet.java.srcDir("src/${srcSet.name}/kotlin") }
 
     testOptions {
         managedDevices {

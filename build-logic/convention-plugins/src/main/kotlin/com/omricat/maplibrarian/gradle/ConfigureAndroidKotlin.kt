@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+
 internal fun Project.configureAndroidKotlin(commonExtension: CommonExtension<*, *, *, *>) {
     val javaVersion = javaVersionFromGradleProperties().get()
     with(commonExtension) {

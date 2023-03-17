@@ -41,6 +41,10 @@ gradlePlugin {
             id = conventionPlugins.android.application.id
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidTest") {
+            id = conventionPlugins.android.test.id
+            implementationClass = "AndroidTestConventionPlugin"
+        }
         register("kotlinLibrary") {
             id = conventionPlugins.kotlin.library.id
             implementationClass = "KotlinLibraryConventionPlugin"
