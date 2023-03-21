@@ -12,20 +12,19 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 public class KotlinLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply(JavaLibraryPlugin::class)
+            with(pluginManager) {
+                apply(JavaLibraryPlugin::class)
+                apply("org.jetbrains.kotlin.jvm")
+                apply(KtfmtConventionPlugin::class)
+                apply(DetektConventionPlugin::class)
+            }
 
             tasks.withType<Test>().configureEach { it.useJUnitPlatform() }
-
-            pluginManager.apply("org.jetbrains.kotlin.jvm")
 
             configure<KotlinJvmProjectExtension> {
                 explicitApi()
                 jvmToolchain { it.languageVersion.set(javaLanguageVersionFromGradleProperties()) }
             }
-
-            pluginManager.apply(KtfmtConventionPlugin::class)
-
-            pluginManager.apply(DetektConventionPlugin::class)
         }
     }
 }
