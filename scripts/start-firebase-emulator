@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -o errexit -o nounset -o pipefail
 projectroot="$(git rev-parse --show-toplevel)"
 firebase_data_dir="firebase-emulator-data"
-firebase emulators:start --import="$projectroot/$firebase_data_dir" --export-on-exit
+firebase emulators:start --import="${projectroot}/${firebase_data_dir}" --export-on-exit "$@"
