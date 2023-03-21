@@ -19,7 +19,7 @@ plugins {
 }
 
 android {
-    namespace = "com.omricat.maplibrarian.testing.debug"
+    namespace = "com.omricat.maplibrarian.integration-testing.debug"
     targetProjectPath = ":app"
 
     val buildVersions: BuildVersions by rootProject.extra
