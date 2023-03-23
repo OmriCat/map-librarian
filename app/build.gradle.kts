@@ -74,23 +74,4 @@ dependencies {
 
     debugImplementation("io.github.pandulapeter.beagle:ui-drawer:_")
     debugImplementation("com.jakewharton:process-phoenix:_")
-
-    testImplementation(KotlinX.coroutines.test)
-
-    testImplementation(Testing.kotest.assertions.core)
-    testImplementation(projects.kotlinResultKotest)
-    testImplementation(Testing.robolectric)
-    testImplementation(Testing.junit4)
-
-    testImplementation(projects.firebaseEmulatorContainer)
-    testImplementation("org.slf4j:slf4j-simple:_") // for testcontainers logs
-
-    testImplementation(AndroidX.test.ext.junit.ktx)
-    testImplementation(AndroidX.test.coreKtx)
-
-    testImplementation(workflow("testing-jvm"))
-
-    androidTestImplementation(AndroidX.test.ext.junit)
-    androidTestImplementation(AndroidX.test.rules)
-    androidTestImplementation(AndroidX.test.espresso.core)
 }
