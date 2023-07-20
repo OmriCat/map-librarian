@@ -40,38 +40,38 @@ android {
 dependencies {
     implementation(projects.core)
 
-    implementation(KotlinX.coroutines.core)
-    implementation(KotlinX.coroutines.android)
-    implementation(KotlinX.coroutines.playServices)
+    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.playServices)
 
-    implementation(AndroidX.appCompat)
-    implementation(AndroidX.core.ktx)
+    implementation(androidx.appCompat)
+    implementation(androidx.coreKtx)
 
-    implementation(AndroidX.activity.ktx)
-    implementation(AndroidX.lifecycle.viewModelKtx)
-    implementation(AndroidX.lifecycle.commonJava8)
+    implementation(androidx.activityKtx)
+    implementation(androidx.lifecycle.viewModelKtx)
+    implementation(androidx.lifecycle.commonJava8)
 
-    compileOnly(AndroidX.annotation)
+    compileOnly(androidx.annotation)
 
-    implementation(AndroidX.constraintLayout)
-    implementation(AndroidX.recyclerView)
-    implementation(Google.android.material)
+    implementation(androidx.constraintLayout)
+    implementation(androidx.recylerView)
+    implementation(libs.material)
 
-    implementation(AndroidX.dataStore.preferences)
+    implementation(androidx.dataStore.preferences)
 
-    implementation(platform(Firebase.bom))
-    implementation(Firebase.cloudFirestoreKtx)
-    implementation(Firebase.authenticationKtx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestoreKtx)
+    implementation(libs.firebase.authKtx)
 
-    fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
-    implementation(workflow("ui-core-android"))
-    implementation(workflow("ui-container-android"))
+    implementation(libs.workflow.ui.core.android)
+    implementation(libs.workflow.ui.container.android)
 
-    implementation("com.michael-bull.kotlin-result:kotlin-result:_")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:_")
+    implementation(libs.kotlinResult)
+    implementation(libs.kotlinResult.coroutines)
 
-    implementation(JakeWharton.timber)
+    implementation(libs.jakeWharton.timber)
 
-    debugImplementation("io.github.pandulapeter.beagle:ui-drawer:_")
-    debugImplementation("com.jakewharton:process-phoenix:_")
+    debugImplementation(libs.beagle.drawer)
+    debugImplementation(libs.jakeWharton.processPhoenix)
 }

@@ -17,6 +17,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    versionCatalogs {
+        val androidx by creating { from(files("gradle/androidx.versions.toml")) }
+    }
 }
 
 plugins {

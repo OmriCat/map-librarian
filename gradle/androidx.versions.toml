@@ -1,0 +1,31 @@
+[versions]
+activity = "1.4.0"
+annotation = "1.1.0"
+appcompat = "1.2.0"
+constraintlayout = "2.1.3"
+core = "1.7.0"
+datastore = "1.0.0"
+espresso = "3.2.0"
+lifecycle = "2.4.0"
+recyclerview = "1.1.0"
+test = "1.2.0"
+testCore = "1.4.0"
+testExtJunit = "1.1.1"
+testExtTruth = "1.2.0"
+testRules = "1.2.0"
+testRunner = "1.2.0"
+
+[libraries]
+annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+activityKtx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
+dataStore_preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+lifecycle_viewModelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle_commonJava8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "lifecycle" }
+recylerView = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+test_runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
+test_ext_junitKtx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "testExtJunit" }
+test_ext_truth = { group = "androidx.test.ext", name = "truth", version.ref = "testExtTruth" }
+test_coreKtx = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
