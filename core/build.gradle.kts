@@ -1,27 +1,23 @@
 plugins {
-    `java-library`
-    kotlin("jvm")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.maplib.kotlin.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
-
-kotlin { explicitApi() }
-
 dependencies {
-    api(KotlinX.coroutines.core)
+    implementation(platform(libs.kotlinx.coroutines.bom))
+    api(libs.kotlinx.coroutines.core)
 
-    fun workflow(artifact: String) = "com.squareup.workflow1:workflow-$artifact:_"
-    api(workflow("core-jvm"))
+    api(libs.workflow.core.jvm)
 
-    api("com.michael-bull.kotlin-result:kotlin-result:_")
+    api(libs.kotlinResult)
 
-    api(KotlinX.serialization.json)
+    api(platform(libs.kotlinx.serialization.bom))
+    api(libs.kotlinx.serialization.json)
 
-    testImplementation(Testing.kotest.runner.junit5)
-    testImplementation(Testing.kotest.assertions.core)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
 
-    testImplementation(KotlinX.coroutines.test)
+    testImplementation(libs.kotlinx.coroutines.test)
 
-    testImplementation(workflow("testing-jvm"))
+    testImplementation(libs.workflow.testing.jvm)
 }

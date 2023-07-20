@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
-import com.omricat.gradle.BuildVersions
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -10,30 +9,14 @@ buildscript {
         mavenCentral()
     }
 
-    dependencies { classpath(Square.okHttp3) }
+    dependencies { classpath(libs.okhttp) }
 }
 
-plugins {
-    id("com.android.test")
-    kotlin("android")
-}
+plugins { alias(libs.plugins.maplib.android.test) }
 
 android {
     namespace = "com.omricat.maplibrarian.integrationtesting.debug"
     targetProjectPath = ":app"
-
-    val buildVersions: BuildVersions by rootProject.extra
-    compileSdk = buildVersions.compileSdk
-
-    defaultConfig {
-        minSdk = buildVersions.minSdk
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes.named("debug") { isDebuggable = true }
-
-    sourceSets.forEach { srcSet -> srcSet.java.srcDir("src/${srcSet.name}/kotlin") }
 
     testOptions {
         managedDevices {
@@ -92,23 +75,23 @@ dependencies {
     debugImplementation(projects.core)
     debugImplementation(projects.app)
 
-    implementation(KotlinX.coroutines.core)
-    implementation(KotlinX.coroutines.android)
+    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.test)
 
-    implementation(platform(Firebase.bom))
-    implementation(Firebase.cloudFirestoreKtx)
-    implementation(Firebase.authenticationKtx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestoreKtx)
+    implementation(libs.firebase.authKtx)
 
-    implementation("com.michael-bull.kotlin-result:kotlin-result:_")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:_")
+    implementation(libs.retrofit)
 
-    implementation(AndroidX.test.coreKtx)
+    implementation(libs.kotlinResult)
+    implementation(libs.kotlinResult.coroutines)
 
-    implementation(AndroidX.test.runner)
-    implementation(AndroidX.test.ext.junit)
-    implementation(AndroidX.test.ext.truth)
+    implementation(androidx.test.coreKtx)
 
-    implementation(Square.retrofit2.retrofit)
-
-    implementation(KotlinX.coroutines.test)
+    implementation(androidx.test.runner)
+    implementation(androidx.test.ext.junitKtx)
+    implementation(androidx.test.ext.truth)
 }

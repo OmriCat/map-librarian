@@ -1,11 +1,8 @@
-plugins {
-    `java-library`
-    kotlin("jvm")
-}
+plugins { alias(libs.plugins.maplib.kotlin.library) }
 
 dependencies {
-    api("com.michael-bull.kotlin-result:kotlin-result:_")
-    api(Testing.kotest.assertions.core)
+    api(libs.kotlinResult)
+    api(libs.kotest.assertions.core)
 }
 
 kotlin { sourceSets.all { languageSettings.optIn("kotlin.contracts.ExperimentalContracts") } }
