@@ -11,14 +11,10 @@ public class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
-                apply(KtfmtConventionPlugin::class)
-                apply(DetektConventionPlugin::class)
+                apply(AndroidKotlinCommonPlugin::class)
             }
-
-            extensions.configure<ApplicationExtension> {
+            configure<ApplicationExtension> {
                 configureAndroidKotlin(this)
-
                 defaultConfig.targetSdk = targetSdkFromGradleProperties().get()
 
                 buildTypes {

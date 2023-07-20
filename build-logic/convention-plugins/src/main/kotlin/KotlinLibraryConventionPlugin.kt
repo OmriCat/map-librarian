@@ -1,4 +1,4 @@
-import com.omricat.maplibrarian.gradle.javaLanguageVersionFromGradleProperties
+import com.omricat.maplibrarian.gradle.configureJavaToolchainForKotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
@@ -23,7 +23,7 @@ public class KotlinLibraryConventionPlugin : Plugin<Project> {
 
             configure<KotlinJvmProjectExtension> {
                 explicitApi()
-                jvmToolchain { it.languageVersion.set(javaLanguageVersionFromGradleProperties()) }
+                configureJavaToolchainForKotlin(this)
             }
         }
     }
