@@ -3,6 +3,10 @@ name: Data layer integration tests
 on:
   workflow_dispatch:
   merge_group:
+  push:
+    branches:
+      - 'develop'
+  pull_request:
 
 concurrency:
   group: 'ci-${{ github.event.merge_group.head_ref || github.head_ref }}-${{ github.workflow }}'
