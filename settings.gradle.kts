@@ -44,6 +44,6 @@ rootProject.name = ("map-librarian")
 include(
     ":app",
     ":core",
-    ":kotlin-result-kotest",
+    ":util:kotlin-result-assertk-extensions",
     ":integration-tests:firebase",
 )
