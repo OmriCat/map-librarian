@@ -50,7 +50,7 @@ internal class ActualSignUpWorkflowTest :
                 "onUserCreated sets output to created user" {
                     val workflow = ActualSignUpWorkflow(TestAuthService())
                     val credential = EmailPasswordCredential("blah@blah", "password")
-                    val user = TestUser("user1", UserUid("1234"))
+                    val user = TestUser("user1", UserUid("1234"), "blah@example.com")
 
                     val (_, maybeOutput) =
                         workflow
