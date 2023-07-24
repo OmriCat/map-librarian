@@ -9,7 +9,6 @@ kotlinx_coroutines = "1.6.0"
 kotlinx_serialization = "1.3.1"
 material = "1.2.1"
 okhttp3 = "4.10.0"
-plugin_dependencyAnalysis = "1.18.0"
 processPhoenix = "2.1.2"
 retrofit2 = "2.9.0"
 robolectric = "4.7.3"
@@ -20,9 +19,11 @@ workflow = "1.6.0"
 
 # plugins
 agp = "7.4.1"
+plugin_dependencyAnalysis = "1.18.0"
 plugin_googleServices = "4.3.10"
 plugin_gradleDoctor = "0.8.1"
 plugin_ktfmt = "0.11.0"
+plugin_moduleGraphAssertion = "2.4.1"
 plugin_taskTree = "2.1.1"
 
 # convention plugins from build-logic
@@ -83,6 +84,7 @@ kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "plugin_ktfmt" }
+moduleGraphAssertion = { id = "com.jraska.module.graph.assertion", version.ref = "plugin_moduleGraphAssertion" }
 taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
 
 ######################################
