@@ -9,9 +9,8 @@ internal data class TestUser(
     override val id: UserUid,
     override val emailAddress: EmailAddress
 ) : User {
-    constructor(
-        displayName: String,
-        id: UserUid,
-        emailAddress: String
-    ) : this(displayName, id, EmailAddress(emailAddress))
+    companion object {
+        operator fun invoke(displayName: String, id: UserUid, emailAddress: String): TestUser =
+            TestUser(displayName, id, EmailAddress(emailAddress))
+    }
 }

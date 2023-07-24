@@ -14,7 +14,10 @@ buildscript {
     dependencies { classpath(libs.okhttp) }
 }
 
-plugins { alias(libs.plugins.maplib.android.test) }
+plugins {
+    alias(libs.plugins.maplib.android.test)
+    alias(libs.plugins.kotlin.serialization)
+}
 
 android {
     namespace = "com.omricat.maplibrarian.integrationtesting.debug"
@@ -82,12 +85,17 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.test)
 
+    implementation(platform(libs.kotlinx.serialization.bom))
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestoreKtx)
     implementation(libs.firebase.authKtx)
 
     implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinXSerialization)
 
+    implementation(projects.util.kotlinResultAssertkExtensions)
     implementation(libs.kotlinResult)
     implementation(libs.kotlinResult.coroutines)
 

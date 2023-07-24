@@ -58,6 +58,7 @@ firebase_firestoreKtx = { group = "com.google.firebase", name = "firebase-firest
 firebase_authKtx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit2" }
+retrofit_converter_kotlinXSerialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
