@@ -98,7 +98,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
-          script: adb uninstall "com.omricat.maplibrarian.integration-testing.debug"; ./gradlew :integration-tests:firebase:connectedCheck
+          script: adb uninstall "com.omricat.maplibrarian.integration-testing.debug"; ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
