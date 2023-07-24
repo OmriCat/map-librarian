@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import com.android.build.api.dsl.ManagedVirtualDevice
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -93,5 +95,6 @@ dependencies {
 
     implementation(androidx.test.runner)
     implementation(androidx.test.ext.junitKtx)
-    implementation(androidx.test.ext.truth)
+
+    implementation(libs.assertk)
 }

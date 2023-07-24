@@ -1,4 +1,5 @@
 [versions]
+assertk = "0.26.1"
 beagle = "2.9.0"
 detekt = "1.18.1"
 firebase = "29.0.0"
@@ -63,6 +64,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 jakeWharton_processPhoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 jakeWharton_timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 
 # Used in build-logic
 android_gradlePlugin_api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
