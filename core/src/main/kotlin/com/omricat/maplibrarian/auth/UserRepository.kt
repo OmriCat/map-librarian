@@ -7,7 +7,7 @@ public data class AuthError(val message: String) {
     public constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")
 }
 
-public interface AuthService {
+public interface UserRepository {
     public suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError>
     public fun signOut()
     public suspend fun getSignedInUserIfAny(): Result<User?, AuthError>

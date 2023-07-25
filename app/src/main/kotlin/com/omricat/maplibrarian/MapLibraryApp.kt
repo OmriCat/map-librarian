@@ -5,8 +5,8 @@ package com.omricat.maplibrarian
 import android.app.Application
 import android.content.Context
 import com.google.firebase.FirebaseApp
-import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.AuthWorkflow
+import com.omricat.maplibrarian.auth.UserRepository
 import com.omricat.maplibrarian.chartlist.ChartsService
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
@@ -29,7 +29,7 @@ class MapLibraryApp : Application() {
 }
 
 interface DiContainer {
-    val authService: AuthService
+    val userRepository: UserRepository
     val chartsService: ChartsService
     val workflows: Workflows
     val viewRegistry: ViewRegistry

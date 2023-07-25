@@ -17,7 +17,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FirebaseAuthServiceTest {
+class FirebaseUserRepositoryTest {
 
     @Before
     fun clearUsers() {
@@ -29,7 +29,7 @@ class FirebaseAuthServiceTest {
     @Test
     fun addUserSucceeds() = runTest {
         val repository =
-            FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
+            FirebaseUserRepository(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
         val createUserResult = repository.createUser(testCredential)
         assertThat(createUserResult).isOk()
     }
@@ -37,7 +37,7 @@ class FirebaseAuthServiceTest {
     @Test
     fun canSignInAddedUser() = runTest {
         val repository =
-            FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
+            FirebaseUserRepository(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
         val createUserResult = repository.createUser(testCredential)
         repository.signOut()
         val signInResult = repository.attemptAuthentication(testCredential)
@@ -48,7 +48,7 @@ class FirebaseAuthServiceTest {
     fun canSignInExternallyAddedUser() = runTest {
         val createdUser = Fixtures.createUserViaRestApi(testCredential)
         val repository =
-            FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
+            FirebaseUserRepository(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
         val signInResult = repository.attemptAuthentication(testCredential)
         assertThat(signInResult)
             .isOk()

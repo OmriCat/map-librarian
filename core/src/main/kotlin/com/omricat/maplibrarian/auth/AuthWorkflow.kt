@@ -28,7 +28,7 @@ public sealed class AuthResult {
 public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScreen>
 
 public class ActualAuthWorkflow(
-    private val authService: AuthService,
+    private val userRepository: UserRepository,
     private val signUpWorkflow: SignUpWorkflow
 ) :
     AuthWorkflow,
@@ -99,7 +99,7 @@ public class ActualAuthWorkflow(
     internal val onSignUpClicked = action { state = SigningUp }
 
     internal val resolveLoggedInStatusWorker: Worker<Result<User?, AuthError>>
-        get() = resultWorker(::AuthError) { authService.getSignedInUserIfAny() }
+        get() = resultWorker(::AuthError) { userRepository.getSignedInUserIfAny() }
 
     internal fun handlePossibleUserResult(result: Result<User?, AuthError>) =
         result
@@ -111,7 +111,7 @@ public class ActualAuthWorkflow(
     internal fun attemptAuthenticationWorker(
         credential: Credential
     ): Worker<Result<User, AuthError>> =
-        resultWorker(::AuthError) { authService.attemptAuthentication(credential) }
+        resultWorker(::AuthError) { userRepository.attemptAuthentication(credential) }
 
     internal fun handleAuthenticationResult(result: Result<User, AuthError>) =
         result.map { user -> onAuthenticated(user) }.getOrElse { error -> onAuthError(error) }

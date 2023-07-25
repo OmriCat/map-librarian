@@ -36,7 +36,7 @@ internal class MainViewModel(app: Application, private val savedState: SavedStat
         renderWorkflowIn(
             workflow =
                 RootWorkflow(
-                    diContainer.authService,
+                    diContainer.userRepository,
                     diContainer.workflows.auth,
                     diContainer.workflows.charts
                 ),

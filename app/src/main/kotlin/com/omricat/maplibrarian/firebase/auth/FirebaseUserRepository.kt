@@ -8,9 +8,9 @@ import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import com.google.firebase.auth.FirebaseAuth
 import com.omricat.maplibrarian.auth.AuthError
-import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.Credential
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
+import com.omricat.maplibrarian.auth.UserRepository
 import com.omricat.maplibrarian.model.EmailAddress
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
@@ -18,10 +18,10 @@ import com.omricat.maplibrarian.utils.DispatcherProvider
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-public class FirebaseAuthService(
+public class FirebaseUserRepository(
     private val auth: FirebaseAuth,
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
-) : AuthService {
+) : UserRepository {
     override suspend fun getSignedInUserIfAny(): Result<User?, AuthError> =
         withContext(dispatchers.io) {
             runSuspendCatching { auth.currentUser }

@@ -7,7 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.chartlist.FirebaseChartsService
 import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi
-import com.omricat.maplibrarian.firebase.auth.FirebaseAuthService
+import com.omricat.maplibrarian.firebase.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.firebase.charts.FirebaseFirestoreRestApi
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
@@ -32,7 +32,7 @@ class FirebaseEndToEndTest {
     @Test
     fun addUser_addCharts_queryCharts() = runTest {
         val testDispatcherProvider = TestDispatcherProvider(testScheduler)
-        val userRepository = FirebaseAuthService(firebaseAuthInstance, testDispatcherProvider)
+        val userRepository = FirebaseUserRepository(firebaseAuthInstance, testDispatcherProvider)
 
         val chartsRepository = FirebaseChartsService(firestoreInstance, testDispatcherProvider)
 
