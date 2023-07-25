@@ -11,6 +11,7 @@ import com.omricat.maplibrarian.auth.AuthError
 import com.omricat.maplibrarian.auth.AuthService
 import com.omricat.maplibrarian.auth.Credential
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
+import com.omricat.maplibrarian.model.EmailAddress
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.maplibrarian.utils.DispatcherProvider
@@ -82,4 +83,15 @@ internal value class FirebaseUser(private val user: com.google.firebase.auth.Fir
 
     override val id: UserUid
         get() = UserUid(user.uid)
+    override val emailAddress: EmailAddress
+        get() {
+            val email =
+                user.email
+                    ?: error(
+                        """FirebaseUser email should always be non-null unless Multiple
+                            | accounts per email has been enable in Firebase Console"""
+                            .trimMargin()
+                    )
+            return EmailAddress(email)
+        }
 }

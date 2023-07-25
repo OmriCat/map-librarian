@@ -1,4 +1,5 @@
 [versions]
+assertk = "0.26.1"
 beagle = "2.9.0"
 detekt = "1.18.1"
 firebase = "29.0.0"
@@ -57,12 +58,15 @@ firebase_firestoreKtx = { group = "com.google.firebase", name = "firebase-firest
 firebase_authKtx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit2" }
+retrofit_converter_kotlinXSerialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 jakeWharton_processPhoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 jakeWharton_timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 
 # Used in build-logic
 android_gradlePlugin_api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }

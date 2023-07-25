@@ -47,7 +47,7 @@ public class ActualAuthWorkflowTest :
         "onAuthenticated action outputs Authenticated(user) from workflow" {
             val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
-            val fakeUser = TestUser("user1", UserUid("1"))
+            val fakeUser = TestUser("user1", UserUid("1"), "blah@example.com")
             val (_, maybeOutput) =
                 workflow
                     .onAuthenticated(fakeUser)
