@@ -38,7 +38,7 @@ internal class ActualSignUpWorkflowTest :
 
                     val (newState, maybeOutput) =
                         workflow
-                            .onErrorCreatingUser(credential, AuthError("Error creating user"))
+                            .onErrorCreatingUser(credential, MessageError("Error creating user"))
                             .applyTo(props = Unit, state = AttemptingUserCreation(credential))
 
                     assertSoftly {

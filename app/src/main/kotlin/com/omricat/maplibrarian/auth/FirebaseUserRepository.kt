@@ -1,16 +1,18 @@
-package com.omricat.maplibrarian.firebase.auth
+package com.omricat.maplibrarian.auth
 
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
-import com.github.michaelbull.result.coroutines.runSuspendCatching
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import com.google.firebase.auth.FirebaseAuth
-import com.omricat.maplibrarian.auth.AuthError
-import com.omricat.maplibrarian.auth.Credential
-import com.omricat.maplibrarian.auth.EmailPasswordCredential
-import com.omricat.maplibrarian.auth.UserRepository
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.omricat.firebase.interop.runCatchingFirebaseException
+import com.omricat.maplibrarian.auth.CreateUserError.EmailAlreadyInUseError
+import com.omricat.maplibrarian.auth.CreateUserError.UserCreatedButSignedOutError
+import com.omricat.maplibrarian.auth.CreateUserError.WeakPasswordError
 import com.omricat.maplibrarian.model.EmailAddress
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.UserUid
@@ -22,18 +24,20 @@ public class FirebaseUserRepository(
     private val auth: FirebaseAuth,
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
 ) : UserRepository {
-    override suspend fun getSignedInUserIfAny(): Result<User?, AuthError> =
+    override suspend fun getSignedInUserIfAny(): Result<User?, UserRepository.Error> =
         withContext(dispatchers.io) {
-            runSuspendCatching { auth.currentUser }
-                .mapError(::AuthError)
+            runCatchingAuthExceptions { auth.currentUser }
+                .mapError { e -> ExceptionWrapperError(e) }
                 .map { user -> user?.let { FirebaseUser(it) } }
         }
 
-    override suspend fun attemptAuthentication(credential: Credential): Result<User, AuthError> =
+    override suspend fun attemptAuthentication(
+        credential: Credential
+    ): Result<User, UserRepository.Error> =
         when (credential) {
             is EmailPasswordCredential ->
                 withContext(dispatchers.io) {
-                    runSuspendCatching {
+                    runCatchingAuthExceptions {
                             auth
                                 .signInWithEmailAndPassword(
                                     credential.emailAddress,
@@ -42,20 +46,20 @@ public class FirebaseUserRepository(
                                 .await()
                                 .user
                         }
-                        .mapError(::AuthError)
+                        .mapError(::ExceptionWrapperError)
                         .andThen { user -> // If user is null, no user is signed in
                             user
-                                .toResultOr { AuthError("No currently signed in user") }
+                                .toResultOr { MessageError("No currently signed in user") }
                                 .map { FirebaseUser(it) }
                         }
                 }
         }
 
-    override suspend fun createUser(credential: Credential): Result<User, AuthError> =
+    override suspend fun createUser(credential: Credential): Result<User, CreateUserError> =
         when (credential) {
             is EmailPasswordCredential ->
                 withContext(dispatchers.io) {
-                    runSuspendCatching {
+                    runCatchingAuthExceptions {
                             auth
                                 .createUserWithEmailAndPassword(
                                     credential.emailAddress,
@@ -64,10 +68,17 @@ public class FirebaseUserRepository(
                                 .await()
                                 .user
                         }
-                        .mapError(::AuthError)
+                        .mapError { e: FirebaseAuthException ->
+                            when (e) {
+                                is FirebaseAuthUserCollisionException ->
+                                    EmailAlreadyInUseError(credential.emailAddress)
+                                is FirebaseAuthWeakPasswordException -> WeakPasswordError
+                                else -> throw e
+                            }
+                        }
                         .andThen { maybeUser ->
                             maybeUser
-                                .toResultOr { AuthError("User was created but not signed in") }
+                                .toResultOr { UserCreatedButSignedOutError }
                                 .map { FirebaseUser(it) }
                         }
                 }
@@ -95,3 +106,6 @@ internal value class FirebaseUser(private val user: com.google.firebase.auth.Fir
             return EmailAddress(email)
         }
 }
+
+public inline fun <V> runCatchingAuthExceptions(block: () -> V): Result<V, FirebaseAuthException> =
+    runCatchingFirebaseException(block)

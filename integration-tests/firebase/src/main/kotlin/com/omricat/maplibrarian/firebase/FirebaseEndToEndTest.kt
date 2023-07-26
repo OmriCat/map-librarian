@@ -5,9 +5,9 @@ import com.github.michaelbull.result.getOrThrow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
+import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.chartlist.FirebaseChartsService
 import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi
-import com.omricat.maplibrarian.firebase.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.firebase.charts.FirebaseFirestoreRestApi
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel

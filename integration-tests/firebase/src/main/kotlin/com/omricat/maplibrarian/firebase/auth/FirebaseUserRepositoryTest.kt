@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.prop
 import com.google.firebase.auth.FirebaseAuth
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
+import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.firebase.FirebaseEmulatorConnection
 import com.omricat.maplibrarian.firebase.TestDispatcherProvider
 import com.omricat.maplibrarian.firebase.TestFixtures

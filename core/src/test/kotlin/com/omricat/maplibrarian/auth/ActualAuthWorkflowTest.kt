@@ -19,7 +19,7 @@ public class ActualAuthWorkflowTest :
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
             val (newState, maybeOutput) =
                 workflow
-                    .onAuthError(AuthError("Authentication failure"))
+                    .onAuthError(MessageError("Authentication failure"))
                     .applyTo(props = Unit, state = State.AttemptingAuthorization(fakeCredential))
 
             assertSoftly {

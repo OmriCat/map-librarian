@@ -62,13 +62,14 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
     override fun snapshotState(state: State): Snapshot? = null
 
     private fun handleUserCreationResult(
-        result: Result<User, AuthError>,
+        result: Result<User, UserRepository.Error>,
         credential: EmailPasswordCredential
     ) = result.map { onUserCreated(it) }.getOrElse { e -> onErrorCreatingUser(credential, e) }
 
-    internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: AuthError) = action {
-        this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
-    }
+    internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: UserRepository.Error) =
+        action {
+            this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
+        }
 
     internal fun onUserCreated(user: User) = action { setOutput(UserCreated(user)) }
 
@@ -80,8 +81,8 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
 
     internal fun attemptUserCreation(
         credential: EmailPasswordCredential
-    ): Worker<Result<User, AuthError>> =
-        resultWorker(::AuthError) { userRepository.createUser(credential) }
+    ): Worker<Result<User, UserRepository.Error>> =
+        resultWorker(::ExceptionWrapperError) { userRepository.createUser(credential) }
 }
 
 public sealed interface SignUpOutput {

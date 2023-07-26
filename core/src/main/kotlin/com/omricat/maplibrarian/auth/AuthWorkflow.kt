@@ -84,7 +84,7 @@ public class ActualAuthWorkflow(
     // Don't need to store state of in progress sign in
     override fun snapshotState(state: State): Snapshot? = null
 
-    internal fun onAuthError(error: AuthError) = action {
+    internal fun onAuthError(error: UserRepository.Error) = action {
         state = LoginPrompt(errorMessage = error.message)
     }
 
@@ -98,10 +98,10 @@ public class ActualAuthWorkflow(
 
     internal val onSignUpClicked = action { state = SigningUp }
 
-    internal val resolveLoggedInStatusWorker: Worker<Result<User?, AuthError>>
-        get() = resultWorker(::AuthError) { userRepository.getSignedInUserIfAny() }
+    internal val resolveLoggedInStatusWorker: Worker<Result<User?, UserRepository.Error>>
+        get() = resultWorker(::ExceptionWrapperError) { userRepository.getSignedInUserIfAny() }
 
-    internal fun handlePossibleUserResult(result: Result<User?, AuthError>) =
+    internal fun handlePossibleUserResult(result: Result<User?, UserRepository.Error>) =
         result
             .map { maybeUser ->
                 maybeUser?.let { user -> onAuthenticated(user) } ?: onNoAuthenticatedUser
@@ -110,10 +110,10 @@ public class ActualAuthWorkflow(
 
     internal fun attemptAuthenticationWorker(
         credential: Credential
-    ): Worker<Result<User, AuthError>> =
-        resultWorker(::AuthError) { userRepository.attemptAuthentication(credential) }
+    ): Worker<Result<User, UserRepository.Error>> =
+        resultWorker(::ExceptionWrapperError) { userRepository.attemptAuthentication(credential) }
 
-    internal fun handleAuthenticationResult(result: Result<User, AuthError>) =
+    internal fun handleAuthenticationResult(result: Result<User, UserRepository.Error>) =
         result.map { user -> onAuthenticated(user) }.getOrElse { error -> onAuthError(error) }
 }
 
