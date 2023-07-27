@@ -19,7 +19,7 @@ timber = "5.0.1"
 workflow = "1.6.0"
 
 # plugins
-agp = "7.4.1"
+agp = "7.4.2"
 plugin_dependencyAnalysis = "1.18.0"
 plugin_googleServices = "4.3.10"
 plugin_gradleDoctor = "0.8.1"
