@@ -1,12 +1,15 @@
 package com.omricat.maplibrarian.firebase.auth
 
-import com.github.michaelbull.result.Ok
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.prop
 import com.google.firebase.auth.FirebaseAuth
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.firebase.FirebaseEmulatorConnection
 import com.omricat.maplibrarian.firebase.TestDispatcherProvider
 import com.omricat.maplibrarian.firebase.TestFixtures
-import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi.TestUser
+import com.omricat.result.kotest.assertk.isOk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -28,7 +31,29 @@ class FirebaseAuthServiceTest {
         val repository =
             FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
         val createUserResult = repository.createUser(testCredential)
-        assert(createUserResult is Ok<User>)
+        assertThat(createUserResult).isOk()
+    }
+
+    @Test
+    fun canSignInAddedUser() = runTest {
+        val repository =
+            FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
+        val createUserResult = repository.createUser(testCredential)
+        repository.signOut()
+        val signInResult = repository.attemptAuthentication(testCredential)
+        assertThat(signInResult).isOk()
+    }
+
+    @Test
+    fun canSignInExternallyAddedUser() = runTest {
+        val createdUser = Fixtures.createUserViaRestApi(testCredential)
+        val repository =
+            FirebaseAuthService(firebaseAuthInstance, TestDispatcherProvider(testScheduler))
+        val signInResult = repository.attemptAuthentication(testCredential)
+        assertThat(signInResult)
+            .isOk()
+            .prop("Email address") { it.emailAddress.value }
+            .isEqualTo(createdUser.email)
     }
 
     companion object Fixtures {
@@ -53,5 +78,9 @@ class FirebaseAuthServiceTest {
                     TestFixtures.emulatorBaseUrl(FirebaseEmulatorConnection.AUTH_PORT)
                 )
         }
+
+        fun createUserViaRestApi(credential: EmailPasswordCredential): TestUser =
+            authApi.createUser(credential).body()
+                ?: error("Failed to create user with credentials $credential")
     }
 }

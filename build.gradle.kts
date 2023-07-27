@@ -21,4 +21,5 @@ plugins {
     alias(libs.plugins.taskTree)
     alias(libs.plugins.dependencyAnalysis)
     alias(libs.plugins.gradleDoctor)
+    alias(libs.plugins.moduleGraphAssertion)
 }
