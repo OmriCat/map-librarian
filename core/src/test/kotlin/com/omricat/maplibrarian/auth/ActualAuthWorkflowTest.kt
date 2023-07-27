@@ -15,11 +15,11 @@ import io.kotest.matchers.types.shouldBeTypeOf
 public class ActualAuthWorkflowTest :
     StringSpec({
         "onAuthError action returns to login prompt" {
-            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
             val (newState, maybeOutput) =
                 workflow
-                    .onAuthError(AuthError("Authentication failure"))
+                    .onAuthError(MessageError("Authentication failure"))
                     .applyTo(props = Unit, state = State.AttemptingAuthorization(fakeCredential))
 
             assertSoftly {
@@ -31,7 +31,7 @@ public class ActualAuthWorkflowTest :
         }
 
         "onNoAuthenticatedUser action transitions to LoginPrompt" {
-            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
             val (newState, maybeOutput) =
                 workflow.onNoAuthenticatedUser.applyTo(
                     props = Unit,
@@ -45,7 +45,7 @@ public class ActualAuthWorkflowTest :
         }
 
         "onAuthenticated action outputs Authenticated(user) from workflow" {
-            val workflow = ActualAuthWorkflow(TestAuthService(), NullSignupWorkflow)
+            val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
             val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
             val fakeUser = TestUser("user1", UserUid("1"), "blah@example.com")
             val (_, maybeOutput) =

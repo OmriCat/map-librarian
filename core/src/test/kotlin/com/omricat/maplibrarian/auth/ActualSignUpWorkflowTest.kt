@@ -18,7 +18,7 @@ internal class ActualSignUpWorkflowTest :
         "actions work correctly" should
             {
                 "onSignUpClicked sets correct state and no output" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
                     val credential = EmailPasswordCredential("blah@blah", "password")
 
                     val (newState, maybeOutput) =
@@ -33,12 +33,12 @@ internal class ActualSignUpWorkflowTest :
                 }
 
                 "onErrorCreatingUser sets correct state and no output" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
                     val credential = EmailPasswordCredential("blah@blah", "password")
 
                     val (newState, maybeOutput) =
                         workflow
-                            .onErrorCreatingUser(credential, AuthError("Error creating user"))
+                            .onErrorCreatingUser(credential, MessageError("Error creating user"))
                             .applyTo(props = Unit, state = AttemptingUserCreation(credential))
 
                     assertSoftly {
@@ -48,7 +48,7 @@ internal class ActualSignUpWorkflowTest :
                 }
 
                 "onUserCreated sets output to created user" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
                     val credential = EmailPasswordCredential("blah@blah", "password")
                     val user = TestUser("user1", UserUid("1234"), "blah@example.com")
 
@@ -67,7 +67,7 @@ internal class ActualSignUpWorkflowTest :
                 }
 
                 "onSignUpCancelled sets output to null applied to AttemptingUserCreation state" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
                     val credential = EmailPasswordCredential("blah@blah", "password")
 
                     val (_, maybeOutput) =
@@ -82,7 +82,7 @@ internal class ActualSignUpWorkflowTest :
                 }
 
                 "onSignUpCancelled sets output to null applied to SignUpPrompt state" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
 
                     val (_, maybeOutput) =
                         workflow.onSignUpCancelled().applyTo(props = Unit, state = SignUpPrompt())
@@ -97,7 +97,7 @@ internal class ActualSignUpWorkflowTest :
         "rendering ActualSignUpWorkflow" should
             {
                 "be cancellable" {
-                    val workflow = ActualSignUpWorkflow(TestAuthService())
+                    val workflow = ActualSignUpWorkflow(TestUserRepository())
                     workflow
                         .testRender(props = Unit)
                         .render { screen ->

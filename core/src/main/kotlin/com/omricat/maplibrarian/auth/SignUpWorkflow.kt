@@ -22,12 +22,12 @@ import com.squareup.workflow1.runningWorker
 
 public interface SignUpWorkflow : Workflow<Unit, SignUpOutput, SignUpScreen> {
     public companion object {
-        public fun instance(authService: AuthService): SignUpWorkflow =
-            ActualSignUpWorkflow(authService)
+        public fun instance(userRepository: UserRepository): SignUpWorkflow =
+            ActualSignUpWorkflow(userRepository)
     }
 }
 
-internal class ActualSignUpWorkflow(private val authService: AuthService) :
+internal class ActualSignUpWorkflow(private val userRepository: UserRepository) :
     StatefulWorkflow<Unit, State, SignUpOutput, SignUpScreen>(), SignUpWorkflow {
     override fun initialState(props: Unit, snapshot: Snapshot?): State = SignUpPrompt()
 
@@ -62,13 +62,14 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
     override fun snapshotState(state: State): Snapshot? = null
 
     private fun handleUserCreationResult(
-        result: Result<User, AuthError>,
+        result: Result<User, UserRepository.Error>,
         credential: EmailPasswordCredential
     ) = result.map { onUserCreated(it) }.getOrElse { e -> onErrorCreatingUser(credential, e) }
 
-    internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: AuthError) = action {
-        this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
-    }
+    internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: UserRepository.Error) =
+        action {
+            this.state = SignUpPrompt(credential = credential, errorMessage = e.message)
+        }
 
     internal fun onUserCreated(user: User) = action { setOutput(UserCreated(user)) }
 
@@ -80,8 +81,8 @@ internal class ActualSignUpWorkflow(private val authService: AuthService) :
 
     internal fun attemptUserCreation(
         credential: EmailPasswordCredential
-    ): Worker<Result<User, AuthError>> =
-        resultWorker(::AuthError) { authService.createUser(credential) }
+    ): Worker<Result<User, UserRepository.Error>> =
+        resultWorker(::ExceptionWrapperError) { userRepository.createUser(credential) }
 }
 
 public sealed interface SignUpOutput {

@@ -19,7 +19,7 @@ abstract class DefaultDiContainer : DiContainer {
     override val workflows: DiContainer.Workflows =
         object : DiContainer.Workflows {
             override val auth: AuthWorkflow by lazy {
-                ActualAuthWorkflow(authService, SignUpWorkflow.instance(authService))
+                ActualAuthWorkflow(userRepository, SignUpWorkflow.instance(userRepository))
             }
 
             override val charts: ChartsWorkflow by lazy {
