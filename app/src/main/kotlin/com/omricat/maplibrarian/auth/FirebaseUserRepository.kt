@@ -47,10 +47,12 @@ public class FirebaseUserRepository(
                                 .user
                         }
                         .mapError(::ExceptionWrapperError)
-                        .andThen { user -> // If user is null, no user is signed in
-                            user
-                                .toResultOr { MessageError("No currently signed in user") }
-                                .map { FirebaseUser(it) }
+                        .map { user -> // If user is null, no user is signed in
+                            FirebaseUser(
+                                requireNotNull(user) {
+                                    "signInWithEmailAndPassword() succeeded but user was not signed in"
+                                }
+                            )
                         }
                 }
         }
