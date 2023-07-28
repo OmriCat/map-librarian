@@ -1,5 +1,6 @@
 package com.omricat.maplibrarian.firebase
 
+import android.annotation.SuppressLint
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.getOrThrow
 import com.google.firebase.auth.FirebaseAuth
@@ -57,7 +58,10 @@ class FirebaseEndToEndTest {
 
     companion object Fixtures {
 
-        @JvmStatic lateinit var firestoreInstance: FirebaseFirestore
+        // Not a problem to leak a Context in an instrumented test
+        @SuppressLint("StaticFieldLeak")
+        @JvmStatic
+        lateinit var firestoreInstance: FirebaseFirestore
 
         @JvmStatic lateinit var firestoreApi: FirebaseFirestoreRestApi
 
