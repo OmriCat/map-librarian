@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -eo pipefail
+set -o errexit -o nounset -o pipefail
 
 function bail() {
-	echo $1
+	echo "$1"
 	exit 1
 }
 
@@ -15,7 +15,9 @@ firestore_rules="${2:-$(git rev-parse --show-toplevel)/firestore.rules}"
 [[ -f "$firestore_rules" ]] || bail "File $firestore_rules doesn't exist"
 echo "Firestore rules file: $firestore_rules"
 
-docker pull ghcr.io/grodin/firebase-emulator-docker:latest
+image="ghcr.io/grodin/firebase-emulator-docker"
+
+docker pull "${image}:latest"
 
 function cleanup() {
   docker rm -f firebase-emulator > /dev/null 2>&1
@@ -29,6 +31,8 @@ ui_logging_port=4500
 hub_port=4400
 auth_port=9099
 firestore_port=8080
+local_firestore_port="${DEBUG_FIRESTORE_PORT:-$firestore_port}"
+
 
 docker run -it \
     --rm \
@@ -37,10 +41,10 @@ docker run -it \
     --publish "$ui_logging_port":"$ui_logging_port" \
     --publish "$hub_port":"$hub_port" \
     --publish "$auth_port":"$auth_port" \
-    --publish "$firestore_port":"$firestore_port" \
+    --publish "$local_firestore_port":"$firestore_port" \
     --name firebase-emulator \
     --volume "$firestore_rules:/home/firestore-emulator/firestore.rules" \
-    firebase-emulator-docker \
+    "${image}" \
  	emulators:start --project "$project_name"
 
 cleanup
