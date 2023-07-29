@@ -13,8 +13,8 @@ import com.omricat.maplibrarian.firebase.FirebaseEmulatorConnection
 import com.omricat.maplibrarian.firebase.TestDispatcherProvider
 import com.omricat.maplibrarian.firebase.TestFixtures
 import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi.TestUser
-import com.omricat.result.kotest.assertk.isErr
-import com.omricat.result.kotest.assertk.isOk
+import com.omricat.result.assertk.isErr
+import com.omricat.result.assertk.isOk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
