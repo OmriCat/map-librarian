@@ -16,6 +16,10 @@ import okhttp3.HttpUrl.Builder
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
+private const val OKHTTP_CALL_TIMEOUT = 20L
+
+private const val OKHTTP_READ_TIMEOUT = 15L
+
 object TestFixtures {
     val app: FirebaseApp by lazy {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
@@ -60,8 +64,8 @@ object TestFixtures {
     @OptIn(ExperimentalTime::class)
     fun okHttpClient(output: Writer, timeSource: TimeSource = TimeSource.Monotonic) =
         OkHttpClient.Builder()
-            .callTimeout(20, SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .callTimeout(OKHTTP_CALL_TIMEOUT, SECONDS)
+            .readTimeout(OKHTTP_READ_TIMEOUT, TimeUnit.SECONDS)
             .eventListener(OkHttpTimingEventListener(output = output, timeSource = timeSource))
             .build()
 }
