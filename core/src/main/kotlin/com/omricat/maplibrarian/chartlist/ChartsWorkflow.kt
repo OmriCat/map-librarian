@@ -25,7 +25,7 @@ import com.squareup.workflow1.runningWorker
 public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
 
 public class ActualChartsWorkflow(
-    private val chartsService: ChartsService,
+    private val chartsRepository: ChartsRepository,
     private val addNewChartWorkflow: AddNewChartWorkflow
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
@@ -41,7 +41,7 @@ public class ActualChartsWorkflow(
     ): ChartsScreen =
         when (renderState) {
             is RequestData -> {
-                context.runningWorker(loadChartList(chartsService, renderProps.user)) { result ->
+                context.runningWorker(loadChartList(chartsRepository, renderProps.user)) { result ->
                     result.map { onChartListLoaded(it) }.getOrElse { onLoadingError(it) }
                 }
                 Loading
@@ -73,7 +73,7 @@ public class ActualChartsWorkflow(
         state = ChartsListLoaded(list)
     }
 
-    internal fun onLoadingError(error: ChartsServiceError) = action {
+    internal fun onLoadingError(error: ChartsRepository.Error) = action {
         state = ErrorLoadingCharts(error)
     }
 
@@ -82,11 +82,11 @@ public class ActualChartsWorkflow(
     internal companion object {
 
         internal fun loadChartList(
-            chartsService: ChartsService,
+            chartsRepository: ChartsRepository,
             user: User
-        ): Worker<Result<List<DbChartModel>, ChartsServiceError>> =
+        ): Worker<Result<List<DbChartModel>, ChartsRepository.Error>> =
             resultWorker(ChartsServiceError::fromThrowable) {
-                chartsService.chartsListForUser(user)
+                chartsRepository.chartsListForUser(user)
             }
     }
 }

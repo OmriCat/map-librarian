@@ -16,7 +16,7 @@ public sealed class ChartsWorkflowState {
 
     @Serializable public object AddingItem : ChartsWorkflowState()
 
-    public data class ErrorLoadingCharts(val error: ChartsServiceError) : ChartsWorkflowState()
+    public data class ErrorLoadingCharts(val error: ChartsRepository.Error) : ChartsWorkflowState()
 
     internal companion object
 }

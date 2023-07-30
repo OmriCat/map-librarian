@@ -23,7 +23,7 @@ import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-public class AddNewChartWorkflow(private val chartsService: ChartsService) :
+public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository) :
     StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
     @Serializable
@@ -76,7 +76,7 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
 
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
-    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsServiceError) = action {
+    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsRepository.Error) = action {
         state = Editing(chart, errorMessage = e.message)
     }
 
@@ -85,8 +85,10 @@ public class AddNewChartWorkflow(private val chartsService: ChartsService) :
     private fun saveNewItem(
         user: User,
         chart: UnsavedChartModel
-    ): Worker<Result<DbChartModel, ChartsServiceError>> =
-        resultWorker(ChartsServiceError::fromThrowable) { chartsService.addNewChart(user, chart) }
+    ): Worker<Result<DbChartModel, ChartsRepository.Error>> =
+        resultWorker(ChartsServiceError::fromThrowable) {
+            chartsRepository.addNewChart(user, chart)
+        }
 
     private fun onSave(chart: UnsavedChartModel) = action { state = Saving(chart) }
 
