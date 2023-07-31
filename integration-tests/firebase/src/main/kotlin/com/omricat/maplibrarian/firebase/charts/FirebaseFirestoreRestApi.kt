@@ -1,7 +1,7 @@
 package com.omricat.maplibrarian.firebase.charts
 
+import android.util.Log
 import com.omricat.maplibrarian.firebase.TestFixtures
-import java.io.StringWriter
 import kotlin.time.ExperimentalTime
 import okhttp3.HttpUrl
 import retrofit2.Call
@@ -14,7 +14,9 @@ import retrofit2.http.Path
 @ExperimentalTime
 class FirebaseFirestoreRestApi(private val projectId: String, baseUrl: HttpUrl) {
 
-    val events = StringWriter()
+    val events: (String) -> Unit = { message ->
+        Log.d(FirebaseFirestoreRestApi::class.simpleName, message)
+    }
 
     private interface FirestoreEmulatorApi {
 

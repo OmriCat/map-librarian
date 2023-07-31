@@ -1,10 +1,6 @@
 package com.omricat.maplibrarian.firebase
 
 import android.annotation.SuppressLint
-import android.app.Instrumentation
-import android.os.Bundle
-import android.util.Log
-import androidx.test.platform.app.InstrumentationRegistry
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.hasSize
@@ -23,7 +19,6 @@ import com.omricat.result.assertk.isOk
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -36,18 +31,6 @@ class FirebaseEndToEndTest {
     fun clearData() {
         authApi.deleteAllUsers()
         firestoreApi.deleteAllData()
-    }
-
-    @After
-    fun reportRestApiMetrics() {
-        InstrumentationRegistry.getInstrumentation()
-            .sendStatus(
-                0,
-                Bundle().apply {
-                    putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\n${firestoreApi.events}")
-                }
-            )
-        Log.i(FirebaseEndToEndTest::class.simpleName, firestoreApi.events.toString())
     }
 
     private val testCredential = EmailPasswordCredential("test@example.com", "password")

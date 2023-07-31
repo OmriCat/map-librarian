@@ -2,7 +2,7 @@ package com.omricat.maplibrarian.firebase
 
 import androidx.test.core.app.ApplicationProvider
 import com.google.firebase.FirebaseApp
-import java.io.Writer
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.time.Duration
@@ -35,7 +35,7 @@ object TestFixtures {
     @OptIn(ExperimentalTime::class)
     class OkHttpTimingEventListener(
         private val timeSource: TimeSource,
-        private val output: Writer,
+        private val output: (String) -> Unit,
     ) : EventListener() {
 
         private lateinit var requestSentTimestamp: TimeMark
@@ -44,12 +44,15 @@ object TestFixtures {
         private var readTime: Duration? = null
         override fun requestHeadersEnd(call: Call, request: Request) {
             requestSentTimestamp = timeSource.markNow()
+            output("requestHeadersEnd(): $call, $request")
         }
 
         override fun responseHeadersStart(call: Call) {
             readingStartTimestamp = timeSource.markNow()
             requestToResponseLatency = requestSentTimestamp.elapsedNow()
-            output.write(log(call, "latency: $requestToResponseLatency"))
+            output(
+                "responseHeadersStart(): ${call}, ${call.request()}, latency: $requestToResponseLatency"
+            )
         }
 
         private fun log(call: Call, data: String) =
@@ -57,12 +60,16 @@ object TestFixtures {
 
         override fun responseBodyEnd(call: Call, byteCount: Long) {
             readTime = readingStartTimestamp.elapsedNow()
-            output.write(log(call, "read time: $readTime"))
+            output("responseBodyEnd(): $call, ${call.request()}, read time: $readTime")
+        }
+
+        override fun responseFailed(call: Call, ioe: IOException) {
+            output("responseFailed(): $call, ${call.request()}, $ioe")
         }
     }
 
     @OptIn(ExperimentalTime::class)
-    fun okHttpClient(output: Writer, timeSource: TimeSource = TimeSource.Monotonic) =
+    fun okHttpClient(output: (String) -> Unit, timeSource: TimeSource = TimeSource.Monotonic) =
         OkHttpClient.Builder()
             .callTimeout(OKHTTP_CALL_TIMEOUT, SECONDS)
             .readTimeout(OKHTTP_READ_TIMEOUT, TimeUnit.SECONDS)
