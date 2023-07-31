@@ -103,7 +103,7 @@ jobs:
                     adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
                     mkdir -p ./build/logs/connected-check
                     adb logcat -c
-                    adb logcat ./*:D | tee ./build/logs/connected-check/logcat.log &
+                    adb logcat ./*:D > ./build/logs/connected-check/logcat.log &
                     ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
 
       - name: Extract logs from firebase emulator container
