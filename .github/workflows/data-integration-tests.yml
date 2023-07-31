@@ -81,9 +81,9 @@ jobs:
       - name: Build instrumented integration tests
         uses: gradle/gradle-build-action@v2
         with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
           arguments: |
             :app:packageDebug :integration-tests:firebase:packageDebug
-          cache-read-only: false
 
       - name: Start Firebase emulator and wait for it to be ready
         id: start-emulator
@@ -101,10 +101,7 @@ jobs:
           script: |
             # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
                     adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
-                    mkdir -p ./build/logs/connected-check
-                    adb logcat -c
-                    adb logcat ./*:D > ./build/logs/connected-check/logcat.log &
-                    ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
+                    ./scripts/capture-logcat-logs.sh ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
@@ -125,7 +122,7 @@ jobs:
         with:
           name: instrumentation-test-results-api-${{ matrix.api-level }}-${{ matrix.target }}
           path: |
-            ./**/build/logs/connected-check/**
+            ./**/build/logs/logcat.log
             ./**/build/reports/androidTests/connected/**
             ./**/build/outputs/androidTest-results/**
             ./**/build/outputs/connected_android_test_additional_output/**
