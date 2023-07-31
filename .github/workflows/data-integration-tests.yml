@@ -2,6 +2,12 @@ name: Data layer integration tests
 
 on:
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
   merge_group:
   push:
     branches:
@@ -89,6 +95,11 @@ jobs:
         id: start-emulator
         run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
 
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
       - name: Run instrumented integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -100,8 +111,9 @@ jobs:
           disable-animations: true
           script: |
             # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
-                    adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
-                    ./scripts/capture-logcat-logs.sh ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
+            adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
+            adb shell am clear-debug-app
+            ./scripts/capture-logcat-logs.sh ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
