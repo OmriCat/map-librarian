@@ -9,5 +9,6 @@ import com.omricat.logging.log
 
 context(Loggable)
 
-inline fun <V, E> Result<V, Throwable>.logErrorAndMap(transform: (Throwable) -> E): Result<V, E> =
-    this.onFailure { logger.log(Warn, throwable = it) { "" } }.mapError(transform)
+inline fun <V, E, T : Exception> Result<V, T>.logExceptionAndMap(
+    transform: (T) -> E
+): Result<V, E> = this.onFailure { logger.log(Warn, throwable = it) { "" } }.mapError(transform)
