@@ -97,13 +97,13 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
           script: |
-            adb uninstall "com.omricat.maplibrarian.integration-testing.debug"
-            mkdir -p ./build/logs/connected-check
-            adb logcat -c
-            adb logcat ./*:D | tee ./build/logs/connected-check/logcat.log &
-            ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
+            # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
+                    adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
+                    mkdir -p ./build/logs/connected-check
+                    adb logcat -c
+                    adb logcat ./*:D | tee ./build/logs/connected-check/logcat.log &
+                    ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
