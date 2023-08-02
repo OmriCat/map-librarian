@@ -11,7 +11,6 @@ recyclerview = "1.3.1"
 test = "1.2.0"
 testCore = "1.5.0"
 testExtJunit = "1.1.5"
-testExtTruth = "1.2.0"
 testRules = "1.2.0"
 testRunner = "1.5.2"
 
@@ -27,5 +26,4 @@ lifecycle_commonJava8 = { group = "androidx.lifecycle", name = "lifecycle-common
 recylerView = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 test_runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 test_ext_junitKtx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "testExtJunit" }
-test_ext_truth = { group = "androidx.test.ext", name = "truth", version.ref = "testExtTruth" }
 test_coreKtx = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }

@@ -109,5 +109,5 @@ internal value class FirebaseUser(private val user: com.google.firebase.auth.Fir
         }
 }
 
-public inline fun <V> runCatchingAuthExceptions(block: () -> V): Result<V, FirebaseAuthException> =
+private inline fun <V> runCatchingAuthExceptions(block: () -> V): Result<V, FirebaseAuthException> =
     runCatchingFirebaseException(block)
