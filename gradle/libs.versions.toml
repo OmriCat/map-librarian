@@ -16,7 +16,7 @@ robolectric = "4.7.3"
 slf4jSimple = "1.7.36"
 testcontainersBom = "1.16.3"
 timber = "5.0.1"
-workflow = "1.6.0"
+workflow = "1.7.1"
 
 # plugins
 agp = "7.4.2"
