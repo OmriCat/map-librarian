@@ -23,7 +23,7 @@ abstract class DefaultDiContainer : DiContainer {
             }
 
             override val charts: ChartsWorkflow by lazy {
-                ActualChartsWorkflow(chartsService, AddNewChartWorkflow(chartsService))
+                ActualChartsWorkflow(chartsRepository, AddNewChartWorkflow(chartsRepository))
             }
         }
     override val viewRegistry: ViewRegistry =

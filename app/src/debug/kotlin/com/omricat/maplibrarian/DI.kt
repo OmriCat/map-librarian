@@ -7,8 +7,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.auth.UserRepository
-import com.omricat.maplibrarian.chartlist.ChartsService
-import com.omricat.maplibrarian.chartlist.FirebaseChartsService
+import com.omricat.maplibrarian.chartlist.ChartsRepository
+import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
 import com.omricat.maplibrarian.debugdrawer.DebugPreferencesRepository
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import kotlinx.coroutines.runBlocking
@@ -36,9 +36,9 @@ internal fun MapLibraryApp.initializeDI(): DiContainer =
                 .useEmulator(firebaseEmulatorHost, FIREBASE_EMULATOR_AUTH_PORT)
             FirebaseUserRepository(Firebase.auth)
         }
-        override val chartsService: ChartsService by lazy {
+        override val chartsRepository: ChartsRepository by lazy {
             FirebaseFirestore.getInstance()
                 .useEmulator(firebaseEmulatorHost, FIREBASE_EMULATOR_FIRESTORE_PORT)
-            FirebaseChartsService(Firebase.firestore)
+            FirebaseChartsRepository(Firebase.firestore)
         }
     }

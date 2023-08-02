@@ -1,16 +1,22 @@
 package com.omricat.maplibrarian.firebase
 
-import com.github.michaelbull.result.Ok
+import android.annotation.SuppressLint
+import assertk.all
+import assertk.assertThat
+import assertk.assertions.hasSize
+import assertk.assertions.isEqualTo
+import assertk.assertions.prop
 import com.github.michaelbull.result.getOrThrow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
-import com.omricat.maplibrarian.chartlist.FirebaseChartsService
+import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
 import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi
 import com.omricat.maplibrarian.firebase.charts.FirebaseFirestoreRestApi
-import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
+import com.omricat.result.assertk.isOk
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -18,7 +24,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 @Suppress("FunctionName")
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalTime::class)
 class FirebaseEndToEndTest {
 
     @Before
@@ -34,7 +40,7 @@ class FirebaseEndToEndTest {
         val testDispatcherProvider = TestDispatcherProvider(testScheduler)
         val userRepository = FirebaseUserRepository(firebaseAuthInstance, testDispatcherProvider)
 
-        val chartsRepository = FirebaseChartsService(firestoreInstance, testDispatcherProvider)
+        val chartsRepository = FirebaseChartsRepository(firestoreInstance, testDispatcherProvider)
 
         val createUserResult = userRepository.createUser(testCredential)
 
@@ -43,21 +49,22 @@ class FirebaseEndToEndTest {
         val addChartResult =
             chartsRepository.addNewChart(user, UnsavedChartModel(user.id, "New map"))
 
-        assert(addChartResult is Ok<DbChartModel>)
+        assertThat(addChartResult).isOk()
 
         val queryChartResult = chartsRepository.chartsListForUser(user)
 
-        queryChartResult
-            .getOrThrow { AssertionError(it) }
-            .run {
-                assert(size == 1)
-                assert(first().title == "New map")
-            }
+        assertThat(queryChartResult).isOk().all {
+            hasSize(1)
+            prop("First item title") { it.first().title }.isEqualTo("New map")
+        }
     }
 
     companion object Fixtures {
 
-        @JvmStatic lateinit var firestoreInstance: FirebaseFirestore
+        // Not a problem to leak a Context in an instrumented test
+        @SuppressLint("StaticFieldLeak")
+        @JvmStatic
+        lateinit var firestoreInstance: FirebaseFirestore
 
         @JvmStatic lateinit var firestoreApi: FirebaseFirestoreRestApi
 

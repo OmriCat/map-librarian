@@ -3,12 +3,14 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
-import com.github.michaelbull.result.coroutines.runSuspendCatching
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.onFailure
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
+import com.omricat.firebase.interop.runCatchingFirebaseException
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.DbChartModelFromMapDeserializer
@@ -21,15 +23,19 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class FirebaseChartsService(
+class FirebaseChartsRepository(
     private val db: FirebaseFirestore,
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default
-) : ChartsService {
+) : ChartsRepository {
 
     override suspend fun chartsListForUser(
         user: User
-    ): Result<List<DbChartModel>, ChartsServiceError> =
-        withContext(dispatchers.io) { runSuspendCatching { db.mapsCollection(user).get().await() } }
+    ): Result<List<DbChartModel>, ChartsRepository.Error> =
+        withContext(dispatchers.io) {
+                runCatchingFirestoreException<QuerySnapshot> {
+                    db.mapsCollection(user).get().await()
+                }
+            }
             .mapError(ChartsServiceError::fromThrowable)
             .onFailure { Timber.e(it.message) }
             .andThen { snapshot ->
@@ -42,13 +48,13 @@ class FirebaseChartsService(
     override suspend fun addNewChart(
         user: User,
         newChart: UnsavedChartModel
-    ): Result<DbChartModel, ChartsServiceError> {
+    ): Result<DbChartModel, ChartsRepository.Error> {
         require(user.id == newChart.userId) {
             "UserId of newMap (was ${newChart.userId}) must be " +
                 "same as userId of user (was ${user.id})"
         }
         return withContext(dispatchers.io) {
-                runSuspendCatching {
+                runCatchingFirestoreException {
                     db.mapsCollection(user).add(newChart.serializedToMap()).await()
                 }
             }
@@ -73,3 +79,7 @@ private fun UnsavedChartModel.withChartId(chartId: ChartId): DbChartModel =
 
 internal fun DocumentSnapshot.parseMapModel() =
     DbChartModelFromMapDeserializer(id, data ?: emptyMap())
+
+private inline fun <V> runCatchingFirestoreException(
+    block: () -> V
+): Result<V, FirebaseFirestoreException> = runCatchingFirebaseException(block)

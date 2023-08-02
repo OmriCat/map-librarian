@@ -7,7 +7,7 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.UserRepository
-import com.omricat.maplibrarian.chartlist.ChartsService
+import com.omricat.maplibrarian.chartlist.ChartsRepository
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
@@ -30,7 +30,7 @@ class MapLibraryApp : Application() {
 
 interface DiContainer {
     val userRepository: UserRepository
-    val chartsService: ChartsService
+    val chartsRepository: ChartsRepository
     val workflows: Workflows
     val viewRegistry: ViewRegistry
 
