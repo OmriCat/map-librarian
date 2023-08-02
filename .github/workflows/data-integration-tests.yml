@@ -111,9 +111,10 @@ jobs:
           disable-animations: true
           script: |
             # Workaround for https://github.com/ReactiveCircus/android-emulator-runner/issues/319
-            adb uninstall "com.omricat.maplibrarian.integration-testing.debug" || true
-            adb shell am clear-debug-app
-            ./scripts/capture-logcat-logs.sh ./gradlew :integration-tests:firebase:connectedCheck --continue --stacktrace
+            adb uninstall "com.omricat.maplibrarian.integrationtesting.debug" || true
+            adb uninstall "com.omricat.maplibrarian.debug" || true
+            ./gradlew installDebug
+            ./scripts/capture-logcat-logs.sh adb shell am instrument -w com.omricat.maplibrarian.integrationtesting.debug/androidx.test.runner.AndroidJUnitRunner
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
