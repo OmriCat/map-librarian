@@ -9,6 +9,7 @@ import assertk.assertions.prop
 import com.github.michaelbull.result.getOrThrow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.omricat.logging.test.TestLogger
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
@@ -39,8 +40,14 @@ class FirebaseEndToEndTest {
     fun addUser_addCharts_queryCharts() = runTest {
         val testDispatcherProvider = TestDispatcherProvider(testScheduler)
         val userRepository = FirebaseUserRepository(firebaseAuthInstance, testDispatcherProvider)
+        val testLogger = TestLogger()
 
-        val chartsRepository = FirebaseChartsRepository(firestoreInstance, testDispatcherProvider)
+        val chartsRepository =
+            FirebaseChartsRepository(
+                firestoreInstance,
+                testDispatcherProvider,
+                testLogger,
+            )
 
         val createUserResult = userRepository.createUser(testCredential)
 

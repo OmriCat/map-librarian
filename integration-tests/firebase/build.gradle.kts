@@ -93,6 +93,8 @@ tasks
 dependencies {
     debugImplementation(projects.core)
     debugImplementation(projects.app)
+    implementation(projects.util.logging)
+    implementation(projects.util.logging.test)
 
     implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.kotlinx.coroutines.core)

@@ -1,5 +1,8 @@
 package com.omricat.maplibrarian.root
 
+import com.omricat.logging.Loggable
+import com.omricat.logging.Logger
+import com.omricat.logging.log
 import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
 import com.omricat.maplibrarian.auth.AuthResult.NotAuthenticated
@@ -21,8 +24,9 @@ import com.squareup.workflow1.renderChild
 public class RootWorkflow(
     private val userRepository: UserRepository,
     private val authWorkflow: AuthWorkflow,
-    private val chartsWorkflow: ChartsWorkflow
-) : StatefulWorkflow<Unit, State, Nothing, Screen>() {
+    private val chartsWorkflow: ChartsWorkflow,
+    override val logger: Logger
+) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable {
 
     public sealed class State {
         public object Unauthorized : State()
@@ -35,6 +39,7 @@ public class RootWorkflow(
         when (renderState) {
             is Unauthorized -> {
                 context.renderChild(authWorkflow) { authResult: AuthResult ->
+                    log { "authResult: $authResult" }
                     when (authResult) {
                         is Authenticated -> onAuthenticated(authResult)
                         is NotAuthenticated -> unauthorized()
