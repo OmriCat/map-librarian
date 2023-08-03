@@ -45,6 +45,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.playServices)
 
+    implementation(projects.util.logging)
+    implementation(libs.kermit)
+
     implementation(androidx.appCompat)
     implementation(androidx.coreKtx)
 
