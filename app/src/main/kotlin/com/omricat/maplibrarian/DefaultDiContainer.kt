@@ -1,5 +1,6 @@
 package com.omricat.maplibrarian
 
+import com.omricat.logging.Logger
 import com.omricat.maplibrarian.auth.ActualAuthWorkflow
 import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
@@ -8,7 +9,9 @@ import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.omricat.maplibrarian.chartlist.MapListViewRegistry
+import com.omricat.maplibrarian.di.DiContainer
 import com.omricat.maplibrarian.root.AuthorizedScreenLayoutRunner
+import com.omricat.maplibrarian.root.RootWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.plus
@@ -16,8 +19,20 @@ import com.squareup.workflow1.ui.plus
 @WorkflowUiExperimentalApi
 abstract class DefaultDiContainer : DiContainer {
 
+    override val logger: Logger by lazy { Logger.NoOpLogger }
+
     override val workflows: DiContainer.Workflows =
         object : DiContainer.Workflows {
+
+            override val root: RootWorkflow by lazy {
+                RootWorkflow(
+                    userRepository,
+                    auth,
+                    charts,
+                    logger,
+                )
+            }
+
             override val auth: AuthWorkflow by lazy {
                 ActualAuthWorkflow(userRepository, SignUpWorkflow.instance(userRepository))
             }

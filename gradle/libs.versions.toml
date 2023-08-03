@@ -15,6 +15,7 @@ retrofit2 = "2.9.0"
 robolectric = "4.7.3"
 slf4jSimple = "1.7.36"
 testcontainersBom = "1.16.3"
+kermit = "2.0.0-RC5"
 timber = "5.0.1"
 workflow = "1.7.1"
 
@@ -67,6 +68,9 @@ jakeWharton_processPhoenix = { module = "com.jakewharton:process-phoenix", versi
 jakeWharton_timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
+
+kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
+kermit_core = { group = "co.touchlab", name = "kermit-core", version.ref = "kermit" }
 
 # Used in build-logic
 android_gradlePlugin_api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }

@@ -16,6 +16,8 @@ android {
         resourceConfigurations += "en" // Only keep languages supported so to trim down FirebaseUI
     }
 
+    kotlinOptions { compileOptions { freeCompilerArgs += "-Xcontext-receivers" } }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -44,6 +46,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.playServices)
+
+    implementation(projects.util.logging)
+    implementation(libs.kermit)
 
     implementation(androidx.appCompat)
     implementation(androidx.coreKtx)

@@ -7,6 +7,7 @@ import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.auth.UserRepository
 import com.omricat.maplibrarian.chartlist.ChartsRepository
 import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
+import com.omricat.maplibrarian.di.DiContainer
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 
 /** Setup DI container for release variant */
@@ -17,6 +18,6 @@ internal fun MapLibraryApp.initializeDI(): DiContainer =
             FirebaseUserRepository(Firebase.auth)
         }
         override val chartsRepository: ChartsRepository by lazy {
-            FirebaseChartsRepository(Firebase.firestore)
+            FirebaseChartsRepository(Firebase.firestore, logger = logger)
         }
     }

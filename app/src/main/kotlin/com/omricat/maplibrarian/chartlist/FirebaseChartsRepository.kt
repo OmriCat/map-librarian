@@ -1,5 +1,6 @@
 package com.omricat.maplibrarian.chartlist
 
+import co.touchlab.kermit.Severity.Warn
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
@@ -11,6 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.omricat.firebase.interop.runCatchingFirebaseException
+import com.omricat.logging.Loggable
+import com.omricat.logging.Logger
+import com.omricat.logging.log
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.DbChartModelFromMapDeserializer
@@ -21,12 +25,12 @@ import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logErrorAndMap
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class FirebaseChartsRepository(
     private val db: FirebaseFirestore,
-    private val dispatchers: DispatcherProvider = DispatcherProvider.Default
-) : ChartsRepository {
+    private val dispatchers: DispatcherProvider = DispatcherProvider.Default,
+    override val logger: Logger
+) : ChartsRepository, Loggable {
 
     override suspend fun chartsListForUser(
         user: User
@@ -37,7 +41,7 @@ class FirebaseChartsRepository(
                 }
             }
             .mapError(ChartsServiceError::fromThrowable)
-            .onFailure { Timber.e(it.message) }
+            .onFailure { log(Warn) { "$it" } }
             .andThen { snapshot ->
                 snapshot
                     .map { m -> m.parseMapModel() }

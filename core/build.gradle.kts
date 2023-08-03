@@ -1,9 +1,14 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.maplib.kotlin.library)
     alias(libs.plugins.kotlin.serialization)
 }
 
+kotlin { compilerOptions { freeCompilerArgs.addAll("-Xcontext-receivers") } }
+
 dependencies {
+    implementation(projects.util.logging)
+
     implementation(platform(libs.kotlinx.coroutines.bom))
     api(libs.kotlinx.coroutines.core)
 

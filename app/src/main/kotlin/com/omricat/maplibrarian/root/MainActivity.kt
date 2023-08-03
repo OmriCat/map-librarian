@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Tag
+import com.omricat.logging.Logger
 import com.omricat.maplibrarian.diContainer
 import com.squareup.workflow1.SimpleLoggingWorkflowInterceptor
 import com.squareup.workflow1.ui.ViewRegistry
@@ -16,7 +18,6 @@ import com.squareup.workflow1.ui.WorkflowLayout
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.renderWorkflowIn
 import kotlinx.coroutines.flow.StateFlow
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,21 +35,17 @@ internal class MainViewModel(app: Application, private val savedState: SavedStat
     private val diContainer = app.diContainer
     val renderings: StateFlow<Screen> by lazy {
         renderWorkflowIn(
-            workflow =
-                RootWorkflow(
-                    diContainer.userRepository,
-                    diContainer.workflows.auth,
-                    diContainer.workflows.charts
-                ),
+            workflow = diContainer.workflows.root,
             scope = viewModelScope,
             savedStateHandle = savedState,
-            interceptors = listOf(TimberLoggingWorkflowInterceptor)
+            interceptors = listOf(MapLibLoggerLoggingWorkflowInterceptor(diContainer.logger))
         )
     }
 }
 
-internal object TimberLoggingWorkflowInterceptor : SimpleLoggingWorkflowInterceptor() {
+internal class MapLibLoggerLoggingWorkflowInterceptor(private val logger: Logger) :
+    SimpleLoggingWorkflowInterceptor() {
     override fun log(text: String) {
-        Timber.d(text)
+        logger.log(tag = Tag("WorkflowLogging")) { text }
     }
 }
