@@ -45,5 +45,6 @@ include(
     ":app",
     ":core",
     ":util:kotlin-result-extensions",
+    ":util:logging",
     ":integration-tests:firebase",
 )
