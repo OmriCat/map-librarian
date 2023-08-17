@@ -87,6 +87,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
 
 public sealed interface SignUpOutput {
     public data class UserCreated(val user: User) : SignUpOutput
+
     public object SignUpCancelled : SignUpOutput
 }
 

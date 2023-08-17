@@ -11,10 +11,13 @@ class TestDispatcherProvider(scheduler: TestCoroutineScheduler) : DispatcherProv
     private val dispatcher = StandardTestDispatcher(scheduler)
     override val default: CoroutineDispatcher
         get() = dispatcher
+
     override val io: CoroutineDispatcher
         get() = dispatcher
+
     override val main: CoroutineDispatcher
         get() = dispatcher
+
     override val unconfined: CoroutineDispatcher
         get() = dispatcher
 }

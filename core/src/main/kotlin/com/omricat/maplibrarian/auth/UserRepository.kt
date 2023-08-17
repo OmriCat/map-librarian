@@ -17,6 +17,7 @@ public sealed class CreateUserError(override val message: String) : UserReposito
         CreateUserError("Email address $emailAddress is already in use")
 
     public object WeakPasswordError : CreateUserError("Password is too weak")
+
     public object UserCreatedButSignedOutError :
         CreateUserError("User created but needs to sign in again")
 
@@ -26,8 +27,11 @@ public sealed class CreateUserError(override val message: String) : UserReposito
 
 public interface UserRepository {
     public suspend fun attemptAuthentication(credential: Credential): Result<User, Error>
+
     public fun signOut()
+
     public suspend fun getSignedInUserIfAny(): Result<User?, Error>
+
     public suspend fun createUser(credential: Credential): Result<User, CreateUserError>
 
     public sealed interface Error {

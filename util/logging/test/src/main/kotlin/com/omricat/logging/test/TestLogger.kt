@@ -8,10 +8,13 @@ public class TestLogger : Logger {
 
     private val logs: List<LogLine>
         get() = _logs
+
     private val _logs = mutableListOf<LogLine>()
+
     override fun log(priority: Severity, tag: Tag, throwable: Throwable?, message: () -> String) {
         _logs.add(LogLine(priority, tag, throwable, message()))
     }
+
     public data class LogLine(
         public val priority: Severity,
         public val tag: Tag,

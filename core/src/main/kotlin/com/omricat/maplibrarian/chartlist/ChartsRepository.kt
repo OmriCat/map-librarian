@@ -10,10 +10,12 @@ public interface ChartsRepository {
     public suspend fun chartsListForUser(
         user: User
     ): Result<List<DbChartModel>, ChartsRepository.Error>
+
     public suspend fun addNewChart(
         user: User,
         newChart: UnsavedChartModel
     ): Result<DbChartModel, ChartsRepository.Error>
+
     public sealed interface Error {
         public val message: String
     }
