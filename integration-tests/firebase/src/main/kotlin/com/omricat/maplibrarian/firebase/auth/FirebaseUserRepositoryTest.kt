@@ -66,6 +66,7 @@ class FirebaseUserRepositoryTest {
             }
         }
     }
+
     @Test
     fun canSignInAddedUser() = runTest {
         val repository =

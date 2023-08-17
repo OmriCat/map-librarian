@@ -42,6 +42,7 @@ object TestFixtures {
         private lateinit var readingStartTimestamp: TimeMark
         private var requestToResponseLatency: Duration? = null
         private var readTime: Duration? = null
+
         override fun requestHeadersEnd(call: Call, request: Request) {
             requestSentTimestamp = timeSource.markNow()
             output("requestHeadersEnd(): $call, $request")

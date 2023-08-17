@@ -93,6 +93,7 @@ public class ActualChartsWorkflow(
 
 public sealed interface ChartsScreen {
     public object Loading : ChartsScreen
+
     public data class ShowError(val message: String) : ChartsScreen
 }
 

@@ -53,6 +53,7 @@ class FirebaseAuthEmulatorRestApi(private val projectId: String, baseUrl: HttpUr
             .addConverterFactory(json.asConverterFactory(jsonMediaType))
             .build()
             .create()
+
     fun deleteAllUsers(): Response<Unit> = wrappedApi.deleteAllUsers(projectId).execute()
 
     fun createUser(credential: EmailPasswordCredential): Response<TestUser> {

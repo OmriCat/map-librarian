@@ -96,6 +96,7 @@ internal value class FirebaseUser(private val user: com.google.firebase.auth.Fir
 
     override val id: UserUid
         get() = UserUid(user.uid)
+
     override val emailAddress: EmailAddress
         get() {
             val email =

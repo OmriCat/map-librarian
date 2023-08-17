@@ -22,6 +22,7 @@ public typealias BackPressHandler = () -> Unit
 
 public sealed class AuthResult {
     public object NotAuthenticated : AuthResult()
+
     public data class Authenticated(val user: User) : AuthResult()
 }
 
@@ -35,8 +36,11 @@ public class ActualAuthWorkflow(
     StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
     public sealed interface State {
         public object PossibleLoggedInUser : State
+
         public data class LoginPrompt(val errorMessage: String = "") : State
+
         public data class AttemptingAuthorization(val credential: Credential) : State
+
         public object SigningUp : State
     }
 

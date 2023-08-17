@@ -20,11 +20,13 @@ internal class AssertionsTest {
         val err: Result<String, String> = Err("Error")
         assertFailure { assertThat(err).isOk() }
     }
+
     @Test
     fun `isErr() succeeds for Err`() {
         val err: Result<String, String> = Err("Error")
         assertThat(err).isErr()
     }
+
     @Test
     fun `isErr() fails for Ok`() {
         val err: Result<String, String> = Ok("Error")
