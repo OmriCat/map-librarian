@@ -37,6 +37,8 @@ jobs:
 
       - name: Setup docker
         uses: crazy-max/ghaction-setup-docker@v1
+        env:
+          SIGN_QEMU_BINARY: 1
 
       - name: Install coreutils
         run: |
