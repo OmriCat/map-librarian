@@ -35,12 +35,10 @@ jobs:
             target: google_atd
     steps:
 
-      # Docker can't be pre-installed on macos due to licensing issues so this is a workaround
-      - name: Setup docker on macos
-        run: |
-          brew install docker
-          colima start
-          docker --version # Sanity check
+      - name: Setup docker
+        uses: crazy-max/ghaction-setup-docker@v1
+        env:
+          SIGN_QEMU_BINARY: 1
 
       - name: Install coreutils
         run: |
