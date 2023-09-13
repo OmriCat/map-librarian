@@ -29,10 +29,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup JDK 11
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Run ktfmt
@@ -48,10 +48,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK 11
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Run lint
@@ -74,10 +74,10 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - name: Setup JDK 11
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Assemble all variants
@@ -93,10 +93,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup JDK 11
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Run local tests
