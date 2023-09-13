@@ -34,7 +34,10 @@ android {
         disable += listOf("GradleDependency")
     }
 
-    buildFeatures { viewBinding = true }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
 
     testOptions { unitTests { isIncludeAndroidResources = true } }
 }
