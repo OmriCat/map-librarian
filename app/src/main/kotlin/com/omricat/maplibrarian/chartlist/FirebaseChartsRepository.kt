@@ -99,7 +99,6 @@ class FirebaseChartsRepository(
         collection("users").document(user.id.value).collection("maps")
 }
 
-@Suppress("UNCHECKED_CAST")
 private fun UnsavedChartModel.withChartId(chartId: ChartId): DbChartModel =
     DbChartModel(userId = userId, title = title, chartId = chartId)
 
