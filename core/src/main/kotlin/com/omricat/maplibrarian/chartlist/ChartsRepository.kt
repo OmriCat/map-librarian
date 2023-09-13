@@ -26,9 +26,9 @@ public interface ChartsRepository {
     }
 
     public sealed class AddNewChartError(public val message: String) {
-        public object Unavailable : AddNewChartError("Service temporarily unavailable")
+        public data object Unavailable : AddNewChartError("Service temporarily unavailable")
 
-        public object Cancelled : AddNewChartError("Operation ")
+        public data object Cancelled : AddNewChartError("Operation ")
         public data class ChartExists(public val unsavedChartModel: UnsavedChartModel) :
             AddNewChartError("Chart already exists: $unsavedChartModel")
         public data class OtherException(val exception: Throwable) :
