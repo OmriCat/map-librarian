@@ -36,7 +36,7 @@ import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.model.serializedToMap
 import com.omricat.maplibrarian.utils.DispatcherProvider
-import com.omricat.maplibrarian.utils.logExceptionAndMap
+import com.omricat.maplibrarian.utils.logAndMapException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -76,7 +76,7 @@ class FirebaseChartsRepository(
                     db.mapsCollection(user).add(newChart.serializedToMap()).await()
                 }
             }
-            .logExceptionAndMap { exception ->
+            .logAndMapException { exception ->
                 when (exception.code) {
                     UNAVAILABLE -> Unavailable
                     ALREADY_EXISTS -> ChartExists(newChart)
