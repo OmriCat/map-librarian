@@ -39,7 +39,6 @@ import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logAndMapException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class FirebaseChartsRepository(
     private val db: FirebaseFirestore,
@@ -92,9 +91,7 @@ class FirebaseChartsRepository(
                     else -> OtherException(exception)
                 }
             }
-            .onFailure {
-                Timber.w("${FirebaseChartsRepository::class.simpleName} : $it : ${it.message}")
-            }
+            .onFailure { log(Warn) { "error Adding New Chart: ${it.message}" } }
             .map { ref -> newChart.withChartId(ChartId(ref.id)) }
     }
 
