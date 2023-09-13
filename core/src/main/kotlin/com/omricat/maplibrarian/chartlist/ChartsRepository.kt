@@ -30,7 +30,7 @@ public interface ChartsRepository {
 
         public object Cancelled : AddNewChartError("Operation ")
         public data class ChartExists(public val unsavedChartModel: UnsavedChartModel) :
-            AddNewChartError("Chart already exists")
+            AddNewChartError("Chart already exists: $unsavedChartModel")
         public data class OtherException(val exception: Throwable) :
             AddNewChartError(exception.message ?: "No message in $exception")
     }
