@@ -53,8 +53,7 @@ class FirebaseChartsRepository(
                     db.mapsCollection(user).get().await()
                 }
             }
-            .onFailure { log(Warn, throwable = it) }
-            .mapError(::ExceptionWrappingError)
+            .logAndMapException(::ExceptionWrappingError)
             .andThen { snapshot ->
                 snapshot
                     .map { m -> m.parseMapModel() }
