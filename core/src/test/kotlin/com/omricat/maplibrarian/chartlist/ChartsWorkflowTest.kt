@@ -33,7 +33,9 @@ internal class ChartsWorkflowTest :
 
                 "transform ErrorLoadingCharts to RequestData" {
                     val state =
-                        ChartsWorkflowState.ErrorLoadingCharts(ChartsServiceError("Error message"))
+                        ChartsWorkflowState.ErrorLoadingCharts(
+                            ChartsRepository.Error.MessageError("Error message")
+                        )
 
                     ChartsWorkflowState.fromSnapshot(state.toSnapshot()) shouldBe
                         ChartsWorkflowState.RequestData
