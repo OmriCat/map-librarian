@@ -1,27 +1,25 @@
 package com.omricat.maplibrarian.firebase
 
-import android.annotation.SuppressLint
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
 import com.github.michaelbull.result.getOrThrow
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.omricat.logging.test.TestLogger
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
-import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi
-import com.omricat.maplibrarian.firebase.charts.FirebaseFirestoreRestApi
+import com.omricat.maplibrarian.firebase.TestFixtures.authApi
+import com.omricat.maplibrarian.firebase.TestFixtures.firebaseAuthInstance
+import com.omricat.maplibrarian.firebase.TestFixtures.firestoreApi
+import com.omricat.maplibrarian.firebase.TestFixtures.firestoreInstance
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.result.assertk.isOk
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 
 @Suppress("FunctionName")
@@ -63,51 +61,6 @@ class FirebaseEndToEndTest {
         assertThat(queryChartResult).isOk().all {
             hasSize(1)
             prop("First item title") { it.first().title }.isEqualTo("New map")
-        }
-    }
-
-    companion object Fixtures {
-
-        // Not a problem to leak a Context in an instrumented test
-        @SuppressLint("StaticFieldLeak")
-        @JvmStatic
-        lateinit var firestoreInstance: FirebaseFirestore
-
-        @JvmStatic lateinit var firestoreApi: FirebaseFirestoreRestApi
-
-        @JvmStatic lateinit var firebaseAuthInstance: FirebaseAuth
-
-        @JvmStatic lateinit var authApi: FirebaseAuthEmulatorRestApi
-
-        @JvmStatic
-        @BeforeClass
-        fun setup() {
-            firestoreInstance =
-                FirebaseFirestore.getInstance(TestFixtures.app).apply {
-                    useEmulator(
-                        FirebaseEmulatorConnection.HOST,
-                        FirebaseEmulatorConnection.FIRESTORE_PORT
-                    )
-                }
-
-            firestoreApi =
-                FirebaseFirestoreRestApi(
-                    TestFixtures.projectId,
-                    TestFixtures.emulatorBaseUrl(FirebaseEmulatorConnection.FIRESTORE_PORT)
-                )
-
-            firebaseAuthInstance =
-                FirebaseAuth.getInstance(TestFixtures.app).apply {
-                    useEmulator(
-                        FirebaseEmulatorConnection.HOST,
-                        FirebaseEmulatorConnection.AUTH_PORT
-                    )
-                }
-            authApi =
-                FirebaseAuthEmulatorRestApi(
-                    TestFixtures.projectId,
-                    TestFixtures.emulatorBaseUrl(FirebaseEmulatorConnection.AUTH_PORT)
-                )
         }
     }
 }

@@ -2,8 +2,11 @@ package com.omricat.maplibrarian.firebase
 
 import androidx.test.core.app.ApplicationProvider
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.omricat.maplibrarian.firebase.auth.FirebaseAuthEmulatorRestApi
+import com.omricat.maplibrarian.firebase.charts.FirebaseFirestoreRestApi
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -20,20 +23,49 @@ private const val OKHTTP_CALL_TIMEOUT = 20L
 
 private const val OKHTTP_READ_TIMEOUT = 15L
 
+@OptIn(ExperimentalTime::class)
 object TestFixtures {
-    val app: FirebaseApp by lazy {
+    private val app: FirebaseApp by lazy {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
             ?: error("Failed to initialize FirebaseApp")
     }
 
-    val projectId: String
+    private val projectId: String
         get() = app.options.projectId ?: error("Can't get projectId from FirebaseApp options")
 
-    fun emulatorBaseUrl(port: Int): HttpUrl =
+    val firestoreInstance: FirebaseFirestore by lazy {
+        FirebaseFirestore.getInstance(app).apply {
+            this.useEmulator(
+                FirebaseEmulatorConnection.HOST,
+                FirebaseEmulatorConnection.FIRESTORE_PORT
+            )
+        }
+    }
+
+    val firestoreApi: FirebaseFirestoreRestApi by lazy {
+        FirebaseFirestoreRestApi(
+            projectId,
+            emulatorBaseUrl(FirebaseEmulatorConnection.FIRESTORE_PORT)
+        )
+    }
+
+    val firebaseAuthInstance: FirebaseAuth by lazy {
+        FirebaseAuth.getInstance(app).apply {
+            useEmulator(FirebaseEmulatorConnection.HOST, FirebaseEmulatorConnection.AUTH_PORT)
+        }
+    }
+
+    val authApi: FirebaseAuthEmulatorRestApi by lazy {
+        FirebaseAuthEmulatorRestApi(
+            projectId,
+            emulatorBaseUrl(FirebaseEmulatorConnection.AUTH_PORT)
+        )
+    }
+
+    private fun emulatorBaseUrl(port: Int): HttpUrl =
         Builder().host(FirebaseEmulatorConnection.HOST).port(port).scheme("http").build()
 
-    @OptIn(ExperimentalTime::class)
-    class OkHttpTimingEventListener(
+    internal class OkHttpTimingEventListener(
         private val timeSource: TimeSource,
         private val output: (String) -> Unit,
     ) : EventListener() {
@@ -56,9 +88,6 @@ object TestFixtures {
             )
         }
 
-        private fun log(call: Call, data: String) =
-            "[${TimeSource.Monotonic.markNow()}]: ${call.request().url} | $data"
-
         override fun responseBodyEnd(call: Call, byteCount: Long) {
             readTime = readingStartTimestamp.elapsedNow()
             output("responseBodyEnd(): $call, ${call.request()}, read time: $readTime")
@@ -69,11 +98,10 @@ object TestFixtures {
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     fun okHttpClient(output: (String) -> Unit, timeSource: TimeSource = TimeSource.Monotonic) =
         OkHttpClient.Builder()
             .callTimeout(OKHTTP_CALL_TIMEOUT, SECONDS)
-            .readTimeout(OKHTTP_READ_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(OKHTTP_READ_TIMEOUT, SECONDS)
             .eventListener(OkHttpTimingEventListener(output = output, timeSource = timeSource))
             .build()
 }
