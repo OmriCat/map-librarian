@@ -14,6 +14,7 @@ public interface ChartsRepository {
         user: User,
         newChart: UnsavedChartModel
     ): Result<DbChartModel, AddNewChartError>
+
     public interface Error {
         public val message: String
 
@@ -29,8 +30,10 @@ public interface ChartsRepository {
         public data object Unavailable : AddNewChartError("Service temporarily unavailable")
 
         public data object Cancelled : AddNewChartError("Operation ")
+
         public data class ChartExists(public val unsavedChartModel: UnsavedChartModel) :
             AddNewChartError("Chart already exists: $unsavedChartModel")
+
         public data class OtherException(val exception: Throwable) :
             AddNewChartError(exception.message ?: "No message in $exception")
     }
