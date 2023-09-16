@@ -25,7 +25,7 @@ public inline fun <reified T : Any> T.log(
     priority: Severity = Debug,
     tag: String? = null,
     throwable: Throwable,
-    noinline message: () -> String
+    noinline message: () -> String = { throwable.message ?: "$throwable" }
 ) {
     logger.log(priority, Tag(tag ?: T::class.outerClassSimpleName()), throwable, message)
 }

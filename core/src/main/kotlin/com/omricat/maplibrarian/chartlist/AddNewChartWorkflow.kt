@@ -9,6 +9,7 @@ import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
+import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
@@ -77,17 +78,18 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
 
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
-    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsRepository.Error) = action {
-        state = Editing(chart, errorMessage = e.message)
-    }
+    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsRepository.AddNewChartError) =
+        action {
+            state = Editing(chart, errorMessage = e.message)
+        }
 
     internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved) }
 
     private fun saveNewItem(
         user: User,
         chart: UnsavedChartModel
-    ): Worker<Result<DbChartModel, ChartsRepository.Error>> =
-        resultWorker(ChartsServiceError::fromThrowable) {
+    ): Worker<Result<DbChartModel, ChartsRepository.AddNewChartError>> =
+        resultWorker({ e -> AddNewChartError.OtherException(e) }) {
             chartsRepository.addNewChart(user, chart)
         }
 

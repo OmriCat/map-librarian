@@ -5,6 +5,7 @@ import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow.Props
 import com.omricat.maplibrarian.chartlist.ChartsListWorkflow.Event.SelectItem
+import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.ExceptionWrappingError
 import com.omricat.maplibrarian.chartlist.ChartsScreen.Loading
 import com.omricat.maplibrarian.chartlist.ChartsScreen.ShowError
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.AddingItem
@@ -85,9 +86,7 @@ public class ActualChartsWorkflow(
             chartsRepository: ChartsRepository,
             user: User
         ): Worker<Result<List<DbChartModel>, ChartsRepository.Error>> =
-            resultWorker(ChartsServiceError::fromThrowable) {
-                chartsRepository.chartsListForUser(user)
-            }
+            resultWorker(::ExceptionWrappingError) { chartsRepository.chartsListForUser(user) }
     }
 }
 

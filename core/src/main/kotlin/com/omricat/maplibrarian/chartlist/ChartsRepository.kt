@@ -4,7 +4,6 @@ import com.github.michaelbull.result.Result
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
-import kotlinx.serialization.Serializable
 
 public interface ChartsRepository {
     public suspend fun chartsListForUser(
@@ -14,20 +13,28 @@ public interface ChartsRepository {
     public suspend fun addNewChart(
         user: User,
         newChart: UnsavedChartModel
-    ): Result<DbChartModel, ChartsRepository.Error>
+    ): Result<DbChartModel, AddNewChartError>
 
-    public sealed interface Error {
+    public interface Error {
         public val message: String
+
+        public data class MessageError(override val message: String) : Error
+
+        public data class ExceptionWrappingError(public val exception: Throwable) : Error {
+            override val message: String
+                get() = exception.message ?: "No message in exception $exception"
+        }
     }
-}
 
-// public typealias ChartsServiceError = ChartsService.Error
-@Serializable
-public data class ChartsServiceError(override val message: String) : ChartsRepository.Error {
-    private constructor(throwable: Throwable) : this(throwable.message ?: "Unknown error")
+    public sealed class AddNewChartError(public val message: String) {
+        public data object Unavailable : AddNewChartError("Service temporarily unavailable")
 
-    public companion object {
-        public fun fromThrowable(throwable: Throwable): ChartsServiceError =
-            ChartsServiceError(throwable)
+        public data object Cancelled : AddNewChartError("Operation ")
+
+        public data class ChartExists(public val unsavedChartModel: UnsavedChartModel) :
+            AddNewChartError("Chart already exists: $unsavedChartModel")
+
+        public data class OtherException(val exception: Throwable) :
+            AddNewChartError(exception.message ?: "No message in $exception")
     }
 }
