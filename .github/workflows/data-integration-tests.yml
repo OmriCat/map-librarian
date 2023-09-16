@@ -112,7 +112,7 @@ jobs:
             adb uninstall "com.omricat.maplibrarian.integrationtesting.debug" || true
             adb uninstall "com.omricat.maplibrarian.debug" || true
             ./gradlew installDebug
-            ./scripts/capture-logcat-logs.sh adb shell am instrument -w com.omricat.maplibrarian.integrationtesting.debug/androidx.test.runner.AndroidJUnitRunner
+            ./scripts/capture-logcat-logs.sh ./scripts/run-instrumented-integration-tests.sh
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
