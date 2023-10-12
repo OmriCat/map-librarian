@@ -15,7 +15,7 @@ retrofit2 = "2.9.0"
 robolectric = "4.7.3"
 slf4jSimple = "1.7.36"
 testcontainersBom = "1.16.3"
-kermit = "2.0.1"
+kermit = "2.0.2"
 timber = "5.0.1"
 workflow = "1.7.1"
 
