@@ -91,7 +91,7 @@ jobs:
 
       - name: Start Firebase emulator and wait for it to be ready
         id: start-emulator
-        run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
+        run: docker compose -f ./integration-tests/firebase/docker-compose.yml up --wait
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: Setup tmate session
@@ -112,13 +112,13 @@ jobs:
             adb uninstall "com.omricat.maplibrarian.integrationtesting.debug" || true
             adb uninstall "com.omricat.maplibrarian.debug" || true
             ./gradlew installDebug
-            ./scripts/capture-logcat-logs.sh ./scripts/run-instrumented-integration-tests.sh
+            ./scripts/run-instrumented-integration-tests.sh
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
         run: |
-          mkdir -p ./build/logs/firebase-emulator
-          docker cp "firebase-emulator:/home/firebase-emulator" ./build/logs/firebase-emulator
+          mkdir -p ./build/logs || true
+          docker compose -f ./integration-tests/firebase/docker-compose.yml cp "firebase-emulator:/home/firebase-emulator" ./build/logs
 
       - name: Upload firebase emulator logs
         if: ${{ always() }}

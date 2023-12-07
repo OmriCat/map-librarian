@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+    firebase-emulator:
+        image: 'ghcr.io/grodin/firebase-emulator-docker@sha256:5960c62f090c124e425e792abd089dd892e7b6f404d17f50b893b28bf03e0c1d'
+        volumes:
+            - ../..:/home/firestore-emulator
+            - type: bind
+              source: ../../firestore.rules
+              target: /home/firebase-emulator/firestore.rules
+        ports:
+            - 4000:4000
+            - 9150:9150
+            - 4500:4500
+            - 4400:4400
+            - 9099:9099
+            - 8080:8080
+        healthcheck:
+            timeout: 120s
