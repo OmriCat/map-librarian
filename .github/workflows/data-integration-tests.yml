@@ -36,7 +36,7 @@ jobs:
     steps:
 
       - name: Setup docker
-        uses: crazy-max/ghaction-setup-docker@v2
+        uses: crazy-max/ghaction-setup-docker@v3
         env:
           SIGN_QEMU_BINARY: 1
 
