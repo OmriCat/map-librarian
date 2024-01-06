@@ -24,7 +24,7 @@ dependencyResolutionManagement {
 
 plugins {
     id("com.gradle.enterprise") version "3.16.1"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.1.17"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.1.18"
 }
 
 gradleEnterprise {
