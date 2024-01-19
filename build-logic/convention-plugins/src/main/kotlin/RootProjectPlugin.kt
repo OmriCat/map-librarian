@@ -55,7 +55,7 @@ public class RootProjectPlugin : Plugin<Project> {
                                 config,
                                 "--excludes",
                                 excludes,
-                                "-r",
+                                "--report",
                                 reports,
                                 "--debug"
                         )
