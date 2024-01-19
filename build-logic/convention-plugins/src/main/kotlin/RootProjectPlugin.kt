@@ -42,23 +42,22 @@ public class RootProjectPlugin : Plugin<Project> {
                 val input = rootDir.absolutePath
                 val config = DetektConventionPlugin.DETEKT_CONFIG_FILE
                 val excludes: String =
-                        listOf("build", "resources", "tools", "scripts").joinToString(
-                                        separator = ","
-                                ) { "**/$it/*" }
-                val reports =
-                        "txt:${rootProject.layout.buildDirectory.get()}/reports/detektAll.txt"
+                    listOf("build", "resources", "tools", "scripts").joinToString(separator = ",") {
+                        "**/$it/*"
+                    }
+                val reports = "txt:${rootProject.layout.buildDirectory.get()}/reports/detektAll.txt"
                 val params =
-                        listOf(
-                                "--input",
-                                input,
-                                "--config",
-                                config,
-                                "--excludes",
-                                excludes,
-                                "--report",
-                                reports,
-                                "--debug"
-                        )
+                    listOf(
+                        "--input",
+                        input,
+                        "--config",
+                        config,
+                        "--excludes",
+                        excludes,
+                        "--report",
+                        reports,
+                        "--debug"
+                    )
                 args = params
                 doFirst { logger.lifecycle("Running detekt cli tool with parameters: $params") }
             }
