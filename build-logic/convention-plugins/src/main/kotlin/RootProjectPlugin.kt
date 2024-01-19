@@ -45,7 +45,19 @@ public class RootProjectPlugin : Plugin<Project> {
                     listOf("build", "resources", "tools", "scripts").joinToString(separator = ",") {
                         "**/$it/*"
                     }
-                val params = listOf("--input", input, "--config", config, "--excludes", excludes)
+                val reports = "txt:${rootProject.layout.buildDirectory.get()}/reports/detektAll.txt"
+                val params =
+                    listOf(
+                        "--input",
+                        input,
+                        "--config",
+                        config,
+                        "--excludes",
+                        excludes,
+                        "--report",
+                        reports,
+                        "--debug"
+                    )
                 args = params
                 doFirst { logger.lifecycle("Running detekt cli tool with parameters: $params") }
             }
