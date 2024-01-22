@@ -1,7 +1,7 @@
 version: "3.7"
 services:
     firebase-emulator:
-        image: 'ghcr.io/grodin/firebase-emulator-docker@sha256:5960c62f090c124e425e792abd089dd892e7b6f404d17f50b893b28bf03e0c1d'
+        image: 'ghcr.io/grodin/firebase-emulator-docker@sha256:1ec42edcc4f5a0c0f64d231448b3b7014f46890e8203bf3ea34179d30a4d3dce'
         volumes:
             - ../..:/home/firestore-emulator
             - type: bind
