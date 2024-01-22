@@ -9,7 +9,9 @@ internal fun Project.javaLanguageVersionFromGradleProperties(): Provider<JavaLan
     javaVersionFromGradleProperties().map { s -> JavaLanguageVersion.of(s.majorVersion) }
 
 internal fun Project.javaVersionFromGradleProperties(): Provider<JavaVersion> =
-    gradleProperty("com.omricat.maplib.javaVersion").map { JavaVersion.toVersion(it) }.orElse(JavaVersion.VERSION_11)
+    gradleProperty("com.omricat.maplib.javaVersion")
+        .map { JavaVersion.toVersion(it) }
+        .orElse(JavaVersion.VERSION_11)
 
 private const val DEFAULT_COMPILE_SDK = 34
 
