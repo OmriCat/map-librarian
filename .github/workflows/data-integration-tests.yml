@@ -23,9 +23,7 @@ jobs:
   data-layer-integration-tests:
     name: Data layer integration tests run against Firebase emulator in Docker
 
-    # Use macos because GH linux runners don't have nested virtualization
-    # Which is required to use gradle managed devices
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         #        api-level: [ 30 ]
@@ -34,16 +32,12 @@ jobs:
           - api-level: 30
             target: google_atd
     steps:
-
-      - name: Setup docker
-        uses: crazy-max/ghaction-setup-docker@v3
-        env:
-          SIGN_QEMU_BINARY: 1
-
-      - name: Install coreutils
+      - name: Enable KVM group perms
         run: |
-          brew install coreutils
-          timeout --version
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls /dev/kvm
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -91,7 +85,7 @@ jobs:
 
       - name: Start Firebase emulator and wait for it to be ready
         id: start-emulator
-        run: scripts/start-firebase-emulator-in-docker-and-wait-for-ready.sh
+        run: docker compose -f ./integration-tests/firebase/docker-compose.yml up --wait
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: Setup tmate session
@@ -112,13 +106,13 @@ jobs:
             adb uninstall "com.omricat.maplibrarian.integrationtesting.debug" || true
             adb uninstall "com.omricat.maplibrarian.debug" || true
             ./gradlew installDebug
-            ./scripts/capture-logcat-logs.sh ./scripts/run-instrumented-integration-tests.sh
+            ./scripts/run-instrumented-integration-tests.sh
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
         run: |
-          mkdir -p ./build/logs/firebase-emulator
-          docker cp "firebase-emulator:/home/firebase-emulator" ./build/logs/firebase-emulator
+          mkdir -p ./build/logs || true
+          docker compose -f ./integration-tests/firebase/docker-compose.yml cp "firebase-emulator:/home/firebase-emulator" ./build/logs
 
       - name: Upload firebase emulator logs
         if: ${{ always() }}
