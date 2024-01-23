@@ -10,7 +10,6 @@ public interface Loggable {
 }
 
 context(Loggable)
-
 public inline fun <reified T : Any> T.log(
     priority: Severity = Debug,
     tag: String? = null,
@@ -20,7 +19,6 @@ public inline fun <reified T : Any> T.log(
 }
 
 context(Loggable)
-
 public inline fun <reified T : Any> T.log(
     priority: Severity = Debug,
     tag: String? = null,

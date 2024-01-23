@@ -24,7 +24,7 @@ agp = "8.2.1"
 plugin_dependencyAnalysis = "1.29.0"
 plugin_googleServices = "4.4.0"
 plugin_gradleDoctor = "0.9.1"
-plugin_ktfmt = "0.13.0"
+plugin_ktfmt = "0.16.0"
 plugin_moduleGraphAssertion = "2.5.0"
 plugin_taskTree = "2.1.1"
 
