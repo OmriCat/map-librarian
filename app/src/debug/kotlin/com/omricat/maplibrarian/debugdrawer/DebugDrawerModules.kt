@@ -56,7 +56,7 @@ internal object DebugDrawerModules {
                     Timber.i("Restarting app to reflect updated emulator connection settings")
                     ProcessPhoenix.triggerRebirth(context)
                 },
-                initialHost = runBlocking { debugPreferences.emulatorHost.value() }
-                        ?: "(No host set)"
+                initialHost =
+                    runBlocking { debugPreferences.emulatorHost.value() } ?: "(No host set)"
             )
 }
