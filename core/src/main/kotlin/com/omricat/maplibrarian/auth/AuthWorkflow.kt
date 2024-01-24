@@ -21,7 +21,7 @@ import com.squareup.workflow1.runningWorker
 public typealias BackPressHandler = () -> Unit
 
 public sealed class AuthResult {
-    public object NotAuthenticated : AuthResult()
+    public data object NotAuthenticated : AuthResult()
 
     public data class Authenticated(val user: User) : AuthResult()
 }
@@ -35,13 +35,13 @@ public class ActualAuthWorkflow(
     AuthWorkflow,
     StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
     public sealed interface State {
-        public object PossibleLoggedInUser : State
+        public data object PossibleLoggedInUser : State
 
         public data class LoginPrompt(val errorMessage: String = "") : State
 
         public data class AttemptingAuthorization(val credential: Credential) : State
 
-        public object SigningUp : State
+        public data object SigningUp : State
     }
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = PossibleLoggedInUser
