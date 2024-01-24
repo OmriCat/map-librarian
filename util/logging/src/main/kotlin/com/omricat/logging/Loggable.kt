@@ -5,6 +5,7 @@ import co.touchlab.kermit.Severity.Debug
 import co.touchlab.kermit.Tag
 import kotlin.reflect.KClass
 
+/** Convenience "mixin" interface to make logging easy. */
 public interface Loggable {
     public val logger: Logger
 }

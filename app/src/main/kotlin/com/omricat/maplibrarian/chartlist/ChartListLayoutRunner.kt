@@ -15,7 +15,6 @@ import com.squareup.workflow1.ui.LayoutRunner
 import com.squareup.workflow1.ui.ViewEnvironment
 import com.squareup.workflow1.ui.ViewFactory
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
-import timber.log.Timber
 
 @OptIn(WorkflowUiExperimentalApi::class)
 internal class ChartListLayoutRunner(private val binding: ChartlistBinding) :
@@ -54,10 +53,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
     override fun onBindViewHolder(holder: ChartViewHolder, position: Int) {
         with(holder.binding) {
             chartItemTitle.text = getItem(position).title
-            root.setOnClickListener {
-                holder.onClick(position)
-                Timber.d("Item clicked at position %d", position)
-            }
+            root.setOnClickListener { holder.onClick(position) }
         }
     }
 

@@ -1,7 +1,10 @@
 package com.omricat.maplibrarian.debugdrawer
 
 import android.content.Context
+import co.touchlab.kermit.Severity.Info
+import co.touchlab.kermit.Tag
 import com.jakewharton.processphoenix.ProcessPhoenix
+import com.omricat.logging.Logger
 import com.omricat.maplibrarian.BuildConfig
 import com.omricat.maplibrarian.R.string
 import com.pandulapeter.beagle.common.configuration.toText
@@ -14,7 +17,6 @@ import com.pandulapeter.beagle.modules.TextInputModule
 import com.pandulapeter.beagle.modules.TextModule
 import com.pandulapeter.beagle.modules.TextModule.Type.SECTION_HEADER
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 
 internal object DebugDrawerModules {
     private fun emulatorConnectionSettingsModules(
@@ -32,7 +34,11 @@ internal object DebugDrawerModules {
             )
         )
 
-    fun modules(context: Context, debugPreferences: DebugPreferencesRepository): Array<Module<*>> =
+    fun modules(
+        context: Context,
+        debugPreferences: DebugPreferencesRepository,
+        logger: Logger
+    ): Array<Module<*>> =
         arrayOf(
             HeaderModule(
                 string.app_name,
@@ -53,7 +59,9 @@ internal object DebugDrawerModules {
             emulatorConnectionSettingsModules(
                 onValueChanged = { host ->
                     runBlocking { debugPreferences.emulatorHost.edit { host } }
-                    Timber.i("Restarting app to reflect updated emulator connection settings")
+                    logger.log(priority = Info, Tag("DebugDrawer.EmulatorConnection")) {
+                        "Restarting app to reflect updated emulator connection settings"
+                    }
                     ProcessPhoenix.triggerRebirth(context)
                 },
                 initialHost =

@@ -78,8 +78,6 @@ dependencies {
     implementation(libs.kotlinResult)
     implementation(libs.kotlinResult.coroutines)
 
-    implementation(libs.jakeWharton.timber)
-
     debugImplementation(libs.beagle.drawer)
     debugImplementation(libs.jakeWharton.processPhoenix)
 }
