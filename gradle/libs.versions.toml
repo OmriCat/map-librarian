@@ -12,9 +12,6 @@ material = "1.11.0"
 okhttp3 = "4.12.0"
 processPhoenix = "2.1.2"
 retrofit2 = "2.9.0"
-robolectric = "4.7.3"
-slf4jSimple = "1.7.36"
-testcontainersBom = "1.16.3"
 kermit = "2.0.2"
 workflow = "1.7.1"
 
@@ -72,7 +69,6 @@ kermit_core = { group = "co.touchlab", name = "kermit-core", version.ref = "kerm
 
 # Used in build-logic
 android_gradlePlugin_api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
-android_gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detekt_cli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
 detekt_gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 kotlin_gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -83,13 +79,11 @@ android_application = { id = "com.android.application", version.ref = "agp" }
 android_library = { id = "com.android.library", version.ref = "agp" }
 android_test = { id = "com.android.test", version.ref = "agp" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "plugin_dependencyAnalysis" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "plugin_googleServices" }
 gradleDoctor = { id = "com.osacky.doctor", version.ref = "plugin_gradleDoctor" }
 kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "plugin_ktfmt" }
 moduleGraphAssertion = { id = "com.jraska.module.graph.assertion", version.ref = "plugin_moduleGraphAssertion" }
 taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
 
