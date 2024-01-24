@@ -43,9 +43,9 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
     }
 
     public sealed interface Event {
-        public object Discard : Event
+        public data object Discard : Event
 
-        public object Saved : Event
+        public data object Saved : Event
     }
 
     override fun initialState(props: User, snapshot: Snapshot?): State =

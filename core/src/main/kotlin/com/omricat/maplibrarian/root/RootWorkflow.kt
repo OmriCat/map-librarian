@@ -29,7 +29,7 @@ public class RootWorkflow(
 ) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable {
 
     public sealed class State {
-        public object Unauthorized : State()
+        public data object Unauthorized : State()
 
         public data class ChartList(val user: User) : State()
     }

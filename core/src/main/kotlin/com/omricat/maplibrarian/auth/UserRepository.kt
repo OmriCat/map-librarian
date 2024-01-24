@@ -16,9 +16,9 @@ public sealed class CreateUserError(override val message: String) : UserReposito
     public data class EmailAlreadyInUseError(public val emailAddress: String) :
         CreateUserError("Email address $emailAddress is already in use")
 
-    public object WeakPasswordError : CreateUserError("Password is too weak")
+    public data object WeakPasswordError : CreateUserError("Password is too weak")
 
-    public object UserCreatedButSignedOutError :
+    public data object UserCreatedButSignedOutError :
         CreateUserError("User created but needs to sign in again")
 
     public data class OtherCreateUserError(public override val message: String) :

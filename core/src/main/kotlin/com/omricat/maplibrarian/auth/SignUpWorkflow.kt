@@ -88,7 +88,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
 public sealed interface SignUpOutput {
     public data class UserCreated(val user: User) : SignUpOutput
 
-    public object SignUpCancelled : SignUpOutput
+    public data object SignUpCancelled : SignUpOutput
 }
 
 public interface SignUpScreen : AuthorizingScreen {
@@ -104,7 +104,7 @@ public interface SignUpScreen : AuthorizingScreen {
             val errorMessage: String = ""
         ) : Step
 
-        public object CreatingUser : Step
+        public data object CreatingUser : Step
     }
 }
 
