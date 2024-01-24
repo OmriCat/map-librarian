@@ -53,9 +53,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
     override fun onBindViewHolder(holder: ChartViewHolder, position: Int) {
         with(holder.binding) {
             chartItemTitle.text = getItem(position).title
-            root.setOnClickListener {
-                holder.onClick(position)
-            }
+            root.setOnClickListener { holder.onClick(position) }
         }
     }
 

@@ -46,11 +46,11 @@ internal object DebugDrawerModules {
             KeyValueListModule(
                 title = "Build config",
                 pairs =
-                listOf(
-                    "application id" to BuildConfig.APPLICATION_ID,
-                    "version name" to BuildConfig.VERSION_NAME,
-                    "version code" to BuildConfig.VERSION_CODE.toString(),
-                )
+                    listOf(
+                        "application id" to BuildConfig.APPLICATION_ID,
+                        "version name" to BuildConfig.VERSION_NAME,
+                        "version code" to BuildConfig.VERSION_CODE.toString(),
+                    )
             ),
             DividerModule(),
             KeylineOverlaySwitchModule(),
@@ -59,13 +59,12 @@ internal object DebugDrawerModules {
             emulatorConnectionSettingsModules(
                 onValueChanged = { host ->
                     runBlocking { debugPreferences.emulatorHost.edit { host } }
-                    logger.log(
-                        priority = Info,
-                        Tag("DebugDrawer.EmulatorConnection")
-                    ) { "Restarting app to reflect updated emulator connection settings" }
+                    logger.log(priority = Info, Tag("DebugDrawer.EmulatorConnection")) {
+                        "Restarting app to reflect updated emulator connection settings"
+                    }
                     ProcessPhoenix.triggerRebirth(context)
                 },
                 initialHost =
-                runBlocking { debugPreferences.emulatorHost.value() } ?: "(No host set)"
+                    runBlocking { debugPreferences.emulatorHost.value() } ?: "(No host set)"
             )
 }
