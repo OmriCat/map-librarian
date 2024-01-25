@@ -1,117 +1,120 @@
 package com.omricat.maplibrarian.auth
 
+import assertk.all
+import assertk.assertThat
+import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
+import assertk.assertions.isNull
+import assertk.assertions.prop
+import com.omricat.maplibrarian.auth.SignUpOutput.SignUpCancelled
+import com.omricat.maplibrarian.auth.SignUpOutput.UserCreated
+import com.omricat.maplibrarian.auth.SignUpScreen.EmailAndPasswordSignUpScreen
 import com.omricat.maplibrarian.auth.State.AttemptingUserCreation
 import com.omricat.maplibrarian.auth.State.SignUpPrompt
 import com.omricat.maplibrarian.model.UserUid
+import com.omricat.maplibrarian.workflow.assertk.value
 import com.squareup.workflow1.applyTo
 import com.squareup.workflow1.testing.testRender
-import io.kotest.assertions.assertSoftly
-import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldBeEmpty
-import io.kotest.matchers.types.shouldBeTypeOf
+import kotlin.test.Test
+import org.junit.jupiter.api.Nested
 
-internal class ActualSignUpWorkflowTest :
-    WordSpec({
-        "actions work correctly" should
-            {
-                "onSignUpClicked sets correct state and no output" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-                    val credential = EmailPasswordCredential("blah@blah", "password")
+internal class ActualSignUpWorkflowTest {
 
-                    val (newState, maybeOutput) =
-                        workflow
-                            .onSignUpClicked(credential)
-                            .applyTo(props = Unit, state = SignUpPrompt())
+    @Nested
+    inner class Actions {
+        @Test
+        fun `onSignUpClicked sets correct state and no output`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+            val credential = EmailPasswordCredential("blah@blah", "password")
 
-                    assertSoftly {
-                        maybeOutput.shouldBeNull()
-                        newState.shouldBeTypeOf<State.AttemptingUserCreation>()
-                    }
-                }
+            val (newState, maybeOutput) =
+                workflow.onSignUpClicked(credential).applyTo(props = Unit, state = SignUpPrompt())
 
-                "onErrorCreatingUser sets correct state and no output" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-                    val credential = EmailPasswordCredential("blah@blah", "password")
+            assertThat(maybeOutput).isNull()
+            assertThat(newState).isInstanceOf<AttemptingUserCreation>()
+        }
 
-                    val (newState, maybeOutput) =
-                        workflow
-                            .onErrorCreatingUser(credential, MessageError("Error creating user"))
-                            .applyTo(props = Unit, state = AttemptingUserCreation(credential))
+        @Test
+        fun `onErrorCreatingUser sets correct state and no output`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+            val credential = EmailPasswordCredential("blah@blah", "password")
 
-                    assertSoftly {
-                        maybeOutput.shouldBeNull()
-                        newState.shouldBeTypeOf<State.SignUpPrompt>()
-                    }
-                }
+            val (newState, maybeOutput) =
+                workflow
+                    .onErrorCreatingUser(credential, MessageError("Error creating user"))
+                    .applyTo(props = Unit, state = AttemptingUserCreation(credential))
 
-                "onUserCreated sets output to created user" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-                    val credential = EmailPasswordCredential("blah@blah", "password")
-                    val user = TestUser("user1", UserUid("1234"), "blah@example.com")
+            assertThat(maybeOutput).isNull()
+            assertThat(newState).isInstanceOf<SignUpPrompt>()
+        }
 
-                    val (_, maybeOutput) =
-                        workflow
-                            .onUserCreated(user)
-                            .applyTo(props = Unit, state = AttemptingUserCreation(credential))
+        @Test
+        fun `onUserCreated sets output to created user`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+            val credential = EmailPasswordCredential("blah@blah", "password")
+            val user = TestUser("user1", UserUid("1234"), "blah@example.com")
 
-                    assertSoftly {
-                        maybeOutput.shouldNotBeNull()
-                        maybeOutput.value.also {
-                            it.shouldBeTypeOf<SignUpOutput.UserCreated>()
-                            it.user.shouldBe(user)
+            val (_, maybeOutput) =
+                workflow
+                    .onUserCreated(user)
+                    .applyTo(props = Unit, state = AttemptingUserCreation(credential))
+
+            assertThat(maybeOutput)
+                .isNotNull()
+                .value()
+                .isInstanceOf<UserCreated>()
+                .prop(UserCreated::user)
+                .isEqualTo(user)
+        }
+
+        @Test
+        fun `onSignUpCancelled sets output to null applied to AttemptingUserCreation state`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+            val credential = EmailPasswordCredential("blah@blah", "password")
+
+            val (_, maybeOutput) =
+                workflow
+                    .onSignUpCancelled()
+                    .applyTo(props = Unit, state = AttemptingUserCreation(credential))
+
+            assertThat(maybeOutput).isNotNull().value().isInstanceOf<SignUpCancelled>()
+        }
+
+        @Test
+        fun `onSignUpCancelled sets output to null applied to SignUpPrompt state`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+
+            val (_, maybeOutput) =
+                workflow.onSignUpCancelled().applyTo(props = Unit, state = SignUpPrompt())
+
+            assertThat(maybeOutput).isNotNull().value().isInstanceOf<SignUpCancelled>()
+        }
+    }
+
+    @Nested
+    inner class Rendering {
+        @Test
+        fun `be cancellable`() {
+            val workflow = ActualSignUpWorkflow(TestUserRepository())
+            workflow
+                .testRender(props = Unit)
+                .render { screen ->
+                    assertThat(screen)
+                        .isInstanceOf<EmailAndPasswordSignUpScreen>()
+                        .prop("credential") { it.credential }
+                        .all {
+                            prop("emailAddress") { it.emailAddress }.isEmpty()
+                            prop("password") { it.password }.isEmpty()
                         }
-                    }
+
+                    screen as EmailAndPasswordSignUpScreen
+                    screen.backPressHandler.invoke()
                 }
-
-                "onSignUpCancelled sets output to null applied to AttemptingUserCreation state" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-                    val credential = EmailPasswordCredential("blah@blah", "password")
-
-                    val (_, maybeOutput) =
-                        workflow
-                            .onSignUpCancelled()
-                            .applyTo(props = Unit, state = AttemptingUserCreation(credential))
-
-                    assertSoftly {
-                        maybeOutput.shouldNotBeNull()
-                        maybeOutput.value.shouldBe(SignUpOutput.SignUpCancelled)
-                    }
+                .verifyActionResult { _, output ->
+                    assertThat(output).isNotNull().value().isInstanceOf<SignUpCancelled>()
                 }
-
-                "onSignUpCancelled sets output to null applied to SignUpPrompt state" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-
-                    val (_, maybeOutput) =
-                        workflow.onSignUpCancelled().applyTo(props = Unit, state = SignUpPrompt())
-
-                    assertSoftly {
-                        maybeOutput.shouldNotBeNull()
-                        maybeOutput.value.shouldBe(SignUpOutput.SignUpCancelled)
-                    }
-                }
-            }
-
-        "rendering ActualSignUpWorkflow" should
-            {
-                "be cancellable" {
-                    val workflow = ActualSignUpWorkflow(TestUserRepository())
-                    workflow
-                        .testRender(props = Unit)
-                        .render { screen ->
-                            screen.shouldBeTypeOf<SignUpScreen.EmailAndPasswordSignUpScreen>()
-                            screen.credential.also {
-                                it.emailAddress.shouldBeEmpty()
-                                it.password.shouldBeEmpty()
-                            }
-                            screen.backPressHandler.invoke()
-                        }
-                        .verifyActionResult { _, output ->
-                            output.shouldNotBeNull()
-                            output.value.shouldBe(SignUpOutput.SignUpCancelled)
-                        }
-                }
-            }
-    })
+        }
+    }
+}

@@ -18,8 +18,8 @@ dependencies {
     api(platform(libs.kotlinx.serialization.bom))
     api(libs.kotlinx.serialization.json)
 
-    testImplementation(libs.kotest.runner.junit5)
-    testImplementation(libs.kotest.assertions.core)
+    testImplementation(projects.util.kotlinResultExtensions)
+    testImplementation(libs.assertk)
 
     testImplementation(libs.kotlinx.coroutines.test)
 

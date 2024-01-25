@@ -1,57 +1,84 @@
 package com.omricat.maplibrarian.model
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.omricat.maplibrarian.model.serialization.DeserializerError
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.types.shouldBeTypeOf
+import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.each
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
+import assertk.assertions.prop
+import com.omricat.maplibrarian.model.serialization.DeserializerError.CastError
+import com.omricat.maplibrarian.model.serialization.DeserializerError.PropertyNonFoundError
+import com.omricat.result.assertk.isErr
+import com.omricat.result.assertk.isOk
+import kotlin.test.Test
 
-internal class ChartModelSerializationTest :
-    StringSpec({
-        "serializing chart model gives a map with correct keys" {
-            val testMap = UnsavedChartModel(userId = UserUid("user1"), title = "A nice map")
+internal class ChartModelSerializationTest {
+    @kotlin.test.Test
+    fun `serializing chart model gives a map with correct keys`() {
+        val testMap = UnsavedChartModel(userId = UserUid("user1"), title = "A nice map")
 
-            val serialized: Map<String, Any?> = testMap.serializedToMap()
+        val serialized: Map<String, Any?> = testMap.serializedToMap()
 
-            serialized.keys shouldContainExactly setOf("title", "userId")
-        }
+        assertThat(serialized.keys).containsExactlyInAnyOrder("title", "userId")
 
-        "serializing chart model gives a map with all string values" {
-            val testMap = UnsavedChartModel(userId = UserUid("user1"), title = "A nice map")
+        //            serialized.keys shouldContainExactly setOf("title", "userId")
+    }
 
-            val serialized: Map<String, Any?> = testMap.serializedToMap()
+    @Test
+    fun `serializing chart model gives a map with all string values`() {
+        val testMap = UnsavedChartModel(userId = UserUid("user1"), title = "A nice map")
 
-            serialized.values.forEach { it.shouldBeTypeOf<String>() }
-        }
+        val serialized: Map<String, Any?> = testMap.serializedToMap()
 
-        "deserializing from Map<String, Any> works correctly if all properties found" {
-            val serialized = mapOf("title" to "A nice map", "userId" to "user1")
-            val id = "map1"
+        assertThat(serialized.values).each { it.isNotNull().isInstanceOf<String>() }
 
-            val deserialized = DbChartModelFromMapDeserializer(id, serialized)
+        //            serialized.values.forEach { it.shouldBeTypeOf<String>() }
+    }
 
-            deserialized.shouldBeTypeOf<Ok<DbChartModel>>()
-        }
+    @Test
+    fun `deserializing from Map(String, Any) works correctly if all properties found`() {
+        val serialized = mapOf("title" to "A nice map", "userId" to "user1")
+        val id = "map1"
 
-        "deserializing should fail if title property is missing" {
-            val serialized = mapOf("userId" to "user1")
-            val id = "map1"
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
 
-            val deserialized = DbChartModelFromMapDeserializer(id, serialized)
+        assertThat(deserialized).isOk().isInstanceOf<DbChartModel>()
 
-            deserialized.shouldBeTypeOf<Err<DeserializerError.PropertyNonFoundError>>()
-            deserialized.error.message shouldContain "Property title not found"
-        }
+        //            deserialized.shouldBeTypeOf<Ok<DbChartModel>>()
+    }
 
-        "deserializing should fail if userId property cannot be converted to UserUid type" {
-            val serialized = mapOf("title" to "A nice map", "userId" to 1.0)
-            val id = "map1"
+    @Test
+    fun `deserializing should fail if title property is missing`() {
+        val serialized = mapOf("userId" to "user1")
+        val id = "map1"
 
-            val deserialized = DbChartModelFromMapDeserializer(id, serialized)
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
 
-            deserialized.shouldBeTypeOf<Err<DeserializerError.CastError>>()
-            deserialized.error.message shouldContain "Can't cast"
-        }
-    })
+        assertThat(deserialized)
+            .isErr()
+            .isInstanceOf<PropertyNonFoundError>()
+            .prop("message") { it.message }
+            .contains("Property title not found")
+
+        //            deserialized.shouldBeTypeOf<Err<DeserializerError.PropertyNonFoundError>>()
+        //            deserialized.error.message shouldContain "Property title not found"
+    }
+
+    @Test
+    fun `deserializing should fail if userId property cannot be converted to UserUid type`() {
+        val serialized = mapOf("title" to "A nice map", "userId" to 1.0)
+        val id = "map1"
+
+        val deserialized = DbChartModelFromMapDeserializer(id, serialized)
+
+        assertThat(deserialized)
+            .isErr()
+            .isInstanceOf<CastError>()
+            .prop("message") { it.message }
+            .contains("Can't cast")
+
+        //            deserialized.shouldBeTypeOf<Err<DeserializerError.CastError>>()
+        //            deserialized.error.message shouldContain "Can't cast"
+    }
+}
