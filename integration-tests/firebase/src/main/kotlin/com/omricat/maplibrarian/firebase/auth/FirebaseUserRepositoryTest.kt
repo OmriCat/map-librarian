@@ -17,10 +17,7 @@ import com.omricat.result.assertk.isOk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import org.junit.experimental.runners.Enclosed
-import org.junit.runner.RunWith
 
-@RunWith(Enclosed::class)
 class FirebaseUserRepositoryTest {
 
     @Before
