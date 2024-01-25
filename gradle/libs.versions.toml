@@ -3,7 +3,6 @@ assertk = "0.28.0"
 beagle = "2.9.0"
 detekt = "1.23.4"
 firebase = "32.7.1"
-kotest = "5.8.0"
 kotlin = "1.9.20"
 kotlinResult = "1.1.18"
 kotlinx_coroutines = "1.7.3"
@@ -46,9 +45,6 @@ workflow_ui_container_android = { group = "com.squareup.workflow1", name = "work
 
 kotlinResult = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlinResult" }
 kotlinResult_coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlinResult" }
-
-kotest_runner_junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
-kotest_assertions_core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 
 firebase_bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase_firestoreKtx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }

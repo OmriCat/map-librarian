@@ -1,10 +1,13 @@
 import com.omricat.maplibrarian.gradle.configureJavaToolchainForKotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
@@ -20,6 +23,10 @@ public class KotlinLibraryConventionPlugin : Plugin<Project> {
             }
 
             tasks.withType<Test>().configureEach { it.useJUnitPlatform() }
+
+            val testImplementation: Configuration = configurations.getByName("testImplementation")
+
+            dependencies { testImplementation(kotlin("test")) }
 
             configure<KotlinJvmProjectExtension> {
                 explicitApi()

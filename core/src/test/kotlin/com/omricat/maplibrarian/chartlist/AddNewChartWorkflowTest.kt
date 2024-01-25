@@ -1,27 +1,30 @@
 package com.omricat.maplibrarian.chartlist
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.UserUid
-import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal class AddNewChartWorkflowTest :
-    WordSpec({
-        "AddNewChartWorkflow.State#toSnapshot composed with fromSnapshot" should
-            {
-                val chart = UnsavedChartModel(UserUid("user"), "title")
+internal class AddNewChartWorkflowTest {
+    @Nested
+    inner class ToSnapshotFromSnapshotRoundTrip {
+        private val chart = UnsavedChartModel(UserUid("user"), "title")
 
-                "be the identity for State.Editing" {
-                    val state = State.Editing(chart, "error message")
+        @Test
+        fun `is the identity for State#Editing`() {
+            val state = State.Editing(chart, "error message")
 
-                    State.fromSnapshot(state.toSnapshot()) shouldBe state
-                }
+            assertThat(State.fromSnapshot(state.toSnapshot())).isEqualTo(state)
+        }
 
-                "be the identity for State.Saving" {
-                    val state = State.Saving(chart)
+        @Test
+        fun `is the identity for State#Saving`() {
+            val state = State.Saving(chart)
 
-                    State.fromSnapshot(state.toSnapshot()) shouldBe state
-                }
-            }
-    })
+            assertThat(State.fromSnapshot(state.toSnapshot())).isEqualTo(state)
+        }
+    }
+}
