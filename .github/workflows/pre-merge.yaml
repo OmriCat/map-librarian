@@ -36,7 +36,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run ktfmt
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: ktfmtCheckAllKtsAndKt
           cache-read-only: false
@@ -55,13 +55,13 @@ jobs:
           distribution: 'temurin'
 
       - name: Run lint
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: lintReportDebug lintReportRelease
           cache-read-only: false
 
       - name: Run detekt
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: detektAll
           cache-read-only: false
@@ -81,7 +81,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Assemble all variants
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: app:assemble --continue
           cache-read-only: false
@@ -100,7 +100,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run local tests
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: test --continue --stacktrace
           cache-read-only: false
