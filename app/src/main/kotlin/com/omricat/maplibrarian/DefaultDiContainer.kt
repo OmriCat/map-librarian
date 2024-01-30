@@ -15,11 +15,15 @@ import com.omricat.maplibrarian.root.RootWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
 import com.squareup.workflow1.ui.plus
+import kotlinx.serialization.StringFormat
+import kotlinx.serialization.json.Json
 
 @WorkflowUiExperimentalApi
 abstract class DefaultDiContainer : DiContainer {
 
     override val logger: Logger by lazy { Logger.NoOpLogger }
+
+    override val stringFormat: StringFormat = Json
 
     override val workflows: DiContainer.Workflows =
         object : DiContainer.Workflows {
@@ -38,7 +42,11 @@ abstract class DefaultDiContainer : DiContainer {
             }
 
             override val charts: ChartsWorkflow by lazy {
-                ActualChartsWorkflow(chartsRepository, AddNewChartWorkflow(chartsRepository))
+                ActualChartsWorkflow(
+                    chartsRepository,
+                    AddNewChartWorkflow(chartsRepository, stringFormat),
+                    stringFormat
+                )
             }
         }
     override val viewRegistry: ViewRegistry =

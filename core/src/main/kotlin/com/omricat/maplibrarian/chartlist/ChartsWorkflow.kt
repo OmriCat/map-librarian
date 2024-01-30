@@ -22,18 +22,22 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
+import kotlinx.serialization.StringFormat
 
 public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
 
 public class ActualChartsWorkflow(
     private val chartsRepository: ChartsRepository,
-    private val addNewChartWorkflow: AddNewChartWorkflow
+    private val addNewChartWorkflow: AddNewChartWorkflow,
+    stringFormat: StringFormat
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
+
+    private val snapshotter = ChartsWorkflowState.snapshotter(stringFormat)
 
     public data class Props(val user: User)
 
     override fun initialState(props: Props, snapshot: Snapshot?): ChartsWorkflowState =
-        snapshot?.let { ChartsWorkflowState.fromSnapshot(it) } ?: RequestData
+        snapshot?.let { snapshotter.valueFromSnapshot(it) } ?: RequestData
 
     override fun render(
         renderProps: Props,
@@ -64,7 +68,7 @@ public class ActualChartsWorkflow(
             is ErrorLoadingCharts -> ShowError(renderState.error.message)
         }
 
-    override fun snapshotState(state: ChartsWorkflowState): Snapshot = state.toSnapshot()
+    override fun snapshotState(state: ChartsWorkflowState): Snapshot = snapshotter.snapshotOf(state)
 
     internal fun onItemAdded() = action { state = RequestData }
 

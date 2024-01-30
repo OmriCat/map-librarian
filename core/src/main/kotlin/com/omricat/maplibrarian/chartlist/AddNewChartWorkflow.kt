@@ -14,6 +14,7 @@ import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
+import com.omricat.maplibrarian.utils.Snapshotter
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
@@ -22,10 +23,12 @@ import com.squareup.workflow1.Worker
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.StringFormat
 
-public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository) :
-    StatefulWorkflow<User, State, Event, AddingItemScreen>() {
+public class AddNewChartWorkflow(
+    private val chartsRepository: ChartsRepository,
+    stringFormat: StringFormat
+) : StatefulWorkflow<User, State, Event, AddingItemScreen>() {
 
     @Serializable
     public sealed class State {
@@ -37,8 +40,9 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
         @Serializable public data class Saving(val chart: UnsavedChartModel) : State()
 
         internal companion object {
-            internal fun fromSnapshot(snapshot: Snapshot): State =
-                Json.decodeFromString(serializer(), snapshot.bytes.utf8())
+
+            internal fun snapshotter(stringFormat: StringFormat) =
+                object : Snapshotter<State>(stringFormat, serializer()) {}
         }
     }
 
@@ -48,8 +52,10 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
         public data object Saved : Event
     }
 
+    private val snapshotter = State.snapshotter(stringFormat)
+
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        snapshot?.let(State::fromSnapshot) ?: Editing(UnsavedChartModel(props.id, ""))
+        snapshot?.let(snapshotter::valueFromSnapshot) ?: Editing(UnsavedChartModel(props.id, ""))
 
     override fun render(
         renderProps: User,
@@ -76,7 +82,7 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
             }
         }
 
-    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
+    override fun snapshotState(state: State): Snapshot = snapshotter.snapshotOf(state)
 
     internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsRepository.AddNewChartError) =
         action {
@@ -101,9 +107,6 @@ public class AddNewChartWorkflow(private val chartsRepository: ChartsRepository)
         action { state = Editing(chart.copy(title = newTitle.toString())) }
     }
 }
-
-internal fun State.toSnapshot(): Snapshot =
-    Snapshot.of(Json.encodeToString(State.serializer(), this))
 
 public sealed interface AddingItemScreen : ChartsScreen {
     public val chart: ChartModel

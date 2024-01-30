@@ -1,11 +1,9 @@
 package com.omricat.maplibrarian.chartlist
 
-import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ErrorLoadingCharts
-import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.RequestData
 import com.omricat.maplibrarian.model.DbChartModel
-import com.squareup.workflow1.Snapshot
+import com.omricat.maplibrarian.utils.Snapshotter
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.StringFormat
 
 @Serializable
 public sealed class ChartsWorkflowState {
@@ -18,16 +16,15 @@ public sealed class ChartsWorkflowState {
 
     public data class ErrorLoadingCharts(val error: ChartsRepository.Error) : ChartsWorkflowState()
 
-    internal companion object
+    internal companion object {
+        fun snapshotter(stringFormat: StringFormat): Snapshotter<ChartsWorkflowState> =
+            object :
+                Snapshotter<ChartsWorkflowState>(
+                    stringFormat,
+                    serializer(),
+                ) {
+                override fun preSerialization(value: ChartsWorkflowState): ChartsWorkflowState =
+                    if (value is ErrorLoadingCharts) RequestData else value
+            }
+    }
 }
-
-internal fun ChartsWorkflowState.Companion.fromSnapshot(snapshot: Snapshot) =
-    Json.decodeFromString(serializer(), snapshot.bytes.utf8())
-
-internal fun ChartsWorkflowState.toSnapshot(): Snapshot =
-    Snapshot.of(
-        Json.encodeToString(
-            ChartsWorkflowState.serializer(),
-            if (this is ErrorLoadingCharts) RequestData else this
-        )
-    )

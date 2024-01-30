@@ -8,6 +8,7 @@ import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.omricat.maplibrarian.root.RootWorkflow
 import com.squareup.workflow1.ui.ViewRegistry
 import com.squareup.workflow1.ui.WorkflowUiExperimentalApi
+import kotlinx.serialization.StringFormat
 
 @OptIn(WorkflowUiExperimentalApi::class)
 interface DiContainer {
@@ -16,6 +17,7 @@ interface DiContainer {
     val workflows: Workflows
     val viewRegistry: ViewRegistry
     val logger: Logger
+    val stringFormat: StringFormat
 
     interface Workflows {
         val root: RootWorkflow
