@@ -3,37 +3,35 @@ package com.omricat.maplibrarian.chartlist
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.tableOf
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UserUid
 import kotlin.test.Test
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
 
 internal class ChartsWorkflowTest {
     @Nested
-    inner class ToSnapshotFromSnapshotRoundTrip {
-        @Test
-        fun `is the identity for RequestData`() {
-            val state = ChartsWorkflowState.RequestData
+    inner class ChartsWorkflowStateSnapshotterTest {
 
-            assertThat(ChartsWorkflowState.fromSnapshot(state.toSnapshot())).isEqualTo(state)
-        }
+        private val snapshotter = ChartsWorkflowState.snapshotter(Json)
 
         @Test
-        fun `is the identity for AddingItem`() {
-            val state = ChartsWorkflowState.AddingItem
+        fun `Snapshot round trips are the identity`() {
 
-            assertThat(ChartsWorkflowState.fromSnapshot(state.toSnapshot())).isEqualTo(state)
-        }
-
-        @Test
-        fun `is the identity for ChartsListLoaded`() {
-            val state =
-                ChartsWorkflowState.ChartsListLoaded(
-                    listOf(DbChartModel(UserUid("user"), "title", ChartId("chart")))
+            tableOf("State")
+                .row<ChartsWorkflowState>(ChartsWorkflowState.RequestData)
+                .row(ChartsWorkflowState.AddingItem)
+                .row(
+                    ChartsWorkflowState.ChartsListLoaded(
+                        listOf(DbChartModel(UserUid("user"), "title", ChartId("chart")))
+                    )
                 )
-
-            assertThat(ChartsWorkflowState.fromSnapshot(state.toSnapshot())).isEqualTo(state)
+                .forAll { state ->
+                    assertThat(snapshotter.valueFromSnapshot(snapshotter.snapshotOf(state)))
+                        .isEqualTo(state)
+                }
         }
 
         @Test
@@ -43,7 +41,7 @@ internal class ChartsWorkflowTest {
                     ChartsRepository.Error.MessageError("Error message")
                 )
 
-            assertThat(ChartsWorkflowState.fromSnapshot(state.toSnapshot()))
+            assertThat(snapshotter.valueFromSnapshot(snapshotter.snapshotOf(state)))
                 .isInstanceOf<ChartsWorkflowState.RequestData>()
         }
     }
