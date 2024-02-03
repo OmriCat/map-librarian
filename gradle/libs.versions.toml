@@ -11,7 +11,7 @@ material = "1.11.0"
 okhttp3 = "4.12.0"
 processPhoenix = "2.1.2"
 retrofit2 = "2.9.0"
-kermit = "2.0.2"
+kermit = "2.0.3"
 workflow = "1.7.1"
 
 # plugins
