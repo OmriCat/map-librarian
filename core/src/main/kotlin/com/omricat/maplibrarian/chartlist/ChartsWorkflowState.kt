@@ -6,15 +6,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
 
 @Serializable
-public sealed class ChartsWorkflowState {
-    @Serializable public data object RequestData : ChartsWorkflowState()
+internal sealed class ChartsWorkflowState {
+    @Serializable data object RequestData : ChartsWorkflowState()
 
-    @Serializable
-    public data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsWorkflowState()
+    @Serializable data class ChartsListLoaded(val list: List<DbChartModel>) : ChartsWorkflowState()
 
-    @Serializable public data object AddingItem : ChartsWorkflowState()
+    @Serializable data object AddingItem : ChartsWorkflowState()
 
-    public data class ErrorLoadingCharts(val error: ChartsRepository.Error) : ChartsWorkflowState()
+    data class ErrorLoadingCharts(val error: ChartsRepository.Error) : ChartsWorkflowState()
 
     internal companion object {
         fun snapshotter(stringFormat: StringFormat): Snapshotter<ChartsWorkflowState> =
