@@ -17,7 +17,7 @@ workflow = "1.7.1"
 # plugins
 agp = "8.2.2"
 plugin_dependencyAnalysis = "1.29.0"
-plugin_googleServices = "4.4.0"
+plugin_googleServices = "4.4.1"
 plugin_gradleDoctor = "0.9.1"
 plugin_ktfmt = "0.17.0"
 plugin_moduleGraphAssertion = "2.5.0"
