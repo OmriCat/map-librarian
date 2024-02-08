@@ -20,15 +20,26 @@ import com.omricat.workflow.resultWorker
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
+import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
 
-public class AddNewChartWorkflow(
-    private val chartsRepository: ChartsRepository,
-    stringFormat: StringFormat
-) : StatefulWorkflow<User, State, Event, AddingItemScreen>() {
+public interface AddNewChartWorkflow : Workflow<User, Event, AddingItemScreen> {
+
+    public companion object {
+        public fun instance(
+            chartsRepository: ChartsRepository,
+            stringFormat: StringFormat
+        ): AddNewChartWorkflow = AddNewChartWorkflowImpl(chartsRepository, stringFormat)
+    }
+
+    public sealed interface Event {
+        public data object Discard : Event
+
+        public data object Saved : Event
+    }
 
     @Serializable
     public sealed class State {
@@ -45,12 +56,12 @@ public class AddNewChartWorkflow(
                 object : Snapshotter<State>(stringFormat, serializer()) {}
         }
     }
+}
 
-    public sealed interface Event {
-        public data object Discard : Event
-
-        public data object Saved : Event
-    }
+private class AddNewChartWorkflowImpl(
+    private val chartsRepository: ChartsRepository,
+    stringFormat: StringFormat
+) : StatefulWorkflow<User, State, Event, AddingItemScreen>(), AddNewChartWorkflow {
 
     private val snapshotter = State.snapshotter(stringFormat)
 

@@ -3,11 +3,11 @@ package com.omricat.maplibrarian.auth
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.AttemptingAuthorization
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.PossibleLoggedInUser
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.SigningUp
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State.AttemptingAuthorization
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State.LoginPrompt
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State.PossibleLoggedInUser
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State.SigningUp
 import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.eventHandler
 import com.omricat.workflow.resultWorker
@@ -26,22 +26,27 @@ public sealed class AuthResult {
     public data class Authenticated(val user: User) : AuthResult()
 }
 
-public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScreen>
+public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScreen> {
+    public companion object {
+        public fun instance(
+            userRepository: UserRepository,
+            signUpWorkflow: SignUpWorkflow
+        ): AuthWorkflow = AuthWorkflowImpl(userRepository, signUpWorkflow)
+    }
+}
 
-public class ActualAuthWorkflow(
+internal class AuthWorkflowImpl(
     private val userRepository: UserRepository,
     private val signUpWorkflow: SignUpWorkflow
-) :
-    AuthWorkflow,
-    StatefulWorkflow<Unit, ActualAuthWorkflow.State, AuthResult, AuthorizingScreen>() {
-    public sealed interface State {
-        public data object PossibleLoggedInUser : State
+) : AuthWorkflow, StatefulWorkflow<Unit, AuthWorkflowImpl.State, AuthResult, AuthorizingScreen>() {
+    sealed interface State {
+        data object PossibleLoggedInUser : State
 
-        public data class LoginPrompt(val errorMessage: String = "") : State
+        data class LoginPrompt(val errorMessage: String = "") : State
 
-        public data class AttemptingAuthorization(val credential: Credential) : State
+        data class AttemptingAuthorization(val credential: Credential) : State
 
-        public data object SigningUp : State
+        data object SigningUp : State
     }
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = PossibleLoggedInUser

@@ -7,19 +7,19 @@ import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import assertk.assertions.prop
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State
-import com.omricat.maplibrarian.auth.ActualAuthWorkflow.State.LoginPrompt
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State
+import com.omricat.maplibrarian.auth.AuthWorkflowImpl.State.LoginPrompt
 import com.omricat.maplibrarian.model.UserUid
 import com.omricat.maplibrarian.workflow.assertk.value
 import com.squareup.workflow1.StatelessWorkflow
 import com.squareup.workflow1.applyTo
 import kotlin.test.Test
 
-public class ActualAuthWorkflowTest {
+public class AuthWorkflowImplTest {
     @Test
     fun `onAuthError action returns to login prompt`() {
-        val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
+        val workflow = AuthWorkflowImpl(TestUserRepository(), NullSignupWorkflow)
         val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
         val (newState, maybeOutput) =
             workflow
@@ -35,7 +35,7 @@ public class ActualAuthWorkflowTest {
 
     @Test
     fun `onNoAuthenticatedUser action transitions to LoginPrompt`() {
-        val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
+        val workflow = AuthWorkflowImpl(TestUserRepository(), NullSignupWorkflow)
         val (newState, maybeOutput) =
             workflow.onNoAuthenticatedUser.applyTo(props = Unit, state = State.PossibleLoggedInUser)
 
@@ -45,7 +45,7 @@ public class ActualAuthWorkflowTest {
 
     @Test
     fun `onAuthenticated action outputs Authenticated(user) from workflow`() {
-        val workflow = ActualAuthWorkflow(TestUserRepository(), NullSignupWorkflow)
+        val workflow = AuthWorkflowImpl(TestUserRepository(), NullSignupWorkflow)
         val fakeCredential = EmailPasswordCredential("a@b.com", "12345")
         val fakeUser = TestUser("user1", UserUid("1"), "blah@example.com")
         val (_, maybeOutput) =

@@ -3,11 +3,11 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow.Props
 import com.omricat.maplibrarian.chartlist.ChartsListWorkflow.Event.SelectItem
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.ExceptionWrappingError
 import com.omricat.maplibrarian.chartlist.ChartsScreen.Loading
 import com.omricat.maplibrarian.chartlist.ChartsScreen.ShowError
+import com.omricat.maplibrarian.chartlist.ChartsWorkflow.Props
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.AddingItem
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ChartsListLoaded
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ErrorLoadingCharts
@@ -24,17 +24,26 @@ import com.squareup.workflow1.action
 import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.StringFormat
 
-public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen>
+public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen> {
 
-public class ActualChartsWorkflow(
+    public companion object {
+        public fun instance(
+            chartsRepository: ChartsRepository,
+            addNewChartWorkflow: AddNewChartWorkflow,
+            stringFormat: StringFormat
+        ): ChartsWorkflow = ChartsWorkflowImpl(chartsRepository, addNewChartWorkflow, stringFormat)
+    }
+
+    public data class Props(val user: User)
+}
+
+private class ChartsWorkflowImpl(
     private val chartsRepository: ChartsRepository,
     private val addNewChartWorkflow: AddNewChartWorkflow,
     stringFormat: StringFormat
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
     private val snapshotter = ChartsWorkflowState.snapshotter(stringFormat)
-
-    public data class Props(val user: User)
 
     override fun initialState(props: Props, snapshot: Snapshot?): ChartsWorkflowState =
         snapshot?.let { snapshotter.valueFromSnapshot(it) } ?: RequestData

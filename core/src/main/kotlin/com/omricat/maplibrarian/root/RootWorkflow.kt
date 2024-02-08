@@ -9,8 +9,8 @@ import com.omricat.maplibrarian.auth.AuthResult.NotAuthenticated
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.AuthorizedScreen
 import com.omricat.maplibrarian.auth.UserRepository
-import com.omricat.maplibrarian.chartlist.ActualChartsWorkflow.Props
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
+import com.omricat.maplibrarian.chartlist.ChartsWorkflow.Props
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.root.RootWorkflow.State
 import com.omricat.maplibrarian.root.RootWorkflow.State.ChartList
@@ -18,21 +18,33 @@ import com.omricat.maplibrarian.root.RootWorkflow.State.Unauthorized
 import com.omricat.workflow.eventHandler
 import com.squareup.workflow1.Snapshot
 import com.squareup.workflow1.StatefulWorkflow
+import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
 import com.squareup.workflow1.renderChild
 
-public class RootWorkflow(
-    private val userRepository: UserRepository,
-    private val authWorkflow: AuthWorkflow,
-    private val chartsWorkflow: ChartsWorkflow,
-    override val logger: Logger
-) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable {
-
+public interface RootWorkflow : Workflow<Unit, Nothing, Screen> {
     public sealed class State {
         public data object Unauthorized : State()
 
         public data class ChartList(val user: User) : State()
     }
+
+    public companion object {
+        public fun instance(
+            userRepository: UserRepository,
+            authWorkflow: AuthWorkflow,
+            chartsWorkflow: ChartsWorkflow,
+            logger: Logger
+        ): RootWorkflow = RootWorkflowImpl(userRepository, authWorkflow, chartsWorkflow, logger)
+    }
+}
+
+private class RootWorkflowImpl(
+    private val userRepository: UserRepository,
+    private val authWorkflow: AuthWorkflow,
+    private val chartsWorkflow: ChartsWorkflow,
+    override val logger: Logger
+) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable, RootWorkflow {
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized
 
