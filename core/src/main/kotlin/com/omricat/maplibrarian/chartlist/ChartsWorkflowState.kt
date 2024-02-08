@@ -13,6 +13,8 @@ internal sealed class ChartsWorkflowState {
 
     @Serializable data object AddingItem : ChartsWorkflowState()
 
+    @Serializable data class ShowingDetails(val chartModel: DbChartModel) : ChartsWorkflowState()
+
     data class ErrorLoadingCharts(val error: ChartsRepository.Error) : ChartsWorkflowState()
 
     internal companion object {
