@@ -80,4 +80,10 @@ dependencies {
 
     debugImplementation(libs.beagle.drawer)
     debugImplementation(libs.jakeWharton.processPhoenix)
+
+    testImplementation(kotlin("test"))
+    testImplementation(androidx.test.coreKtx)
+
+    testImplementation(projects.util.kotlinResultExtensions)
+    testImplementation(libs.assertk)
 }

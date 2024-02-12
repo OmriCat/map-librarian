@@ -30,11 +30,10 @@ import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError.Unav
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.ExceptionWrappingError
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.MessageError
 import com.omricat.maplibrarian.model.ChartId
+import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
-import com.omricat.maplibrarian.model.DbChartModelFromMapDeserializer
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
-import com.omricat.maplibrarian.model.serializedToMap
 import com.omricat.maplibrarian.utils.DispatcherProvider
 import com.omricat.maplibrarian.utils.logAndMapException
 import kotlinx.coroutines.tasks.await
@@ -71,7 +70,9 @@ class FirebaseChartsRepository(
         }
         return withContext(dispatchers.io) {
                 runCatchingFirestoreException {
-                    db.mapsCollection(user).add(newChart.serializedToMap()).await()
+                    db.mapsCollection(user)
+                        .add(ChartModelToMapSerializer.serializeToMap(newChart))
+                        .await()
                 }
             }
             .logAndMapException { exception ->
@@ -98,11 +99,13 @@ class FirebaseChartsRepository(
         collection("users").document(user.id.value).collection("maps")
 }
 
-private fun UnsavedChartModel.withChartId(chartId: ChartId): DbChartModel =
+private fun ChartModel.withChartId(chartId: ChartId): DbChartModel =
     DbChartModel(userId = userId, title = title, chartId = chartId)
 
 internal fun DocumentSnapshot.parseMapModel() =
-    DbChartModelFromMapDeserializer(id, data ?: emptyMap())
+    ChartModelFromMapDeserializer.deserializeFromMap(data ?: emptyMap()).map {
+        it.withChartId(ChartId(id))
+    }
 
 private inline fun <V> runCatchingFirestoreException(
     block: () -> V
