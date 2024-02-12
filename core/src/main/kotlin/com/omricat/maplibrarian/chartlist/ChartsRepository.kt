@@ -1,6 +1,8 @@
 package com.omricat.maplibrarian.chartlist
 
 import com.github.michaelbull.result.Result
+import com.omricat.maplibrarian.model.ChartId
+import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
@@ -15,6 +17,12 @@ public interface ChartsRepository {
         newChart: UnsavedChartModel
     ): Result<DbChartModel, AddNewChartError>
 
+    public fun saveEditedChart(
+        user: User,
+        chartId: ChartId,
+        model: ChartModel
+    ): Result<DbChartModel, SaveEditedChartError>
+
     public interface Error {
         public val message: String
 
@@ -25,6 +33,8 @@ public interface ChartsRepository {
                 get() = exception.message ?: "No message in exception $exception"
         }
     }
+
+    public sealed class SaveEditedChartError
 
     public sealed class AddNewChartError(public val message: String) {
         public data object Unavailable : AddNewChartError("Service temporarily unavailable")

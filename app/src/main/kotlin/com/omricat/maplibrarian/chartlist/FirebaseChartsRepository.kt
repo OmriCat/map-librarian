@@ -29,6 +29,7 @@ import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError.Othe
 import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError.Unavailable
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.ExceptionWrappingError
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.MessageError
+import com.omricat.maplibrarian.chartlist.ChartsRepository.SaveEditedChartError
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
@@ -89,6 +90,14 @@ class FirebaseChartsRepository(
             }
             .onFailure { log(Warn) { "error Adding New Chart: ${it.message}" } }
             .map { ref -> newChart.withChartId(ChartId(ref.id)) }
+    }
+
+    override fun saveEditedChart(
+        user: User,
+        chartId: ChartId,
+        model: ChartModel
+    ): Result<DbChartModel, SaveEditedChartError> {
+        TODO("not implemented")
     }
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
