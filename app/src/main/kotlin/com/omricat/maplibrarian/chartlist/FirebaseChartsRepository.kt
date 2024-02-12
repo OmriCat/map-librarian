@@ -64,10 +64,6 @@ class FirebaseChartsRepository(
         user: User,
         newChart: UnsavedChartModel
     ): Result<DbChartModel, AddNewChartError> {
-        require(user.id == newChart.userId) {
-            "UserId of newMap (was ${newChart.userId}) must be " +
-                "same as userId of user (was ${user.id})"
-        }
         return withContext(dispatchers.io) {
                 runCatchingFirestoreException {
                     db.mapsCollection(user)
@@ -100,7 +96,7 @@ class FirebaseChartsRepository(
 }
 
 private fun ChartModel.withChartId(chartId: ChartId): DbChartModel =
-    DbChartModel(userId = userId, title = title, chartId = chartId)
+    DbChartModel(title = title, chartId = chartId)
 
 internal fun DocumentSnapshot.parseMapModel() =
     ChartModelFromMapDeserializer.deserializeFromMap(data ?: emptyMap()).map {

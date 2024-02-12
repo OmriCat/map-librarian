@@ -6,7 +6,6 @@ import assertk.assertions.isInstanceOf
 import assertk.tableOf
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.DbChartModel
-import com.omricat.maplibrarian.model.UserUid
 import kotlin.test.Test
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
@@ -25,7 +24,7 @@ internal class ChartsWorkflowTest {
                 .row(ChartsWorkflowState.AddingItem)
                 .row(
                     ChartsWorkflowState.ChartsListLoaded(
-                        listOf(DbChartModel(UserUid("user"), "title", ChartId("chart")))
+                        listOf(DbChartModel("title", ChartId("chart")))
                     )
                 )
                 .forAll { state ->

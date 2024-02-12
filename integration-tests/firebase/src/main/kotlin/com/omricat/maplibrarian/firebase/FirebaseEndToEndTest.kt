@@ -51,8 +51,7 @@ class FirebaseEndToEndTest {
 
         val user = createUserResult.getOrThrow { AssertionError(it) }
 
-        val addChartResult =
-            chartsRepository.addNewChart(user, UnsavedChartModel(user.id, "New map"))
+        val addChartResult = chartsRepository.addNewChart(user, UnsavedChartModel("New map"))
 
         assertThat(addChartResult).isOk()
 
