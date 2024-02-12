@@ -5,7 +5,6 @@ import assertk.assertions.isEqualTo
 import assertk.tableOf
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
 import com.omricat.maplibrarian.model.UnsavedChartModel
-import com.omricat.maplibrarian.model.UserUid
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.Test
 internal class AddNewChartWorkflowTest {
     @Nested
     inner class StateSnapshotterTest {
-        private val chart = UnsavedChartModel(UserUid("user"), "title")
+        private val chart = UnsavedChartModel("title")
         private val snapshotter = State.snapshotter(Json)
 
         @Test

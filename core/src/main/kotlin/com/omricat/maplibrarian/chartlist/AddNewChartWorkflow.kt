@@ -66,7 +66,7 @@ private class AddNewChartWorkflowImpl(
     private val snapshotter = State.snapshotter(stringFormat)
 
     override fun initialState(props: User, snapshot: Snapshot?): State =
-        snapshot?.let(snapshotter::valueFromSnapshot) ?: Editing(UnsavedChartModel(props.id, ""))
+        snapshot?.let(snapshotter::valueFromSnapshot) ?: Editing(UnsavedChartModel(""))
 
     override fun render(
         renderProps: User,

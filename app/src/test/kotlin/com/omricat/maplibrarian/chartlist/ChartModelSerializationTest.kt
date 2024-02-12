@@ -6,7 +6,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import com.omricat.maplibrarian.chartlist.DeserializerError.PropertyNonFoundError
 import com.omricat.maplibrarian.model.UnsavedChartModel
-import com.omricat.maplibrarian.model.UserUid
 import com.omricat.result.assertk.isErr
 import com.omricat.result.assertk.isOk
 import kotlin.test.Test
@@ -15,7 +14,7 @@ internal class ChartModelSerializationTest {
 
     @Test
     fun `serializing then deserializing should be identity`() {
-        val chartModel = UnsavedChartModel(UserUid("userId"), "Chart title")
+        val chartModel = UnsavedChartModel("Chart title")
         val result =
             ChartModelFromMapDeserializer.deserializeFromMap(
                 ChartModelToMapSerializer.serializeToMap(chartModel)
@@ -26,10 +25,7 @@ internal class ChartModelSerializationTest {
     @Test
     fun `deserializing should fail if any property is missing`() {
         val serialized: Map<String, Any> =
-            ChartModelToMapSerializer.serializeToMap(
-                UnsavedChartModel(UserUid("userId"), "Chart title")
-            )
-        val id = "map1"
+            ChartModelToMapSerializer.serializeToMap(UnsavedChartModel("Chart title"))
 
         val deserializer = ChartModelFromMapDeserializer
 

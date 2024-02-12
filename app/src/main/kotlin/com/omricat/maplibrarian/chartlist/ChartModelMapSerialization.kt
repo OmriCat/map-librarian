@@ -3,34 +3,31 @@ package com.omricat.maplibrarian.chartlist
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.flatMap
-import com.github.michaelbull.result.map
 import com.github.michaelbull.result.toResultOr
 import com.omricat.maplibrarian.chartlist.DeserializerError.CastError
 import com.omricat.maplibrarian.chartlist.DeserializerError.PropertyNonFoundError
 import com.omricat.maplibrarian.chartlist.MapModelProperties.TITLE
-import com.omricat.maplibrarian.chartlist.MapModelProperties.USER_ID
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
-import com.omricat.maplibrarian.model.UserUid as UserId
 import kotlin.reflect.KClass
 
 private object MapModelProperties {
 
     const val TITLE = "title"
-    const val USER_ID = "userId"
 }
 
 public object ChartModelToMapSerializer {
     fun serializeToMap(model: ChartModel): Map<String, String> =
-        hashMapOf(TITLE to model.title, USER_ID to model.userId.value)
+        hashMapOf(
+            TITLE to model.title,
+        )
 }
 
 public object ChartModelFromMapDeserializer {
     fun deserializeFromMap(properties: Map<String, Any?>): Result<ChartModel, DeserializerError> =
         binding {
-            val userId = properties.getProperty<String>(USER_ID).map { UserId(it) }.bind()
             val title = properties.getProperty<String>(TITLE).bind()
-            UnsavedChartModel(userId = userId, title = title)
+            UnsavedChartModel(title = title)
         }
 }
 
