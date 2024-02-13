@@ -1,13 +1,12 @@
 package com.omricat.maplibrarian.firebase.charts
 
 import assertk.assertThat
-import com.github.michaelbull.result.Result
+import assertk.assertions.isEqualTo
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.unwrap
 import com.omricat.logging.test.TestLogger
 import com.omricat.maplibrarian.auth.EmailPasswordCredential
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
-import com.omricat.maplibrarian.chartlist.ChartsRepository
 import com.omricat.maplibrarian.chartlist.FirebaseChartsRepository
 import com.omricat.maplibrarian.firebase.TestDispatcherProvider
 import com.omricat.maplibrarian.firebase.TestFixtures
@@ -51,14 +50,16 @@ class FirebaseChartsRepositoryTest {
 
         val createdChart: DbChartModel = addChartResult.unwrap()
 
-        val editChartResult: Result<DbChartModel, ChartsRepository.SaveEditedChartError> =
+        val newTitle = "A different title"
+        val editChartResult =
             chartsRepository.saveEditedChart(
                 user,
                 createdChart.chartId,
-                UnsavedChartModel("A different title")
+                UnsavedChartModel(newTitle)
             )
 
-        assertThat(editChartResult).isOk()
+        val expectedPostEdit = DbChartModel(newTitle, createdChart.chartId)
+        assertThat(editChartResult).isOk().isEqualTo(expectedPostEdit)
     }
 
     companion object {

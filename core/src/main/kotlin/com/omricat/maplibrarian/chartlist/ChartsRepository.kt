@@ -17,7 +17,7 @@ public interface ChartsRepository {
         newChart: UnsavedChartModel
     ): Result<DbChartModel, AddNewChartError>
 
-    public fun saveEditedChart(
+    public suspend fun saveEditedChart(
         user: User,
         chartId: ChartId,
         model: ChartModel
@@ -34,7 +34,13 @@ public interface ChartsRepository {
         }
     }
 
-    public sealed class SaveEditedChartError
+    public sealed class SaveEditedChartError(public val message: String) {
+
+        public class FailureGettingSavedChartError(message: String) : SaveEditedChartError(message)
+
+        public data class OtherException(val exception: Throwable) :
+            SaveEditedChartError(exception.message ?: "No message in $exception")
+    }
 
     public sealed class AddNewChartError(public val message: String) {
         public data object Unavailable : AddNewChartError("Service temporarily unavailable")

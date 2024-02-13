@@ -4,6 +4,7 @@ import co.touchlab.kermit.Severity.Warn
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
+import com.github.michaelbull.result.flatMap
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.onFailure
@@ -30,6 +31,7 @@ import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError.Unav
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.ExceptionWrappingError
 import com.omricat.maplibrarian.chartlist.ChartsRepository.Error.MessageError
 import com.omricat.maplibrarian.chartlist.ChartsRepository.SaveEditedChartError
+import com.omricat.maplibrarian.chartlist.ChartsRepository.SaveEditedChartError.FailureGettingSavedChartError
 import com.omricat.maplibrarian.model.ChartId
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
@@ -92,13 +94,29 @@ class FirebaseChartsRepository(
             .map { ref -> newChart.withChartId(ChartId(ref.id)) }
     }
 
-    override fun saveEditedChart(
+    override suspend fun saveEditedChart(
         user: User,
         chartId: ChartId,
         model: ChartModel
-    ): Result<DbChartModel, SaveEditedChartError> {
-        TODO("not implemented")
-    }
+    ): Result<DbChartModel, SaveEditedChartError> =
+        withContext(dispatchers.io) {
+                runCatchingFirestoreException {
+                    val chartRef = db.mapsCollection(user).document(chartId.id)
+                    chartRef.update(ChartModelToMapSerializer.serializeToMap(model)).await()
+                    chartRef.get().await()
+                }
+            }
+            .logAndMapException { exception ->
+                when (exception.code) {
+                    else -> SaveEditedChartError.OtherException(exception)
+                }
+            }
+            .onFailure { log(Warn) { "error saving changed chart: ${it.message}" } }
+            .flatMap { documentSnapshot ->
+                documentSnapshot.parseMapModel().mapError {
+                    FailureGettingSavedChartError("DeserializationError: ${it.message}")
+                }
+            }
 
     private fun FirebaseFirestore.mapsCollection(user: User) =
         collection("users").document(user.id.value).collection("maps")
