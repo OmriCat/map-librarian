@@ -27,11 +27,7 @@ internal class ChartsWorkflowTest {
                         listOf(DbChartModel("title", ChartId("chart")))
                     )
                 )
-                .row(
-                    ChartsWorkflowState.ShowingDetails(
-                        DbChartModel(UserUid("userid"), "title", ChartId("chartid"))
-                    )
-                )
+                .row(ChartsWorkflowState.ShowingDetails(DbChartModel("title", ChartId("chartid"))))
                 .forAll { state ->
                     assertThat(snapshotter.valueFromSnapshot(snapshotter.snapshotOf(state)))
                         .isEqualTo(state)
