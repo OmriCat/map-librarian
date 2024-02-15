@@ -6,9 +6,9 @@ import com.github.michaelbull.result.map
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Discard
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.Event.Saved
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Editing
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State.Saving
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflowImpl.State
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflowImpl.State.Editing
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflowImpl.State.Saving
 import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError
 import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
@@ -40,15 +40,20 @@ public interface AddNewChartWorkflow : Workflow<User, Event, AddingItemScreen> {
 
         public data object Saved : Event
     }
+}
+
+internal class AddNewChartWorkflowImpl(
+    private val chartsRepository: ChartsRepository,
+    stringFormat: StringFormat
+) : StatefulWorkflow<User, State, Event, AddingItemScreen>(), AddNewChartWorkflow {
 
     @Serializable
-    public sealed class State {
+    sealed class State {
 
         @Serializable
-        public data class Editing(val chart: UnsavedChartModel, val errorMessage: String = "") :
-            State()
+        data class Editing(val chart: UnsavedChartModel, val errorMessage: String = "") : State()
 
-        @Serializable public data class Saving(val chart: UnsavedChartModel) : State()
+        @Serializable data class Saving(val chart: UnsavedChartModel) : State()
 
         internal companion object {
 
@@ -56,12 +61,6 @@ public interface AddNewChartWorkflow : Workflow<User, Event, AddingItemScreen> {
                 object : Snapshotter<State>(stringFormat, serializer()) {}
         }
     }
-}
-
-private class AddNewChartWorkflowImpl(
-    private val chartsRepository: ChartsRepository,
-    stringFormat: StringFormat
-) : StatefulWorkflow<User, State, Event, AddingItemScreen>(), AddNewChartWorkflow {
 
     private val snapshotter = State.snapshotter(stringFormat)
 
@@ -95,17 +94,16 @@ private class AddNewChartWorkflowImpl(
 
     override fun snapshotState(state: State): Snapshot = snapshotter.snapshotOf(state)
 
-    internal fun onErrorSaving(chart: UnsavedChartModel, e: ChartsRepository.AddNewChartError) =
-        action {
-            state = Editing(chart, errorMessage = e.message)
-        }
+    fun onErrorSaving(chart: UnsavedChartModel, e: AddNewChartError) = action {
+        state = Editing(chart, errorMessage = e.message)
+    }
 
-    internal fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved) }
+    fun onNewItemSaved(savedChart: DbChartModel) = action { setOutput(Saved) }
 
     private fun saveNewItem(
         user: User,
         chart: UnsavedChartModel
-    ): Worker<Result<DbChartModel, ChartsRepository.AddNewChartError>> =
+    ): Worker<Result<DbChartModel, AddNewChartError>> =
         resultWorker({ e -> AddNewChartError.OtherException(e) }) {
             chartsRepository.addNewChart(user, chart)
         }

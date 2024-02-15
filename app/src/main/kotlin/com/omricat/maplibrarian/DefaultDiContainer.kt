@@ -5,6 +5,7 @@ import com.omricat.maplibrarian.auth.AuthViewRegistry
 import com.omricat.maplibrarian.auth.AuthWorkflow
 import com.omricat.maplibrarian.auth.SignUpWorkflow
 import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow
+import com.omricat.maplibrarian.chartlist.ChartDetailsWorkflow
 import com.omricat.maplibrarian.chartlist.ChartsWorkflow
 import com.omricat.maplibrarian.chartlist.MapListViewRegistry
 import com.omricat.maplibrarian.di.DiContainer
@@ -39,11 +40,22 @@ abstract class DefaultDiContainer : DiContainer {
                 AuthWorkflow.instance(userRepository, SignUpWorkflow.instance(userRepository))
             }
 
+            override val addNewChart by lazy {
+                AddNewChartWorkflow.instance(chartsRepository, stringFormat)
+            }
+
+            override val chartDetails by lazy {
+                ChartDetailsWorkflow.instance(
+                    addNewChart,
+                    stringFormat,
+                )
+            }
             override val charts: ChartsWorkflow by lazy {
                 ChartsWorkflow.instance(
                     chartsRepository,
-                    AddNewChartWorkflow.instance(chartsRepository, stringFormat),
-                    stringFormat
+                    addNewChart,
+                    chartDetails,
+                    stringFormat,
                 )
             }
         }

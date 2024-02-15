@@ -1,6 +1,8 @@
 package com.omricat.maplibrarian.chartlist
 
 import com.github.michaelbull.result.Result
+import com.omricat.maplibrarian.model.ChartId
+import com.omricat.maplibrarian.model.ChartModel
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
@@ -15,6 +17,12 @@ public interface ChartsRepository {
         newChart: UnsavedChartModel
     ): Result<DbChartModel, AddNewChartError>
 
+    public suspend fun saveEditedChart(
+        user: User,
+        chartId: ChartId,
+        model: ChartModel
+    ): Result<DbChartModel, SaveEditedChartError>
+
     public interface Error {
         public val message: String
 
@@ -24,6 +32,14 @@ public interface ChartsRepository {
             override val message: String
                 get() = exception.message ?: "No message in exception $exception"
         }
+    }
+
+    public sealed class SaveEditedChartError(public val message: String) {
+
+        public class FailureGettingSavedChartError(message: String) : SaveEditedChartError(message)
+
+        public data class OtherException(val exception: Throwable) :
+            SaveEditedChartError(exception.message ?: "No message in $exception")
     }
 
     public sealed class AddNewChartError(public val message: String) {
