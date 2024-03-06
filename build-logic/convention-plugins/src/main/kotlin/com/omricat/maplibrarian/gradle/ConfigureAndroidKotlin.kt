@@ -3,7 +3,7 @@ package com.omricat.maplibrarian.gradle
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 
-internal fun Project.configureAndroidKotlin(commonExtension: CommonExtension<*, *, *, *, *>) {
+internal fun Project.configureAndroidKotlin(commonExtension: CommonExtension<*, *, *, *, *, *>) {
     val javaVersion = javaVersionFromGradleProperties().get()
     with(commonExtension) {
         compileSdk = compileSdkFromGradleProperties().get()
