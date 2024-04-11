@@ -2,7 +2,7 @@
 assertk = "0.28.0"
 beagle = "2.9.0"
 detekt = "1.23.6"
-firebase = "32.8.0"
+firebase = "32.8.1"
 kotlin = "1.9.23"
 kotlinResult = "1.1.21"
 kotlinx_coroutines = "1.8.0"
