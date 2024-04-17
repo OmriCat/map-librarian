@@ -1,5 +1,5 @@
 [versions]
-assertk = "0.28.0"
+assertk = "0.28.1"
 beagle = "2.9.0"
 detekt = "1.23.6"
 firebase = "32.8.1"
