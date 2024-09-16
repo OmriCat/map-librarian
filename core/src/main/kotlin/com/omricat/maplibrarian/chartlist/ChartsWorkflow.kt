@@ -12,6 +12,7 @@ import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.AddingItem
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ChartsListLoaded
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ErrorLoadingCharts
 import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.RequestData
+import com.omricat.maplibrarian.chartlist.ChartsWorkflowState.ShowingDetails
 import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.workflow.eventHandler
@@ -21,6 +22,7 @@ import com.squareup.workflow1.StatefulWorkflow
 import com.squareup.workflow1.Worker
 import com.squareup.workflow1.Workflow
 import com.squareup.workflow1.action
+import com.squareup.workflow1.renderChild
 import com.squareup.workflow1.runningWorker
 import kotlinx.serialization.StringFormat
 
@@ -30,8 +32,15 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen> {
         public fun instance(
             chartsRepository: ChartsRepository,
             addNewChartWorkflow: AddNewChartWorkflow,
+            chartDetailsWorkflow: ChartDetailsWorkflow,
             stringFormat: StringFormat
-        ): ChartsWorkflow = ChartsWorkflowImpl(chartsRepository, addNewChartWorkflow, stringFormat)
+        ): ChartsWorkflow =
+            ChartsWorkflowImpl(
+                chartsRepository,
+                addNewChartWorkflow,
+                chartDetailsWorkflow,
+                stringFormat
+            )
     }
 
     public data class Props(val user: User)
@@ -40,6 +49,7 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen> {
 private class ChartsWorkflowImpl(
     private val chartsRepository: ChartsRepository,
     private val addNewChartWorkflow: AddNewChartWorkflow,
+    private val chartDetailsWorkflow: ChartDetailsWorkflow,
     stringFormat: StringFormat
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
@@ -74,6 +84,8 @@ private class ChartsWorkflowImpl(
             }
             is AddingItem ->
                 context.renderChild(addNewChartWorkflow, props = renderProps.user) { onItemAdded() }
+            is ShowingDetails ->
+                context.renderChild(chartDetailsWorkflow, props = renderState.chartModel)
             is ErrorLoadingCharts -> ShowError(renderState.error.message)
         }
 
