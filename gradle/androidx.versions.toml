@@ -1,6 +1,6 @@
 [versions]
 activity = "1.9.2"
-annotation = "1.8.0"
+annotation = "1.9.0"
 appcompat = "1.7.0"
 constraintlayout = "2.1.4"
 core = "1.13.1"
