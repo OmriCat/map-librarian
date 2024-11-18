@@ -20,7 +20,6 @@ dependencies {
     implementation(gradleKotlinDsl())
     implementation(libs.ktfmt.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
-    implementation(libs.detekt.cli)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.android.gradlePlugin.api)
 }
