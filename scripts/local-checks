@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -o nounset -o errexit # Errexit is not a recommended way of handling errors but it'll do here
+
+bail() {
+    printf '%b\n' "$@"
+    exit 1
+}
+
+[[ "$(git rev-parse --show-toplevel)" == "$PWD" ]] || bail "ERROR!\nRun this from the repo root"
+
+header() {
+    printf '%s\n' "$@"
+    printf '=========================================================='
+}
+
+header "Unit tests"
+
+./gradlew test --continue
+
+header "Style checks"
+
+./gradlew ktfmtCheckAll
+
+header "lints"
+
+./gradlew detektAll
+./gradlew lintReportDebug
+./gradlew lintReportRelease
