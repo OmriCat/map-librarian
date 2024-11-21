@@ -103,6 +103,7 @@ jobs:
             adb uninstall "com.omricat.maplibrarian.debug" || true
             ./gradlew installDebug
             ./scripts/run-instrumented-integration-tests.sh
+            killall -INT crashpad_handler || true
 
       - name: Extract logs from firebase emulator container
         if: ${{ always() }}
