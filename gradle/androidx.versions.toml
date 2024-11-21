@@ -2,7 +2,7 @@
 activity = "1.9.3"
 annotation = "1.8.0"
 appcompat = "1.7.0"
-constraintlayout = "2.1.4"
+constraintlayout = "2.2.0"
 core = "1.13.1"
 datastore = "1.1.1"
 espresso = "3.2.0"
