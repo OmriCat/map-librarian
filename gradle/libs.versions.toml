@@ -86,7 +86,7 @@ taskTree = { id = "com.dorongold.task-tree", version.ref = "plugin_taskTree" }
 ######################################
 # convention plugins from build-logic
 ######################################
-maplib_root = { id = "com.omricat.maplib.root", version.ref = "plugin_convention_maplib" }
-maplib_kotlin_library = { id = "com.omricat.maplib.kotlin.library", version.ref = "plugin_convention_maplib" }
-maplib_android_application = { id = "com.omricat.maplib.android.application", version.ref = "plugin_convention_maplib" }
-maplib_android_test = { id = "com.omricat.maplib.android.test", version.ref = "plugin_convention_maplib" }
+maplib_root = { id = "com.omricat.maplib.root" }
+maplib_kotlin_library = { id = "com.omricat.maplib.kotlin.library" }
+maplib_android_application = { id = "com.omricat.maplib.android.application" }
+maplib_android_test = { id = "com.omricat.maplib.android.test" }
