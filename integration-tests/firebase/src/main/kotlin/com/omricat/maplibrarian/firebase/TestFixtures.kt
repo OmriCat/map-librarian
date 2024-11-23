@@ -37,7 +37,7 @@ object TestFixtures {
         FirebaseFirestore.getInstance(app).apply {
             this.useEmulator(
                 FirebaseEmulatorConnection.HOST,
-                FirebaseEmulatorConnection.FIRESTORE_PORT
+                FirebaseEmulatorConnection.FIRESTORE_PORT,
             )
         }
     }
@@ -45,7 +45,7 @@ object TestFixtures {
     val firestoreApi: FirebaseFirestoreRestApi by lazy {
         FirebaseFirestoreRestApi(
             projectId,
-            emulatorBaseUrl(FirebaseEmulatorConnection.FIRESTORE_PORT)
+            emulatorBaseUrl(FirebaseEmulatorConnection.FIRESTORE_PORT),
         )
     }
 
@@ -58,7 +58,7 @@ object TestFixtures {
     val authApi: FirebaseAuthEmulatorRestApi by lazy {
         FirebaseAuthEmulatorRestApi(
             projectId,
-            emulatorBaseUrl(FirebaseEmulatorConnection.AUTH_PORT)
+            emulatorBaseUrl(FirebaseEmulatorConnection.AUTH_PORT),
         )
     }
 

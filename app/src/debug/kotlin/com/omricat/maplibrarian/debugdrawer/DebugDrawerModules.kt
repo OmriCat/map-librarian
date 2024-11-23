@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 internal object DebugDrawerModules {
     private fun emulatorConnectionSettingsModules(
         initialHost: String,
-        onValueChanged: (String) -> Unit
+        onValueChanged: (String) -> Unit,
     ) =
         arrayOf(
             TextModule("Emulator connection", type = SECTION_HEADER),
@@ -30,19 +30,17 @@ internal object DebugDrawerModules {
                 initialValue = initialHost,
                 areRealTimeUpdatesEnabled = false,
                 id = "EMULATOR_HOST",
-                onValueChanged = onValueChanged
-            )
+                onValueChanged = onValueChanged,
+            ),
         )
 
     fun modules(
         context: Context,
         debugPreferences: DebugPreferencesRepository,
-        logger: Logger
+        logger: Logger,
     ): Array<Module<*>> =
         arrayOf(
-            HeaderModule(
-                string.app_name,
-            ),
+            HeaderModule(string.app_name),
             KeyValueListModule(
                 title = "Build config",
                 pairs =
@@ -50,7 +48,7 @@ internal object DebugDrawerModules {
                         "application id" to BuildConfig.APPLICATION_ID,
                         "version name" to BuildConfig.VERSION_NAME,
                         "version code" to BuildConfig.VERSION_CODE.toString(),
-                    )
+                    ),
             ),
             DividerModule(),
             KeylineOverlaySwitchModule(),
@@ -65,6 +63,6 @@ internal object DebugDrawerModules {
                     ProcessPhoenix.triggerRebirth(context)
                 },
                 initialHost =
-                    runBlocking { debugPreferences.emulatorHost.value() } ?: "(No host set)"
+                    runBlocking { debugPreferences.emulatorHost.value() } ?: "(No host set)",
             )
 }

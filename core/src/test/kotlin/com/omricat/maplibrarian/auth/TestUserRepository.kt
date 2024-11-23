@@ -11,7 +11,7 @@ internal class TestUserRepository(
         null,
     private val onSignOut: (() -> Unit)? = null,
     private val onGetSignedInUserIfAny: (suspend () -> Result<User, MessageError>)? = null,
-    private val onCreateUser: (suspend (Credential) -> Result<User, CreateUserError>)? = null
+    private val onCreateUser: (suspend (Credential) -> Result<User, CreateUserError>)? = null,
 ) : UserRepository {
     override suspend fun attemptAuthentication(credential: Credential): Result<User, MessageError> =
         onAttemptAuthentication?.invoke(credential)

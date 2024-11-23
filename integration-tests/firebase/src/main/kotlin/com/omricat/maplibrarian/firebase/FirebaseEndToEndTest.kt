@@ -41,11 +41,7 @@ class FirebaseEndToEndTest {
         val testLogger = TestLogger()
 
         val chartsRepository =
-            FirebaseChartsRepository(
-                firestoreInstance,
-                testDispatcherProvider,
-                testLogger,
-            )
+            FirebaseChartsRepository(firestoreInstance, testDispatcherProvider, testLogger)
 
         val createUserResult = userRepository.createUser(testCredential)
 

@@ -27,12 +27,7 @@ abstract class DefaultDiContainer : DiContainer {
         object : DiContainer.Workflows {
 
             override val root: RootWorkflow by lazy {
-                RootWorkflow.instance(
-                    userRepository,
-                    auth,
-                    charts,
-                    logger,
-                )
+                RootWorkflow.instance(userRepository, auth, charts, logger)
             }
 
             override val auth: AuthWorkflow by lazy {
@@ -43,7 +38,7 @@ abstract class DefaultDiContainer : DiContainer {
                 ChartsWorkflow.instance(
                     chartsRepository,
                     AddNewChartWorkflow.instance(chartsRepository, stringFormat),
-                    stringFormat
+                    stringFormat,
                 )
             }
         }

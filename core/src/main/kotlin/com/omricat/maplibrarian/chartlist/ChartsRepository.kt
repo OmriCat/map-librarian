@@ -12,7 +12,7 @@ public interface ChartsRepository {
 
     public suspend fun addNewChart(
         user: User,
-        newChart: UnsavedChartModel
+        newChart: UnsavedChartModel,
     ): Result<DbChartModel, AddNewChartError>
 
     public interface Error {

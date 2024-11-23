@@ -61,6 +61,6 @@ internal class AuthorizedScreenLayoutRunner(binding: AuthorizedScreenBinding) :
     companion object :
         ViewFactory<AuthorizedScreen<*>> by bind(
             AuthorizedScreenBinding::inflate,
-            ::AuthorizedScreenLayoutRunner
+            ::AuthorizedScreenLayoutRunner,
         )
 }

@@ -34,7 +34,7 @@ class FirebaseAuthEmulatorRestApi(private val projectId: String, baseUrl: HttpUr
         @POST("/identitytoolkit.googleapis.com/v1/projects/{project-id}/accounts")
         fun createUser(
             @Path("project-id") projectId: String,
-            @Body body: RequestBody
+            @Body body: RequestBody,
         ): Call<TestUser>
     }
 

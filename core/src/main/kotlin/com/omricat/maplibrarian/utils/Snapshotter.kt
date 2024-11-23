@@ -14,11 +14,7 @@ public abstract class Snapshotter<T>(
     public constructor(
         stringFormat: StringFormat,
         serializer: KSerializer<T>,
-    ) : this(
-        stringFormat,
-        serializer,
-        serializer,
-    )
+    ) : this(stringFormat, serializer, serializer)
 
     public fun snapshotOf(value: T): Snapshot =
         Snapshot.of(stringFormat.encodeToString(serializationStrategy, preSerialization(value)))

@@ -12,7 +12,7 @@ internal fun MapLibraryApp.initializeMapLibApp() {
     // Enable coroutines debug mode
     System.setProperty(
         kotlinx.coroutines.DEBUG_PROPERTY_NAME,
-        kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
+        kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON,
     )
 
     Beagle.initialize(
@@ -20,7 +20,7 @@ internal fun MapLibraryApp.initializeMapLibApp() {
         // Disable shake detection for debug drawer
         behavior =
             Behavior(shakeDetectionBehavior = Behavior.ShakeDetectionBehavior(threshold = null)),
-        appearance = Appearance()
+        appearance = Appearance(),
     )
     Beagle.set(
         modules =

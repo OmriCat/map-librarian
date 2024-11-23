@@ -38,7 +38,7 @@ internal class MainViewModel(app: Application, private val savedState: SavedStat
             workflow = diContainer.workflows.root,
             scope = viewModelScope,
             savedStateHandle = savedState,
-            interceptors = listOf(MapLibLoggerLoggingWorkflowInterceptor(diContainer.logger))
+            interceptors = listOf(MapLibLoggerLoggingWorkflowInterceptor(diContainer.logger)),
         )
     }
 }

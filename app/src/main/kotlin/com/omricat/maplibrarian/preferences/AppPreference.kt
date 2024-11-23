@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 
 internal class AppPreference(
     private val dataStore: DataStore<Preferences>,
-    private val key: Preferences.Key<String>
+    private val key: Preferences.Key<String>,
 ) {
     suspend fun value(): String? = dataStore.data.map { prefs -> prefs[key] }.firstOrNull()
 

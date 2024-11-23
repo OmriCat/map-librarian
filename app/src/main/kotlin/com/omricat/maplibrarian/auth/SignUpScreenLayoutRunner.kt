@@ -13,7 +13,7 @@ class SignUpScreenLayoutRunner(private val binding: SignUpScreenBinding) :
     LayoutRunner<SignUpScreen.EmailAndPasswordSignUpScreen> {
     override fun showRendering(
         rendering: SignUpScreen.EmailAndPasswordSignUpScreen,
-        viewEnvironment: ViewEnvironment
+        viewEnvironment: ViewEnvironment,
     ) =
         with(binding) {
             signUpEmail.updateText(rendering.credential.emailAddress)
@@ -25,7 +25,7 @@ class SignUpScreenLayoutRunner(private val binding: SignUpScreenBinding) :
                         step.onSignUpClicked(
                             EmailPasswordCredential(
                                 signUpEmail.text?.toString().orEmpty(),
-                                signUpPassword.text?.toString().orEmpty()
+                                signUpPassword.text?.toString().orEmpty(),
                             )
                         )
                     }
@@ -43,6 +43,6 @@ class SignUpScreenLayoutRunner(private val binding: SignUpScreenBinding) :
     companion object SignUpScreenViewFactory :
         ViewFactory<SignUpScreen.EmailAndPasswordSignUpScreen> by LayoutRunner.bind(
             SignUpScreenBinding::inflate,
-            ::SignUpScreenLayoutRunner
+            ::SignUpScreenLayoutRunner,
         )
 }

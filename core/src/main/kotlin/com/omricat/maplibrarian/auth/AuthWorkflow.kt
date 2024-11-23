@@ -30,14 +30,14 @@ public sealed interface AuthWorkflow : Workflow<Unit, AuthResult, AuthorizingScr
     public companion object {
         public fun instance(
             userRepository: UserRepository,
-            signUpWorkflow: SignUpWorkflow
+            signUpWorkflow: SignUpWorkflow,
         ): AuthWorkflow = AuthWorkflowImpl(userRepository, signUpWorkflow)
     }
 }
 
 internal class AuthWorkflowImpl(
     private val userRepository: UserRepository,
-    private val signUpWorkflow: SignUpWorkflow
+    private val signUpWorkflow: SignUpWorkflow,
 ) : AuthWorkflow, StatefulWorkflow<Unit, AuthWorkflowImpl.State, AuthResult, AuthorizingScreen>() {
     sealed interface State {
         data object PossibleLoggedInUser : State
@@ -54,13 +54,13 @@ internal class AuthWorkflowImpl(
     override fun render(
         renderProps: Unit,
         renderState: State,
-        context: RenderContext
+        context: RenderContext,
     ): AuthorizingScreen =
         when (renderState) {
             is PossibleLoggedInUser -> {
                 context.runningWorker(
                     resolveLoggedInStatusWorker,
-                    handler = ::handlePossibleUserResult
+                    handler = ::handlePossibleUserResult,
                 )
                 AuthorizingScreen.AttemptingLogin("")
             }
@@ -68,17 +68,17 @@ internal class AuthWorkflowImpl(
                 AuthorizingScreen.Login(
                     errorMessage = renderState.errorMessage,
                     onLoginClicked = context.eventHandler(::onLoginClicked),
-                    onSignUpClicked = context.eventHandler(::onSignUpClicked)
+                    onSignUpClicked = context.eventHandler(::onSignUpClicked),
                 )
             is AttemptingAuthorization -> {
                 context.runningWorker(
                     attemptAuthenticationWorker(renderState.credential),
-                    handler = ::handleAuthenticationResult
+                    handler = ::handleAuthenticationResult,
                 )
                 AuthorizingScreen.AttemptingLogin(
                     "LoggingIn",
                     backPressHandler =
-                        context.eventHandler { setOutput(AuthResult.NotAuthenticated) }
+                        context.eventHandler { setOutput(AuthResult.NotAuthenticated) },
                 )
             }
             is SigningUp ->
@@ -130,11 +130,11 @@ public sealed interface AuthorizingScreen {
     public data class Login(
         val errorMessage: String,
         val onLoginClicked: (credential: Credential) -> Unit,
-        val onSignUpClicked: () -> Unit
+        val onSignUpClicked: () -> Unit,
     ) : AuthorizingScreen
 
     public data class AttemptingLogin(
         val message: String,
-        val backPressHandler: BackPressHandler? = null
+        val backPressHandler: BackPressHandler? = null,
     ) : AuthorizingScreen
 }

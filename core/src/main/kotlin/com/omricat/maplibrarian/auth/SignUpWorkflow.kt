@@ -34,7 +34,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
     override fun render(
         renderProps: Unit,
         renderState: State,
-        context: RenderContext
+        context: RenderContext,
     ): SignUpScreen =
         when (renderState) {
             is SignUpPrompt ->
@@ -45,7 +45,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
                             errorMessage = renderState.errorMessage,
                             onSignUpClicked = context.eventHandler(::onSignUpClicked),
                         ),
-                    backPressHandler = context.eventHandler(::onSignUpCancelled)
+                    backPressHandler = context.eventHandler(::onSignUpCancelled),
                 )
             is AttemptingUserCreation -> {
                 context.runningWorker(attemptUserCreation(renderState.credential)) {
@@ -54,7 +54,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
                 EmailAndPasswordSignUpScreen(
                     credential = renderState.credential,
                     backPressHandler = context.eventHandler(::onSignUpCancelled),
-                    step = Step.CreatingUser
+                    step = Step.CreatingUser,
                 )
             }
         }
@@ -63,7 +63,7 @@ internal class ActualSignUpWorkflow(private val userRepository: UserRepository) 
 
     private fun handleUserCreationResult(
         result: Result<User, UserRepository.Error>,
-        credential: EmailPasswordCredential
+        credential: EmailPasswordCredential,
     ) = result.map { onUserCreated(it) }.getOrElse { e -> onErrorCreatingUser(credential, e) }
 
     internal fun onErrorCreatingUser(credential: EmailPasswordCredential, e: UserRepository.Error) =
@@ -95,13 +95,13 @@ public interface SignUpScreen : AuthorizingScreen {
     public data class EmailAndPasswordSignUpScreen(
         val credential: EmailPasswordCredential,
         val backPressHandler: BackPressHandler,
-        val step: Step
+        val step: Step,
     ) : SignUpScreen
 
     public sealed interface Step {
         public data class EnteringEmailAndPassword(
             val onSignUpClicked: (EmailPasswordCredential) -> Unit,
-            val errorMessage: String = ""
+            val errorMessage: String = "",
         ) : Step
 
         public data object CreatingUser : Step

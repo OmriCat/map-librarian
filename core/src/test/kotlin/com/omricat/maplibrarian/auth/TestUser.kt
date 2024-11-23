@@ -7,7 +7,7 @@ import com.omricat.maplibrarian.model.UserUid
 internal data class TestUser(
     override val displayName: String,
     override val id: UserUid,
-    override val emailAddress: EmailAddress
+    override val emailAddress: EmailAddress,
 ) : User {
     companion object {
         operator fun invoke(displayName: String, id: UserUid, emailAddress: String): TestUser =
