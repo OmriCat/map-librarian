@@ -73,7 +73,7 @@ val findFirebaseEmulator: Task by
                 } catch (e: IOException) {
                     throw IllegalStateException(
                         "Can't connect to Firebase emulator at ${request.url}",
-                        e
+                        e,
                     )
                 }
             }

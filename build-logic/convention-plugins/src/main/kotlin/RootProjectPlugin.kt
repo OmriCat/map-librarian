@@ -5,6 +5,7 @@ import com.omricat.maplibrarian.gradle.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
@@ -26,6 +27,19 @@ public class RootProjectPlugin : Plugin<Project> {
             tasks.register<KtfmtFormatTask>("ktfmtFormatAllKtsAndKt") {
                 description = "Formats all Kotlin source and Kotlin script files"
                 configureForAllKtsAndKt(target)
+            }
+
+            // This disambiguates between different variants of Guava
+            configurations.named("ktfmt") { ktfmt ->
+                ktfmt.attributes {
+                    it.attribute(
+                        TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                        objects.named(
+                            TargetJvmEnvironment::class.java,
+                            TargetJvmEnvironment.STANDARD_JVM,
+                        ),
+                    )
+                }
             }
 
             pluginManager.apply(DetektConventionPlugin::class)
@@ -56,7 +70,7 @@ public class RootProjectPlugin : Plugin<Project> {
                         excludes,
                         "--report",
                         reports,
-                        "--debug"
+                        "--debug",
                     )
                 args = params
                 doFirst { logger.lifecycle("Running detekt cli tool with parameters: $params") }

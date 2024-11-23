@@ -17,10 +17,7 @@ private object MapModelProperties {
 }
 
 public object ChartModelToMapSerializer {
-    fun serializeToMap(model: ChartModel): Map<String, String> =
-        hashMapOf(
-            TITLE to model.title,
-        )
+    fun serializeToMap(model: ChartModel): Map<String, String> = hashMapOf(TITLE to model.title)
 }
 
 public object ChartModelFromMapDeserializer {

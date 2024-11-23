@@ -16,7 +16,7 @@ internal val AuthLoginViewFactory: ViewFactory<AuthorizingScreen.Login> =
             authScreen.onLoginClicked(
                 EmailPasswordCredential(
                     emailAddress = editEmail.text?.toString() ?: "",
-                    password = editPassword.text?.toString() ?: ""
+                    password = editPassword.text?.toString() ?: "",
                 )
             )
         }

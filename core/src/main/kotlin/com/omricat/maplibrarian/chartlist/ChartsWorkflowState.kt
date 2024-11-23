@@ -18,11 +18,7 @@ public sealed class ChartsWorkflowState {
 
     internal companion object {
         fun snapshotter(stringFormat: StringFormat): Snapshotter<ChartsWorkflowState> =
-            object :
-                Snapshotter<ChartsWorkflowState>(
-                    stringFormat,
-                    serializer(),
-                ) {
+            object : Snapshotter<ChartsWorkflowState>(stringFormat, serializer()) {
                 override fun preSerialization(value: ChartsWorkflowState): ChartsWorkflowState =
                     if (value is ErrorLoadingCharts) RequestData else value
             }

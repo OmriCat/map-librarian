@@ -9,7 +9,7 @@ public interface Logger {
         priority: Severity = Debug,
         tag: Tag,
         throwable: Throwable?,
-        message: () -> String
+        message: () -> String,
     )
 
     public fun log(priority: Severity = Debug, tag: Tag, message: () -> String): Unit =
@@ -20,7 +20,7 @@ public interface Logger {
             priority: Severity,
             tag: Tag,
             throwable: Throwable?,
-            message: () -> String
+            message: () -> String,
         ): Unit = Unit
     }
 }

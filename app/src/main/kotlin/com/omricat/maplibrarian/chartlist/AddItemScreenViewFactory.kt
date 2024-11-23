@@ -16,7 +16,7 @@ internal object AddItemScreenViewFactory :
             editTitle.updateText(screen.chart.title)
             savingError.text = screen.errorMessage
             enableSaveAndDiscard(screen)
-        }
+        },
     )
 
 @OptIn(WorkflowUiExperimentalApi::class)
@@ -26,7 +26,7 @@ internal object SavingItemScreenViewFactory :
         showRendering = { screen, _ ->
             editTitle.updateText(screen.chart.title)
             enableSaveAndDiscard(null)
-        }
+        },
     )
 
 @WorkflowUiExperimentalApi

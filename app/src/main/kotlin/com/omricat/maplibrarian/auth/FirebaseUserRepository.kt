@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 public class FirebaseUserRepository(
     private val auth: FirebaseAuth,
-    private val dispatchers: DispatcherProvider = DispatcherProvider.Default
+    private val dispatchers: DispatcherProvider = DispatcherProvider.Default,
 ) : UserRepository {
     override suspend fun getSignedInUserIfAny(): Result<User?, UserRepository.Error> =
         withContext(dispatchers.io) {
@@ -41,7 +41,7 @@ public class FirebaseUserRepository(
                             auth
                                 .signInWithEmailAndPassword(
                                     credential.emailAddress,
-                                    credential.password
+                                    credential.password,
                                 )
                                 .await()
                                 .user
@@ -65,7 +65,7 @@ public class FirebaseUserRepository(
                             auth
                                 .createUserWithEmailAndPassword(
                                     credential.emailAddress,
-                                    credential.password
+                                    credential.password,
                                 )
                                 .await()
                                 .user

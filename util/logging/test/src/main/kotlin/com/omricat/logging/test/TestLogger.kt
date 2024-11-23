@@ -19,6 +19,6 @@ public class TestLogger : Logger {
         public val priority: Severity,
         public val tag: Tag,
         public val throwable: Throwable?,
-        public val message: String
+        public val message: String,
     )
 }

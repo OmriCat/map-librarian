@@ -37,7 +37,7 @@ internal class ChartListLayoutRunner(private val binding: ChartlistBinding) :
     companion object :
         ViewFactory<ChartListScreen> by LayoutRunner.bind(
             ChartlistBinding::inflate,
-            ::ChartListLayoutRunner
+            ::ChartListLayoutRunner,
         )
 }
 
@@ -47,7 +47,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChartViewHolder =
         ChartViewHolder(
             ChartlistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            onClick
+            onClick,
         )
 
     override fun onBindViewHolder(holder: ChartViewHolder, position: Int) {
@@ -59,7 +59,7 @@ internal class ChartListAdapter : ListAdapter<DbChartModel, ChartViewHolder>(Cha
 
     class ChartViewHolder(
         internal val binding: ChartlistItemBinding,
-        internal val onClick: (Int) -> Unit
+        internal val onClick: (Int) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root)
 
     private object ChartDiffCallback : DiffUtil.ItemCallback<DbChartModel>() {

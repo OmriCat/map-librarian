@@ -34,7 +34,7 @@ public interface RootWorkflow : Workflow<Unit, Nothing, Screen> {
             userRepository: UserRepository,
             authWorkflow: AuthWorkflow,
             chartsWorkflow: ChartsWorkflow,
-            logger: Logger
+            logger: Logger,
         ): RootWorkflow = RootWorkflowImpl(userRepository, authWorkflow, chartsWorkflow, logger)
     }
 }
@@ -43,7 +43,7 @@ private class RootWorkflowImpl(
     private val userRepository: UserRepository,
     private val authWorkflow: AuthWorkflow,
     private val chartsWorkflow: ChartsWorkflow,
-    override val logger: Logger
+    override val logger: Logger,
 ) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable, RootWorkflow {
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized

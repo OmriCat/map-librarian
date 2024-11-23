@@ -10,7 +10,7 @@ public object UserDetailsWorkFlow :
     override fun render(renderProps: User, context: RenderContext): UserDetailsScreen =
         UserDetailsScreen(
             user = renderProps,
-            onLogOutClicked = context.eventHandler { setOutput(LogOut) }
+            onLogOutClicked = context.eventHandler { setOutput(LogOut) },
         )
 }
 

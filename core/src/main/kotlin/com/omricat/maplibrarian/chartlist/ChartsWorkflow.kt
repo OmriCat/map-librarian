@@ -30,7 +30,7 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen> {
         public fun instance(
             chartsRepository: ChartsRepository,
             addNewChartWorkflow: AddNewChartWorkflow,
-            stringFormat: StringFormat
+            stringFormat: StringFormat,
         ): ChartsWorkflow = ChartsWorkflowImpl(chartsRepository, addNewChartWorkflow, stringFormat)
     }
 
@@ -40,7 +40,7 @@ public interface ChartsWorkflow : Workflow<Props, Nothing, ChartsScreen> {
 private class ChartsWorkflowImpl(
     private val chartsRepository: ChartsRepository,
     private val addNewChartWorkflow: AddNewChartWorkflow,
-    stringFormat: StringFormat
+    stringFormat: StringFormat,
 ) : StatefulWorkflow<Props, ChartsWorkflowState, Nothing, ChartsScreen>(), ChartsWorkflow {
 
     private val snapshotter = ChartsWorkflowState.snapshotter(stringFormat)
@@ -51,7 +51,7 @@ private class ChartsWorkflowImpl(
     override fun render(
         renderProps: Props,
         renderState: ChartsWorkflowState,
-        context: RenderContext
+        context: RenderContext,
     ): ChartsScreen =
         when (renderState) {
             is RequestData -> {
@@ -69,7 +69,7 @@ private class ChartsWorkflowImpl(
                     }
                 AddItemDecoratorScreen(
                     childScreen = listScreen,
-                    onAddItemClicked = context.eventHandler(::onAddItemClicked)
+                    onAddItemClicked = context.eventHandler(::onAddItemClicked),
                 )
             }
             is AddingItem ->
@@ -97,7 +97,7 @@ private class ChartsWorkflowImpl(
 
         internal fun loadChartList(
             chartsRepository: ChartsRepository,
-            user: User
+            user: User,
         ): Worker<Result<List<DbChartModel>, ChartsRepository.Error>> =
             resultWorker(::ExceptionWrappingError) { chartsRepository.chartsListForUser(user) }
     }
@@ -111,5 +111,5 @@ public sealed interface ChartsScreen {
 
 public data class AddItemDecoratorScreen<ChildScreenT : ChartsScreen>(
     val childScreen: ChildScreenT,
-    val onAddItemClicked: () -> Unit
+    val onAddItemClicked: () -> Unit,
 ) : ChartsScreen

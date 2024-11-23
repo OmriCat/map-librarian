@@ -31,7 +31,7 @@ public interface AddNewChartWorkflow : Workflow<User, Event, AddingItemScreen> {
     public companion object {
         public fun instance(
             chartsRepository: ChartsRepository,
-            stringFormat: StringFormat
+            stringFormat: StringFormat,
         ): AddNewChartWorkflow = AddNewChartWorkflowImpl(chartsRepository, stringFormat)
     }
 
@@ -60,7 +60,7 @@ public interface AddNewChartWorkflow : Workflow<User, Event, AddingItemScreen> {
 
 private class AddNewChartWorkflowImpl(
     private val chartsRepository: ChartsRepository,
-    stringFormat: StringFormat
+    stringFormat: StringFormat,
 ) : StatefulWorkflow<User, State, Event, AddingItemScreen>(), AddNewChartWorkflow {
 
     private val snapshotter = State.snapshotter(stringFormat)
@@ -71,7 +71,7 @@ private class AddNewChartWorkflowImpl(
     override fun render(
         renderProps: User,
         renderState: State,
-        context: RenderContext
+        context: RenderContext,
     ): AddingItemScreen =
         when (renderState) {
             is Editing -> {
@@ -80,7 +80,7 @@ private class AddNewChartWorkflowImpl(
                     errorMessage = renderState.errorMessage,
                     onTitleChanged = context.eventHandler(onTitleChanged(renderState.chart)),
                     discardChanges = context.eventHandler(::onDiscard),
-                    saveChanges = context.eventHandler(onSave(renderState.chart))
+                    saveChanges = context.eventHandler(onSave(renderState.chart)),
                 )
             }
             is Saving -> {
@@ -104,7 +104,7 @@ private class AddNewChartWorkflowImpl(
 
     private fun saveNewItem(
         user: User,
-        chart: UnsavedChartModel
+        chart: UnsavedChartModel,
     ): Worker<Result<DbChartModel, ChartsRepository.AddNewChartError>> =
         resultWorker({ e -> AddNewChartError.OtherException(e) }) {
             chartsRepository.addNewChart(user, chart)
@@ -128,7 +128,7 @@ public data class AddItemScreen(
     val errorMessage: String = "",
     val onTitleChanged: (CharSequence) -> Unit,
     val discardChanges: () -> Unit,
-    val saveChanges: () -> Unit
+    val saveChanges: () -> Unit,
 ) : AddingItemScreen
 
 public data class SavingItemScreen(override val chart: ChartModel) : AddingItemScreen

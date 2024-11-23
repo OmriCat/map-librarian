@@ -42,7 +42,7 @@ import kotlinx.coroutines.withContext
 class FirebaseChartsRepository(
     private val db: FirebaseFirestore,
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default,
-    override val logger: Logger
+    override val logger: Logger,
 ) : ChartsRepository, Loggable {
     override suspend fun chartsListForUser(
         user: User
@@ -62,7 +62,7 @@ class FirebaseChartsRepository(
 
     override suspend fun addNewChart(
         user: User,
-        newChart: UnsavedChartModel
+        newChart: UnsavedChartModel,
     ): Result<DbChartModel, AddNewChartError> {
         return withContext(dispatchers.io) {
                 runCatchingFirestoreException {
