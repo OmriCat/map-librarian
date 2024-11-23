@@ -4,6 +4,10 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Debug
 import co.touchlab.kermit.Tag
 
+/**
+ * Facade for logging. Presents a simplified interface on top of more fully-featured logging
+ * implementations.
+ */
 public interface Logger {
     public fun log(
         priority: Severity = Debug,

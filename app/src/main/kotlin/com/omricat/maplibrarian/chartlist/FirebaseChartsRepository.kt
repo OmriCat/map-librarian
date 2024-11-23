@@ -1,6 +1,7 @@
 package com.omricat.maplibrarian.chartlist
 
 import co.touchlab.kermit.Severity.Warn
+import co.touchlab.kermit.Tag
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.combine
@@ -21,6 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.omricat.firebase.interop.runCatchingFirebaseException
 import com.omricat.logging.Loggable
 import com.omricat.logging.Logger
+import com.omricat.logging.classTag
 import com.omricat.logging.log
 import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError
 import com.omricat.maplibrarian.chartlist.ChartsRepository.AddNewChartError.Cancelled
@@ -35,7 +37,6 @@ import com.omricat.maplibrarian.model.DbChartModel
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import com.omricat.maplibrarian.model.User
 import com.omricat.maplibrarian.utils.DispatcherProvider
-import com.omricat.maplibrarian.utils.logAndMapException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -44,6 +45,9 @@ class FirebaseChartsRepository(
     private val dispatchers: DispatcherProvider = DispatcherProvider.Default,
     override val logger: Logger,
 ) : ChartsRepository, Loggable {
+
+    override val loggingTag: Tag = classTag()
+
     override suspend fun chartsListForUser(
         user: User
     ): Result<List<DbChartModel>, ChartsRepository.Error> =
@@ -52,7 +56,8 @@ class FirebaseChartsRepository(
                     db.mapsCollection(user).get().await()
                 }
             }
-            .logAndMapException(::ExceptionWrappingError)
+            .onFailure { log(Warn, throwable = it) }
+            .mapError(::ExceptionWrappingError)
             .andThen { snapshot ->
                 snapshot
                     .map { m -> m.parseMapModel() }
@@ -71,7 +76,8 @@ class FirebaseChartsRepository(
                         .await()
                 }
             }
-            .logAndMapException { exception ->
+            .onFailure { log(Warn, throwable = it) }
+            .mapError { exception: FirebaseFirestoreException ->
                 when (exception.code) {
                     UNAVAILABLE -> Unavailable
                     ALREADY_EXISTS -> ChartExists(newChart)
@@ -83,6 +89,7 @@ class FirebaseChartsRepository(
                             "FirebaseFirestoreException $exception had a status code of OK. " +
                                 "Docs say this should never happen."
                         )
+
                     UNKNOWN -> OtherException(exception)
                     else -> OtherException(exception)
                 }
