@@ -3,7 +3,7 @@ package com.omricat.maplibrarian.chartlist
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.tableOf
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflow.State
+import com.omricat.maplibrarian.chartlist.AddNewChartWorkflowImpl.State
 import com.omricat.maplibrarian.model.UnsavedChartModel
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
