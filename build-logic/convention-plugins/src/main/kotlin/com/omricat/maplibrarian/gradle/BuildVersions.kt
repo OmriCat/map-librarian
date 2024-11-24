@@ -13,10 +13,10 @@ internal fun Project.javaVersionFromGradleProperties(): Provider<JavaVersion> =
         .map { JavaVersion.toVersion(it) }
         .orElse(JavaVersion.VERSION_11)
 
-private const val DEFAULT_COMPILE_SDK = 34
+private const val DEFAULT_COMPILE_SDK = 35
 
 internal fun Project.compileSdkFromGradleProperties(): Provider<Int> =
-    gradleProperty("com.omricat.maplib.compilesdk").orElse(DEFAULT_COMPILE_SDK)
+    gradleProperty("com.omricat.maplib.compileSdk").orElse(DEFAULT_COMPILE_SDK)
 
 private const val DEFAULT_MIN_SDK = 23
 
