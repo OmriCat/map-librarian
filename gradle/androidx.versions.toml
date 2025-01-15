@@ -1,5 +1,5 @@
 [versions]
-activity = "1.9.3"
+activity = "1.10.0"
 annotation = "1.8.0"
 appcompat = "1.7.0"
 constraintlayout = "2.2.0"
