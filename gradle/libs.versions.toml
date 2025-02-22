@@ -1,7 +1,7 @@
 [versions]
 assertk = "0.28.1"
 beagle = "2.9.0"
-detekt = "1.23.7"
+detekt = "1.23.8"
 firebase = "33.9.0"
 kotlin = "2.1.10"
 kotlinResult = "1.1.21"
