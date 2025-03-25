@@ -15,7 +15,7 @@ kermit = "2.0.5"
 workflow = "1.7.1"
 
 # plugins
-agp = "8.9.0"
+agp = "8.9.1"
 plugin_dependencyAnalysis = "2.13.0"
 plugin_googleServices = "4.4.2"
 plugin_gradleDoctor = "0.10.0"
