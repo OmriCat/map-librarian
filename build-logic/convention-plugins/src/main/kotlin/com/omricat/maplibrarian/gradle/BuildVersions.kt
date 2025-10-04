@@ -2,31 +2,35 @@ package com.omricat.maplibrarian.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.getByType
 
 internal fun Project.javaLanguageVersionFromGradleProperties(): Provider<JavaLanguageVersion> =
     javaVersionFromGradleProperties().map { s -> JavaLanguageVersion.of(s.majorVersion) }
 
 internal fun Project.javaVersionFromGradleProperties(): Provider<JavaVersion> =
-    gradleProperty("com.omricat.maplib.javaVersion")
-        .map { JavaVersion.toVersion(it) }
-        .orElse(JavaVersion.VERSION_11)
+    versionFromCatalog("javaVersion").map { JavaVersion.toVersion(it) }
 
-private const val DEFAULT_COMPILE_SDK = 35
+private fun Project.versionFromCatalog(identifier: String): Provider<Int> =
+    providers
+        .provider {
+            extensions
+                .getByType<VersionCatalogsExtension>()
+                .named("libs")
+                .findVersion(identifier)
+                .get()
+                .requiredVersion
+        }
+        .map { str -> str.toInt() }
 
 internal fun Project.compileSdkFromGradleProperties(): Provider<Int> =
-    gradleProperty("com.omricat.maplib.compileSdk").orElse(DEFAULT_COMPILE_SDK)
+    versionFromCatalog("compileSdk")
 
-private const val DEFAULT_MIN_SDK = 23
-
-internal fun Project.minSdkFromGradleProperties(): Provider<Int> =
-    gradleProperty("com.omricat.maplib.minSdk").orElse(DEFAULT_MIN_SDK)
+internal fun Project.minSdkFromGradleProperties(): Provider<Int> = versionFromCatalog("minSdk")
 
 private const val DEFAULT_TARGET_SDK = 29
 
 internal fun Project.targetSdkFromGradleProperties(): Provider<Int> =
-    gradleProperty("com.omricat.maplib.targetSdk").orElse(DEFAULT_TARGET_SDK)
-
-private fun Project.gradleProperty(id: String): Provider<Int> =
-    providers.gradleProperty("com.omricat.maplib.${id}").map { s -> s.toInt() }
+    versionFromCatalog("targetSdk").orElse(DEFAULT_TARGET_SDK)

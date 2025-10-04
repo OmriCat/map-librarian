@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.test
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     `java-gradle-plugin`
@@ -18,10 +20,13 @@ repositories {
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
+    implementation(platform(libs.kotlin.bom))
     implementation(libs.ktfmt.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.android.gradlePlugin.api)
+    testImplementation(gradleTestKit())
+    testImplementation(kotlin("test"))
 }
 
 val Provider<PluginDependency>.id
