@@ -13,6 +13,10 @@ processPhoenix = "3.0.0"
 retrofit2 = "3.0.0"
 kermit = "2.0.8"
 workflow = "1.7.1"
+javaVersion = "11"
+compileSdk = "36"
+minSdk = "23"
+targetSdk = "29"
 
 # plugins
 agp = "8.13.0"
@@ -27,7 +31,7 @@ plugin_taskTree = "4.0.1"
 plugin_convention_maplib = "0.1"
 
 [libraries]
-
+kotlin_bom = {group = "org.jetbrains.kotlin", name="kotlin-bom", version.ref = "kotlin"}
 kotlinx_coroutines_bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx_coroutines" }
 kotlinx_coroutines_core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core" }
 kotlinx_coroutines_android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android" }
