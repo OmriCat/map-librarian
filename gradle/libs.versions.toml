@@ -31,7 +31,7 @@ plugin_taskTree = "4.0.1"
 plugin_convention_maplib = "0.1"
 
 [libraries]
-kotlin_bom = {group = "org.jetbrains.kotlin", name="kotlin-bom", version.ref = "kotlin"}
+kotlin_bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 kotlinx_coroutines_bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx_coroutines" }
 kotlinx_coroutines_core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core" }
 kotlinx_coroutines_android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android" }
@@ -51,8 +51,8 @@ kotlinResult = { module = "com.michael-bull.kotlin-result:kotlin-result", versio
 kotlinResult_coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlinResult" }
 
 firebase_bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
-firebase_firestoreKtx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
-firebase_authKtx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase_firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase_auth = { group = "com.google.firebase", name = "firebase-auth" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit2" }
 retrofit_converter_kotlinXSerialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
