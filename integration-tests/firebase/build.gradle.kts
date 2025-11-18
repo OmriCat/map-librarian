@@ -114,7 +114,7 @@ dependencies {
 
     implementation(androidx.test.coreKtx)
     implementation(androidx.test.runner)
-    implementation("androidx.test:monitor:1.8.0")
+    implementation(androidx.test.monitor)
     implementation(androidx.test.ext.junitKtx)
 
     implementation(libs.assertk)

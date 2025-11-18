@@ -6,6 +6,7 @@ constraintlayout = "2.2.1"
 core = "1.17.0"
 datastore = "1.1.7"
 espresso = "3.2.0"
+monitor = "1.8.0"
 lifecycle = "2.9.4"
 recyclerview = "1.4.0"
 test = "1.2.0"
@@ -27,3 +28,4 @@ recylerView = { module = "androidx.recyclerview:recyclerview", version.ref = "re
 test_runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 test_ext_junitKtx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "testExtJunit" }
 test_coreKtx = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
+test_monitor = { module = "androidx.test:monitor", version.ref = "monitor" }
