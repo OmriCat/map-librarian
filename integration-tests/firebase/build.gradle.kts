@@ -25,16 +25,12 @@ android {
     targetProjectPath = ":app"
 
     testOptions {
-        emulatorSnapshots {
-            enableForTestFailures = true
-            maxSnapshotsForTestFailures = 2
-        }
         unitTests {
             isIncludeAndroidResources = true
             all { it.testLogging.showStandardStreams = true }
         }
         managedDevices {
-            devices {
+            allDevices {
                 maybeCreate<ManagedVirtualDevice>("nexus5api27").apply {
                     device = "Nexus 5"
                     apiLevel = 27
@@ -55,8 +51,8 @@ object Ports {
     const val AUTH = 9099
 }
 
-val findFirebaseEmulator: Task by
-    tasks.creating {
+val findFirebaseEmulator by
+    tasks.registering {
         doLast {
             logger.lifecycle("Checking whether Firebase emulator is reachable")
             val client = OkHttpClient.Builder().build()
