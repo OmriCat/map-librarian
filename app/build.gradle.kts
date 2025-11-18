@@ -12,11 +12,9 @@ android {
         versionCode = 1
         versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        resourceConfigurations += "en" // Only keep languages supported so to trim down FirebaseUI
     }
 
-    kotlinOptions { compileOptions { freeCompilerArgs += "-Xcontext-receivers" } }
+    kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-receivers") } }
 
     buildTypes {
         getByName("release") {
