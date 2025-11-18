@@ -1,10 +1,10 @@
 package com.omricat.maplibrarian
 
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
 import com.omricat.logging.Logger
 import com.omricat.maplibrarian.auth.FirebaseUserRepository
 import com.omricat.maplibrarian.auth.UserRepository

@@ -67,8 +67,8 @@ dependencies {
     implementation(androidx.dataStore.preferences)
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestoreKtx)
-    implementation(libs.firebase.authKtx)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
 
     implementation(libs.workflow.ui.core.android)
     implementation(libs.workflow.ui.container.android)
