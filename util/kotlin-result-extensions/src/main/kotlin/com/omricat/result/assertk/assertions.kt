@@ -10,6 +10,8 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getError
 
+private typealias Ok<V> = Result<V, Nothing>
+
 public fun <V> Assert<Result<V, *>>.isOk(): Assert<V> =
     transform(appendName("value", separator = ".")) { actualResult ->
         if (actualResult is Ok<V>) {
