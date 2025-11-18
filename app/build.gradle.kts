@@ -14,7 +14,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-receivers") } }
+    kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-parameters") } }
 
     buildTypes {
         getByName("release") {

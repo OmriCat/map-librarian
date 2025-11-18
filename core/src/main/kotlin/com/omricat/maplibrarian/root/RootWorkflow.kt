@@ -1,9 +1,7 @@
 package com.omricat.maplibrarian.root
 
-import co.touchlab.kermit.Tag
 import com.omricat.logging.Loggable
 import com.omricat.logging.Logger
-import com.omricat.logging.classTag
 import com.omricat.logging.log
 import com.omricat.maplibrarian.auth.AuthResult
 import com.omricat.maplibrarian.auth.AuthResult.Authenticated
@@ -47,8 +45,6 @@ private class RootWorkflowImpl(
     private val chartsWorkflow: ChartsWorkflow,
     override val logger: Logger,
 ) : StatefulWorkflow<Unit, State, Nothing, Screen>(), Loggable, RootWorkflow {
-
-    override val loggingTag: Tag = classTag()
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = Unauthorized
 
