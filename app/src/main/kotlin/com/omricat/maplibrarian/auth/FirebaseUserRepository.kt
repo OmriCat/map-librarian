@@ -104,7 +104,8 @@ internal value class FirebaseUser(private val user: com.google.firebase.auth.Fir
                     ?: error(
                         """
                         |FirebaseUser email should always be non-null unless Multiple
-                        | accounts per email has been enable in Firebase Console"""
+                        | accounts per email has been enable in Firebase Console
+                        """
                             .trimMargin()
                     )
             return EmailAddress(email)

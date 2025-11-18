@@ -7,8 +7,7 @@ public sealed interface ChartModel {
 }
 
 @Serializable
-public data class DbChartModel(override val title: String, public val chartId: ChartId) :
-    ChartModel
+public data class DbChartModel(override val title: String, public val chartId: ChartId) : ChartModel
 
 @Serializable public data class UnsavedChartModel(override val title: String) : ChartModel
 
