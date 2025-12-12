@@ -19,7 +19,7 @@ minSdk = "23"
 targetSdk = "29"
 
 # plugins
-agp = "8.13.1"
+agp = "8.13.2"
 plugin_dependencyAnalysis = "3.5.1"
 plugin_googleServices = "4.4.4"
 plugin_gradleDoctor = "0.12.1"
