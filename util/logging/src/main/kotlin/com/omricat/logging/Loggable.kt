@@ -8,22 +8,25 @@ import kotlin.reflect.KClass
 /** Convenience "mixin" interface to make logging easy. */
 public interface Loggable {
     public val logger: Logger
-    public val loggingTag: Tag
 }
 
-public inline fun <reified T : Any> T.classTag(): Tag = Tag(T::class.outerClassSimpleName())
-
-public fun Loggable.log(priority: Severity = Debug, tag: String? = null, message: () -> String) {
-    logger.log(priority, tag?.let { Tag(it) } ?: this.loggingTag, message)
+context(loggable: Loggable)
+public inline fun <reified T : Any> T.log(
+    priority: Severity = Debug,
+    tag: String? = null,
+    noinline message: () -> String,
+) {
+    loggable.logger.log(priority, Tag(tag ?: T::class.outerClassSimpleName()), message)
 }
 
-public fun Loggable.log(
+context(loggable: Loggable)
+public inline fun <reified T : Any> T.log(
     priority: Severity = Debug,
     tag: String? = null,
     throwable: Throwable,
-    message: () -> String = { throwable.message ?: "$throwable" },
+    noinline message: () -> String = { throwable.message ?: "$throwable" },
 ) {
-    logger.log(priority, tag?.let { Tag(it) } ?: this.loggingTag, throwable, message)
+    loggable.logger.log(priority, Tag(tag ?: T::class.outerClassSimpleName()), throwable, message)
 }
 
 public fun KClass<*>.outerClassSimpleName(): String {
