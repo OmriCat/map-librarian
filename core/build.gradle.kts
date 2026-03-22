@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-kotlin { compilerOptions { freeCompilerArgs.addAll("-Xcontext-receivers") } }
+kotlin { compilerOptions { freeCompilerArgs.addAll("-Xcontext-parameters") } }
 
 dependencies {
     implementation(projects.util.logging)
