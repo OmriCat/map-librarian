@@ -12,6 +12,7 @@ internal class AppPreference(
 ) {
     suspend fun value(): String? = dataStore.data.map { prefs -> prefs[key] }.firstOrNull()
 
-    suspend fun edit(transform: (String?) -> String) =
-        dataStore.edit { prefs -> prefs[key] = transform(prefs[key]) }
+    suspend fun edit(transform: (String?) -> String) = dataStore.edit { prefs ->
+        prefs[key] = transform(prefs[key])
+    }
 }

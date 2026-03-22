@@ -51,32 +51,31 @@ object Ports {
     const val AUTH = 9099
 }
 
-val findFirebaseEmulator by
-    tasks.registering {
-        doLast {
-            logger.lifecycle("Checking whether Firebase emulator is reachable")
-            val client = OkHttpClient.Builder().build()
-            val baseUrl = HttpUrl.Builder().scheme("http").host("localhost").build()
-            listOf(Ports.AUTH, Ports.FIRESTORE).forEach { port ->
-                val serviceUrl = baseUrl.newBuilder().port(port).build()
-                val request = Request.Builder().url(serviceUrl).build()
-                try {
-                    client.newCall(request).execute().use { resp ->
-                        check(resp.isSuccessful) {
-                            "Can't connect to Firebase emulator at ${request.url}"
-                        }
+val findFirebaseEmulator by tasks.registering {
+    doLast {
+        logger.lifecycle("Checking whether Firebase emulator is reachable")
+        val client = OkHttpClient.Builder().build()
+        val baseUrl = HttpUrl.Builder().scheme("http").host("localhost").build()
+        listOf(Ports.AUTH, Ports.FIRESTORE).forEach { port ->
+            val serviceUrl = baseUrl.newBuilder().port(port).build()
+            val request = Request.Builder().url(serviceUrl).build()
+            try {
+                client.newCall(request).execute().use { resp ->
+                    check(resp.isSuccessful) {
+                        "Can't connect to Firebase emulator at ${request.url}"
                     }
-                } catch (e: IOException) {
-                    throw IllegalStateException(
-                        "Can't connect to Firebase emulator at ${request.url}",
-                        e,
-                    )
                 }
+            } catch (e: IOException) {
+                throw IllegalStateException(
+                    "Can't connect to Firebase emulator at ${request.url}",
+                    e,
+                )
             }
-            logger.lifecycle("Firebase emulator found!")
         }
-        outputs.upToDateWhen { false } // Always run this task if it's part of the task graph
+        logger.lifecycle("Firebase emulator found!")
     }
+    outputs.upToDateWhen { false } // Always run this task if it's part of the task graph
+}
 
 tasks
     .matching {
