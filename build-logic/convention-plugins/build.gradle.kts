@@ -9,7 +9,10 @@ group = "com.omricat.map-librarian"
 
 version = libs.versions.plugin.convention.maplib.get()
 
-kotlin { explicitApi() }
+kotlin {
+    explicitApi()
+    jvmToolchain(libs.versions.javaVersion.get().toInt())
+}
 
 repositories {
     google()
