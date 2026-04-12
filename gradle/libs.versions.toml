@@ -24,7 +24,7 @@ plugin_dependencyAnalysis = "3.7.0"
 plugin_googleServices = "4.4.4"
 plugin_gradleDoctor = "0.12.1"
 plugin_ktfmt = "0.26.0"
-plugin_moduleGraphAssertion = "2.9.0"
+plugin_moduleGraphAssertion = "2.9.1"
 plugin_taskTree = "4.0.1"
 
 # convention plugins from build-logic
