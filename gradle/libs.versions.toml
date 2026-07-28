@@ -20,7 +20,7 @@ targetSdk = "29"
 
 # plugins
 agp = "8.13.2"
-plugin_dependencyAnalysis = "3.17.0"
+plugin_dependencyAnalysis = "3.18.0"
 plugin_googleServices = "4.5.0"
 plugin_gradleDoctor = "0.12.1"
 plugin_ktfmt = "0.26.0"
