@@ -3,23 +3,25 @@ package com.omricat.maplibrarian.chartlist
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.tableOf
-import com.omricat.maplibrarian.chartlist.AddNewChartWorkflowImpl.State
-import com.omricat.maplibrarian.model.UnsavedChartModel
+import com.omricat.maplibrarian.chartlist.ChartDetailsWorkflowImpl.State
+import com.omricat.maplibrarian.model.ChartId
+import com.omricat.maplibrarian.model.DbChartModel
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-internal class AddNewChartWorkflowTest {
+class ChartDetailsWorkflowTest {
+
+    private val snapshotter = State.snapshotter(Json)
+
     @Nested
     inner class StateSnapshotterTest {
-        private val chart = UnsavedChartModel("title")
-        private val snapshotter = State.snapshotter(Json)
-
         @Test
         fun `Snapshot round trips are the identity`() {
+            val chart = DbChartModel("title", ChartId("chartId"))
             tableOf("state")
-                .row<State>(State.Editing(chart, "error message"))
-                .row(State.Saving(chart))
+                .row<State>(State.ShowingDetails(chart))
+                .row(State.EditingChart(chart))
                 .forAll { state ->
                     assertThat(snapshotter.valueFromSnapshot(snapshotter.snapshotOf(state)))
                         .isEqualTo(state)
